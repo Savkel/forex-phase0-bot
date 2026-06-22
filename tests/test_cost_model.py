@@ -1,0 +1,63 @@
+from datetime import datetime, timezone
+from bot.forex.cost_model import CostModel, spread_frac, rollovers_in, swap_frac
+
+def _ms(y, m, d, h):
+    return int(datetime(y, m, d, h, tzinfo=timezone.utc).timestamp() * 1000)
+
+def test_spread_frac_is_full_spread_over_mid():
+    # bid 1.0000, ask 1.0002 -> spread 0.0002, mid 1.0001
+    f = spread_frac(1.0000, 1.0002, spread_mult=1.0)
+    assert abs(f - (0.0002 / 1.0001)) < 1e-12
+
+def test_spread_mult_widens_linearly():
+    base = spread_frac(1.0000, 1.0002, 1.0)
+    assert abs(spread_frac(1.0000, 1.0002, 1.5) - 1.5 * base) < 1e-12
+
+def test_rollovers_counts_one_per_day_crossing():
+    # interval covering exactly one 21:00 rollover
+    t0 = _ms(2026, 6, 1, 20); t1 = _ms(2026, 6, 1, 23)
+    rolls = rollovers_in(t0, t1, 21)
+    assert len(rolls) == 1 and rolls[0].hour == 21
+
+def test_wednesday_rollover_is_tripled():
+    cost = CostModel(pip=0.0001, long_swap_pips=1.0, short_swap_pips=1.0,
+                     rollover_hour_utc=21, spread_mult=1.0, swap_mult=1.0)
+    # 2026-06-03 is a Wednesday
+    wed = swap_frac(cost, side=1, mid=1.0, t0_ms=_ms(2026,6,3,20), t1_ms=_ms(2026,6,3,23))
+    thu = swap_frac(cost, side=1, mid=1.0, t0_ms=_ms(2026,6,4,20), t1_ms=_ms(2026,6,4,23))
+    assert abs(wed - 3 * thu) < 1e-12
+
+def test_swap_mult_scales_cost():
+    c1 = CostModel(0.0001, 1.0, 1.0, 21, 1.0, 1.0)
+    c2 = CostModel(0.0001, 1.0, 1.0, 21, 1.0, 2.0)
+    a = swap_frac(c1, 1, 1.0, _ms(2026,6,4,20), _ms(2026,6,4,23))
+    b = swap_frac(c2, 1, 1.0, _ms(2026,6,4,20), _ms(2026,6,4,23))
+    assert abs(b - 2 * a) < 1e-12
+
+def test_no_rollover_means_zero_swap():
+    # interval entirely before the 21:00 rollover crosses nothing
+    cost = CostModel(pip=0.0001, long_swap_pips=1.0, short_swap_pips=1.0, rollover_hour_utc=21)
+    assert rollovers_in(_ms(2026,6,4,10), _ms(2026,6,4,12), 21) == []
+    assert swap_frac(cost, side=1, mid=1.0, t0_ms=_ms(2026,6,4,10), t1_ms=_ms(2026,6,4,12)) == 0.0
+
+def test_swap_distinguishes_long_and_short_sign():
+    # long pays (positive pips), short earns (negative pips): different sign & magnitude
+    cost = CostModel(pip=0.0001, long_swap_pips=2.0, short_swap_pips=-1.0, rollover_hour_utc=21)
+    t0, t1 = _ms(2026,6,4,20), _ms(2026,6,4,23)   # one Thursday rollover (not Wed -> x1)
+    long_swap = swap_frac(cost, side=1, mid=1.0, t0_ms=t0, t1_ms=t1)
+    short_swap = swap_frac(cost, side=-1, mid=1.0, t0_ms=t0, t1_ms=t1)
+    assert long_swap > 0          # long pays
+    assert short_swap < 0         # short earns (credit)
+    assert long_swap != short_swap
+
+def test_stress_multipliers_are_monotonic():
+    # spread widens monotonically with spread_mult
+    s1 = spread_frac(1.0000, 1.0002, 1.0)
+    s2 = spread_frac(1.0000, 1.0002, 1.5)
+    s3 = spread_frac(1.0000, 1.0002, 2.0)
+    assert s1 < s2 < s3
+    # swap cost grows monotonically with swap_mult
+    base = CostModel(0.0001, 1.0, 1.0, 21, 1.0, 1.0)
+    stressed = CostModel(0.0001, 1.0, 1.0, 21, 1.0, 2.0)
+    t0, t1 = _ms(2026,6,4,20), _ms(2026,6,4,23)
+    assert swap_frac(stressed, 1, 1.0, t0, t1) > swap_frac(base, 1, 1.0, t0, t1)
