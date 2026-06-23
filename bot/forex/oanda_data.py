@@ -89,12 +89,12 @@ def load_or_fetch(data_cfg: Dict[str, Any], *,
     return df
 
 def fetch_candles(data_cfg: Dict[str, Any], token: Optional[str] = None,
-                  account_id: Optional[str] = None, *, session: Any = None) -> pd.DataFrame:
+                  *, session: Any = None) -> pd.DataFrame:
     """Live fetch from OANDA practice, paging backward via `to`/`count`. The API
     token comes from the `token` arg or the OANDA_API_TOKEN env var (never
     hardcoded); a missing token fails clearly BEFORE any network call. Pass a
-    `session` to run fully offline in tests. Account id (OANDA_ACCOUNT_ID) is
-    optional here — the candles endpoint does not require it."""
+    `session` to run fully offline in tests. The candles endpoint needs only the
+    token — no account id."""
     token = token or os.environ.get("OANDA_API_TOKEN")
     if not token:
         raise RuntimeError("OANDA_API_TOKEN not set; provide it via the environment (never hardcode).")
