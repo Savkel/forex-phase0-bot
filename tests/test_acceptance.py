@@ -113,3 +113,24 @@ def test_result_echoes_drawdowns_with_sign_convention():
     assert dd["bot_max_drawdown"] == -0.10
     assert dd["gross_matched_max_drawdown"] == -0.18
     assert "convention" in dd and "<= 0" in dd["convention"]
+
+
+# --- NaN in any required metric must drive the verdict to FAIL (never PASS) ---
+# All NaN comparisons are False in Python, so the check that consumes the NaN
+# metric fails. (bot/gross drawdowns both feed the single drawdown check.)
+_NAN_METRIC_TO_RULE = {
+    "holdout_alpha": "holdout_alpha_positive",
+    "null_percentile": "null_percentile",
+    "bot_max_drawdown": "drawdown_le_gross_matched_passive",
+    "gross_matched_max_drawdown": "drawdown_le_gross_matched_passive",
+    "stress_combined_alpha": "cost_stress_combined_alpha_positive",
+}
+
+@pytest.mark.parametrize("metric,rule", list(_NAN_METRIC_TO_RULE.items()))
+def test_nan_in_any_metric_forces_fail(metric, rule):
+    m = _pass_metrics(); m[metric] = float("nan")
+    r = phase0_acceptance(m)
+    assert r["overall"] == "FAIL"                       # NaN never yields PASS
+    assert r["failed"]                                  # at least one check failed
+    check = next(c for c in r["checks"] if c["rule"] == rule)
+    assert check["passed"] is False                     # the check consuming the NaN metric fails
