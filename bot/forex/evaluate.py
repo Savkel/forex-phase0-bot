@@ -65,7 +65,7 @@ def segmented_evaluation(bars: pd.DataFrame, decisions: np.ndarray, cost: CostMo
     nothing, tunes nothing, and emits no strategy decision — NOT a gate (spec
     §4). Inputs are never mutated."""
     b = bars.reset_index(drop=True)
-    decisions = np.asarray(decisions, dtype=int)
+    decisions = np.array(decisions, dtype=int, copy=True)   # defensive copy: never a view into the caller's array
     n = len(b)
     if n < n_segments * 3:
         n_segments = max(1, n // 3)
