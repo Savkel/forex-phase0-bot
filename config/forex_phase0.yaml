@@ -1,0 +1,29 @@
+starting_equity: 10000.0
+data:
+  instrument: EUR_USD
+  granularity: H4
+  price: BA
+  cache_dir: data/forex_ohlcv/
+split:
+  holdout_frac: 0.35
+costs:
+  pip: 0.0001
+  long_swap_pips: 0.5
+  short_swap_pips: 0.5
+  rollover_hour_utc: 21
+  spread_mult: 1.0
+  swap_mult: 1.0
+cost_stress:
+  spread_mult: 1.5
+  swap_mult: 2.0
+null_bench:          # NOTE: not "null" — that is a YAML reserved word (parses to None)
+  runs: 1000
+  min_runs: 500
+  method: circular_shift
+  seed: 12345
+  guard_frac: 0.02
+candidates: [mom_20, mom_50, donchian_50]
+acceptance:
+  null_percentile: 90
+reporting:
+  base_dir: reports/forex/
