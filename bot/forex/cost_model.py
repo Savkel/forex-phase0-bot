@@ -15,9 +15,11 @@ class CostModel:
     swap_mult: float = 1.0
 
 def spread_frac(bid_o: float, ask_o: float, spread_mult: float = 1.0) -> float:
-    """Full per-unit spread (cost of one entry+exit pair on one unit of notional)
-    as a fraction of mid, widened by spread_mult. Charged on traded notional at
-    each fill; a flip trades 2x notional and therefore pays this twice."""
+    """Return the FULL bid/ask spread (ask - bid) as a fraction of mid, widened by
+    spread_mult. This is the per-unit cost of a full entry+exit round-trip, NOT the
+    cost of a single fill. The engine charges HALF of this value per one-way fill, so:
+    a round-trip (entry then exit) pays ~one full spread; a flip pays ~one full spread
+    because it is two one-way fills (close + open). Math unchanged."""
     mid = (bid_o + ask_o) / 2.0
     if mid <= 0:
         return 0.0
