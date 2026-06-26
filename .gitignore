@@ -5,3 +5,6 @@ __pycache__/
 data/forex_ohlcv/
 reports/
 .env
+# local Claude governance docs (not part of the published bot)
+CLAUDE.md
+docs/
