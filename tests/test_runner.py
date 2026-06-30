@@ -134,6 +134,47 @@ def test_configured_block_len_reaches_block_shuffle_diagnostic():
     assert r_small["diagnostics"]["null_circular"] == r_big["diagnostics"]["null_circular"]
 
 
+# --- F2: cost-stress multipliers are RELATIVE to the base cost multipliers ---
+
+def _combined_alpha_at(cfg, bars, spread_mult, swap_mult):
+    """Recompute the combined-stress cell EXACTLY as run_phase0 does, but at the given
+    absolute multipliers, so a test can pin the effective multipliers the runner used."""
+    from dataclasses import replace
+    from bot.forex.backtest import simulate
+    from bot.forex.evaluate import exposure_adjusted_alpha, hold_long
+    from bot.forex.indicators import compute_features
+    from bot.forex.signals import candidate_decisions
+    feats = compute_features(bars, cfg["candidates"])
+    n = len(feats); cut = int(round(n * (1.0 - cfg["split"]["holdout_frac"])))
+    holdout = feats.iloc[cut:].reset_index(drop=True)
+    selected = run_phase0(cfg, bars)["selection"]["selected"]
+    d_hold = candidate_decisions(holdout, selected)
+    eq = float(cfg["starting_equity"])
+    c = replace(_cost(cfg, stress=False), spread_mult=spread_mult, swap_mult=swap_mult)
+    s = simulate(holdout, d_hold, c, 1.0, eq)["summary"]
+    hr = hold_long(holdout, c, eq)["total_return"]
+    return round(exposure_adjusted_alpha(s["total_return"], s["avg_net_exposure"], hr), 6)
+
+
+def test_cost_stress_multipliers_are_relative_to_base():
+    bars = _bars()
+    # non-default base multipliers; swap pips non-zero so the swap channel is actually exercised
+    cfg = _cfg(costs={"spread_mult": 2.0, "swap_mult": 2.0, "long_swap_pips": 0.5, "short_swap_pips": 0.5},
+               cost_stress={"spread_mult": 1.5, "swap_mult": 1.5})
+    combined = run_phase0(cfg, bars)["holdout_gate"]["stress_combined_alpha"]
+    # relative scaling => effective multipliers are base(2.0) * stress(1.5) = 3.0, NOT the bare 1.5
+    assert combined == _combined_alpha_at(cfg, bars, 3.0, 3.0)
+    assert combined != _combined_alpha_at(cfg, bars, 1.5, 1.5)   # the old absolute-override behavior
+
+
+def test_default_base_multipliers_leave_stress_sweep_unchanged():
+    bars = _bars()
+    cfg = _cfg()   # default base mult 1.0/1.0; cost_stress 1.5/2.0
+    combined = run_phase0(cfg, bars)["holdout_gate"]["stress_combined_alpha"]
+    # base 1.0 => relative == absolute; combined still equals the documented default gate cell (1.5, 2.0)
+    assert combined == _combined_alpha_at(cfg, bars, 1.5, 2.0)
+
+
 # --- config goes through the validated loader; unknown keys still fail ---
 
 def test_config_yaml_loads_through_validated_loader():

@@ -76,10 +76,13 @@ def run_phase0(cfg: Dict[str, Any], bars: pd.DataFrame) -> Dict[str, Any]:
     holdout_alpha = exposure_adjusted_alpha(sel["total_return"], sel["avg_net_exposure"], hold_ret)
 
     # --- cost-stress sweep (multipliers from config); 'combined' is the gate cell ---
+    # Stress multipliers are RELATIVE to the configured base multipliers, so a stress cell
+    # can never become cheaper than base when base costs are non-default (e.g. base 2.0 x
+    # stress 1.5 = 3.0). With the default base of 1.0, relative == absolute (sweep unchanged).
     sm, wm = cfg["cost_stress"]["spread_mult"], cfg["cost_stress"]["swap_mult"]
     sweep = {}
     for label, s_m, w_m in (("base", 1.0, 1.0), ("spread", sm, 1.0), ("swap", 1.0, wm), ("combined", sm, wm)):
-        c = replace(base, spread_mult=s_m, swap_mult=w_m)
+        c = replace(base, spread_mult=base.spread_mult * s_m, swap_mult=base.swap_mult * w_m)
         ss = simulate(holdout, d_hold, c, 1.0, eq)["summary"]
         hr = hold_long(holdout, c, eq)["total_return"]
         sweep[label] = round(exposure_adjusted_alpha(ss["total_return"], ss["avg_net_exposure"], hr), 6)
