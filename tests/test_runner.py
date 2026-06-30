@@ -117,6 +117,23 @@ def test_null_benchmark_is_deterministic_with_seed():
     assert r1["diagnostics"]["null_circular"] == r2["diagnostics"]["null_circular"]
 
 
+# --- B3: a configured null_bench.block_len reaches the block-shuffle diagnostic null ---
+
+def test_configured_block_len_reaches_block_shuffle_diagnostic():
+    bars = _bars()
+    # null_distribution echoes the block length it actually used; a configured value must win
+    # over the auto-computed median. Two distinct configured values must produce two distinct
+    # reported block lengths — proving the runner forwards the config (not silently ignoring it).
+    r_small = run_phase0(_cfg(null_bench={"runs": 120, "min_runs": 50, "seed": 7, "block_len": 3}), bars)
+    r_big = run_phase0(_cfg(null_bench={"runs": 120, "min_runs": 50, "seed": 7, "block_len": 9}), bars)
+    assert r_small["diagnostics"]["null_block_shuffle"]["block_len"] == 3
+    assert r_big["diagnostics"]["null_block_shuffle"]["block_len"] == 9
+    # circular-shift GATE ignores block_len (irrelevant there): verdict + gate + circular null unchanged
+    assert r_small["holdout_gate"] == r_big["holdout_gate"]
+    assert r_small["verdict"] == r_big["verdict"]
+    assert r_small["diagnostics"]["null_circular"] == r_big["diagnostics"]["null_circular"]
+
+
 # --- config goes through the validated loader; unknown keys still fail ---
 
 def test_config_yaml_loads_through_validated_loader():

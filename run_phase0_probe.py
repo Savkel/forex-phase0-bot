@@ -109,7 +109,8 @@ def run_phase0(cfg: Dict[str, Any], bars: pd.DataFrame) -> Dict[str, Any]:
         "null_block_shuffle": null_distribution(holdout, d_hold, base, 1.0, eq,
                                                 runs=int(cfg["null_bench"]["runs"]), method="block_shuffle",
                                                 seed=int(cfg["null_bench"]["seed"]),
-                                                guard_frac=float(cfg["null_bench"]["guard_frac"])),
+                                                guard_frac=float(cfg["null_bench"]["guard_frac"]),
+                                                block_len=cfg["null_bench"]["block_len"]),  # honor config (None=auto)
         "segmented_full_span": segmented_evaluation(feats, candidate_decisions(feats, selected), base, 1.0, eq),
         "null_circular": nb,
     }
