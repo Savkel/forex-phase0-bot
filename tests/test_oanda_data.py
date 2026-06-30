@@ -29,9 +29,13 @@ class _FakeResp:
 
 class _FakeSession:
     """Stand-in for requests.Session so fetch_candles runs fully offline."""
-    def __init__(self, payload): self._p = payload; self.calls = 0; self.headers = {}
+    def __init__(self, payload):
+        self._p = payload; self.calls = 0; self.headers = {}
+        self.last_params = None; self.params_log = []      # capture request params for assertions
     def get(self, url, params=None, timeout=None):
         self.calls += 1
+        self.last_params = params
+        self.params_log.append(params)
         return _FakeResp(self._p)
 
 
@@ -146,3 +150,25 @@ def test_fetch_candles_uses_injected_session_no_network(monkeypatch):
     assert sess.calls >= 1                               # used the injected session, not a real one
     assert len(df) == 2                                  # incomplete dropped
     assert list(df["open_time"]) == sorted(df["open_time"])
+
+
+# --- B2: configured candle alignment is actually sent to OANDA (no silent no-op) ---
+
+def test_fetch_candles_sends_configured_utc_alignment(monkeypatch):
+    monkeypatch.setenv("OANDA_API_TOKEN", "dummy-token-for-test-only")
+    sess = _FakeSession(PAYLOAD)
+    fetch_candles({"instrument": "EUR_USD", "granularity": "H4", "price": "BA",
+                   "alignment_hour_utc": 0}, session=sess)
+    # every page request must carry the alignment contract, not just the first
+    for p in sess.params_log:
+        assert p["alignmentTimezone"] == "UTC"           # candles aligned to UTC per the config contract
+        assert p["dailyAlignment"] == 0                  # = configured alignment_hour_utc
+
+
+def test_fetch_candles_honors_nonzero_alignment_hour(monkeypatch):
+    monkeypatch.setenv("OANDA_API_TOKEN", "dummy-token-for-test-only")
+    sess = _FakeSession(PAYLOAD)
+    fetch_candles({"instrument": "EUR_USD", "granularity": "D", "price": "BA",
+                   "alignment_hour_utc": 17}, session=sess)
+    assert sess.last_params["dailyAlignment"] == 17      # configured hour flows through to the request
+    assert sess.last_params["alignmentTimezone"] == "UTC"

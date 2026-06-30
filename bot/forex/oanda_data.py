@@ -105,11 +105,17 @@ def fetch_candles(data_cfg: Dict[str, Any], token: Optional[str] = None,
     sess.headers.update({"Authorization": f"Bearer {token}",
                          "Accept-Datetime-Format": "UNIX"})
     inst = data_cfg["instrument"]; gran = data_cfg["granularity"]
+    # Honor the configured candle alignment (CLAUDE.md §5: an accepted key must take
+    # effect). Without this OANDA aligns H4/daily candles to its broker default
+    # (~17:00 New York), so the fetched bars would silently differ from the config
+    # contract — and the 21:00 swap rollover would land in the wrong bar.
+    align_hour = int(data_cfg.get("alignment_hour_utc", 0))
     url = f"{PRACTICE_HOST}/v3/instruments/{inst}/candles"
     frames = []
     to_time = None
     for _ in range(2000):                              # hard page cap
-        params = {"granularity": gran, "price": data_cfg.get("price", "BA"), "count": 5000}
+        params = {"granularity": gran, "price": data_cfg.get("price", "BA"), "count": 5000,
+                  "alignmentTimezone": "UTC", "dailyAlignment": align_hour}
         if to_time is not None:
             params["to"] = to_time
         resp = sess.get(url, params=params, timeout=30)
