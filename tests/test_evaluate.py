@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from bot.forex.cost_model import CostModel
+from bot.forex.backtest import simulate
 from bot.forex.evaluate import (exposure_adjusted_alpha, hold_long, matched_net,
                                 matched_gross, passive_benchmarks, segmented_evaluation)
 
@@ -105,6 +106,44 @@ def test_passive_benchmarks_suite_runs_through_engine():
     assert {"hold_long", "fixed_50pct", "ma_filter"}.issubset(out)
     for k in ("hold_long", "fixed_50pct", "ma_filter"):
         assert "total_return" in out[k] and "max_drawdown" in out[k]
+
+
+# --- B1: MA-filter uses the SAME single-lag convention as any decision array (no double-lag) ---
+
+def _ma_crossover_bars():
+    # rise then fall so the price crosses its own MA(50) after the 50-bar warm-up; this makes the
+    # single-lag and double-lag equity curves materially different, so the test can distinguish them.
+    up = np.linspace(1.00, 1.30, 70)
+    down = np.linspace(1.30, 1.05, 40)
+    return _bars(list(np.concatenate([up, down])))
+
+
+def test_ma_filter_uses_single_engine_lag_not_double_lag():
+    bars = _ma_crossover_bars()
+    mid = bars["mid_c"].astype(float).reset_index(drop=True)
+    ma = mid.rolling(50, min_periods=50).mean()
+    raw = (mid > ma).to_numpy().astype(int)                              # decision known at bar CLOSE, no pre-shift
+    shifted = (mid > ma).shift(1, fill_value=False).to_numpy().astype(int)
+
+    single_lag = simulate(bars, raw, NO_COST, 1.0, 100.0)["summary"]      # engine fills at next open => ONE lag
+    double_lag = simulate(bars, shifted, NO_COST, 1.0, 100.0)["summary"]  # pre-shift + engine fill => TWO lags
+    assert abs(single_lag["total_return"] - double_lag["total_return"]) > 1e-9   # data truly distinguishes them
+
+    ma_filter = passive_benchmarks(bars, NO_COST, 100.0)["ma_filter"]
+    # the diagnostic must equal the SINGLE-lag path (like every normal decision array), not the double-lag one
+    assert abs(ma_filter["total_return"] - single_lag["total_return"]) < 1e-12
+    assert abs(ma_filter["max_drawdown"] - single_lag["max_drawdown"]) < 1e-12
+    assert abs(ma_filter["total_return"] - double_lag["total_return"]) > 1e-9    # NOT double-lagged
+
+
+def test_ma_filter_remains_diagnostic_only():
+    out = passive_benchmarks(_ma_crossover_bars(), NO_COST, 100.0)
+    # passive_benchmarks emits ONLY costed benchmark summaries — no gate/verdict/selection surface,
+    # so the MA filter can never feed acceptance or the runner gate.
+    assert set(out.keys()) == {"hold_long", "fixed_50pct", "ma_filter"}
+    for forbidden in ("verdict", "overall", "acceptance", "selected", "selection", "gate", "passed"):
+        assert forbidden not in out
+    assert "total_return" in out["ma_filter"] and "max_drawdown" in out["ma_filter"]
 
 
 # --- segmented evaluation: DIAGNOSTIC ONLY, never selects/tunes ---

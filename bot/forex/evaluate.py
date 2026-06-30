@@ -51,10 +51,12 @@ def passive_benchmarks(bars: pd.DataFrame, cost: CostModel,
     n = len(bars)
     out = {"hold_long": hold_long(bars, cost, starting_equity)}
     out["fixed_50pct"] = simulate(bars, np.ones(n, dtype=int), cost, 0.5, starting_equity)["summary"]
-    # MA(50) timing filter on mid close; decision uses shift(1) -> no look-ahead
+    # MA(50) timing filter on mid close. The decision (mid_c[t] > ma[t]) uses only data
+    # through close t; no-look-ahead comes from the engine's fill lag (filled at open t+1),
+    # NOT from a pre-shift. Single-lagged like every other decision array (see test_evaluate).
     mid = bars["mid_c"].astype(float).reset_index(drop=True)
     ma = mid.rolling(50, min_periods=50).mean()
-    in_mkt = (mid > ma).shift(1, fill_value=False).to_numpy().astype(int)
+    in_mkt = (mid > ma).to_numpy().astype(int)
     out["ma_filter"] = simulate(bars, in_mkt, cost, 1.0, starting_equity)["summary"]
     return out
 
