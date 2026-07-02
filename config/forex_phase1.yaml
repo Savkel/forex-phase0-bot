@@ -1,0 +1,35 @@
+starting_equity: 10000.0
+data:
+  granularity: H4
+  price: BA
+  alignment_hour_utc: 0
+  cache_dir: data/forex_ohlcv/
+universe: [EUR_USD, GBP_USD, USD_JPY, USD_CHF, AUD_USD, USD_CAD, NZD_USD]
+split:
+  holdout_frac: 0.35
+costs:
+  pip: 0.0001
+  pip_overrides: {USD_JPY: 0.01}
+  long_swap_pips: 0.5          # conservative per-night carry (cost, pips); replace later w/ OANDA published
+  short_swap_pips: 0.5
+  rollover_hour_utc: 21
+  spread_mult: 1.0
+  swap_mult: 1.0
+cost_stress:
+  spread_mult: 1.5
+  swap_mult: 2.0
+null_bench:          # NOTE: not "null" — YAML reserved word
+  runs: 1000
+  min_runs: 500
+  method: circular_shift        # per-pair-independent shift (primary)
+  block_len: null
+  seed: 12345
+  guard_frac: 0.02
+candidates: [zscore_20_2.0, rsi_14_30_70, boll_20_2.0]
+max_holding_bars: 12
+acceptance:
+  null_percentile: 90
+  min_positive_pairs: 5
+  per_pair_floor: -0.10
+reporting:
+  base_dir: reports/forex/
