@@ -68,9 +68,9 @@ def simulate(bars: pd.DataFrame, decisions: np.ndarray, cost: CostModel,
             if pos != 0:                               # open the new trade at open j (long@ask, short@bid)
                 e_px = ask_o[j] if pos > 0 else bid_o[j]
                 open_trade = (pos, e_px, t_ms[j], j)
-        # --- swap for holding `pos` over (open j, open j+1] ---
+        # --- swap for holding `pos` over (open j, open j+1] (scaled by f, like spread) ---
         if pos != 0:
-            equity *= (1.0 - swap_frac(cost, pos, mid_o[j], t_ms[j], t_ms[j + 1]))
+            equity *= (1.0 - f * swap_frac(cost, pos, mid_o[j], t_ms[j], t_ms[j + 1]))
         # --- FORWARD open-to-open mid return earned by `pos` ---
         r = mid_o[j + 1] / mid_o[j] - 1.0
         equity *= (1.0 + pos * f * r)

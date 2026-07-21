@@ -111,3 +111,28 @@ def test_summary_has_required_metrics():
     assert isinstance(s["trade_count"], int)
     assert s["max_drawdown"] <= 0.0
     assert len(res["equity"]) == len(bars)
+
+def test_swap_cost_scales_with_f():
+    # flat price + zero spread -> ONLY swap moves equity. Long held across exactly one
+    # Wednesday 21:00 UTC rollover (2026-06-03 is a Wednesday) -> engine charges Wed x3.
+    cost = CostModel(pip=0.0001, long_swap_pips=10.0, short_swap_pips=10.0, rollover_hour_utc=21)
+    wed = _bars_at([_ms(2026,6,3,16), _ms(2026,6,3,20), _ms(2026,6,4,0)], [1.0, 1.0, 1.0], spread=0.0)
+    full = simulate(wed, np.array([1,1,1]), cost, f=1.0, starting_equity=100.0)["summary"]["total_return"]
+    half = simulate(wed, np.array([1,1,1]), cost, f=0.5, starting_equity=100.0)["summary"]["total_return"]
+    zero = simulate(wed, np.array([1,1,1]), cost, f=0.0, starting_equity=100.0)["summary"]["total_return"]
+    # per_night = 10*0.0001/1.0 = 0.001 ; Wed x3 = 0.003 ; one multiplicative charge -> total = -f*0.003
+    assert abs(full - (-0.003)) < 1e-12          # existing f=1.0 behavior preserved (Wed x3 intact)
+    assert abs(half - (-0.0015)) < 1e-12         # f=0.5 pays HALF the swap
+    assert abs(half - 0.5 * full) < 1e-12        # exact half of the f=1.0 charge
+    assert zero == 0.0                           # f=0.0 pays NO swap
+    # Wednesday x3 stays x3 AFTER the fix: compare to a Thursday (x1) rollover at matched f.
+    thu = _bars_at([_ms(2026,6,4,16), _ms(2026,6,4,20), _ms(2026,6,5,0)], [1.0, 1.0, 1.0], spread=0.0)
+    thu_full = simulate(thu, np.array([1,1,1]), cost, f=1.0, starting_equity=100.0)["summary"]["total_return"]
+    thu_half = simulate(thu, np.array([1,1,1]), cost, f=0.5, starting_equity=100.0)["summary"]["total_return"]
+    assert abs(full - 3.0 * thu_full) < 1e-12    # Wednesday x3 intact at f=1.0
+    assert abs(half - 3.0 * thu_half) < 1e-12    # ...and still x3 after scaling by f
+    assert abs(thu_half - 0.5 * thu_full) < 1e-12  # x1 rollover also scales by f
+    # short-side swap scales too (short_swap_pips is a separate CostModel input).
+    s_full = simulate(wed, np.array([-1,-1,-1]), cost, f=1.0, starting_equity=100.0)["summary"]["total_return"]
+    s_half = simulate(wed, np.array([-1,-1,-1]), cost, f=0.5, starting_equity=100.0)["summary"]["total_return"]
+    assert s_full < 0.0 and abs(s_half - 0.5 * s_full) < 1e-12
