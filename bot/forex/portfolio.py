@@ -43,7 +43,19 @@ re-run the SAME bot-vs-hold alpha path (`portfolio_alpha_under`) under each scen
 Identical bars/decisions/universe/weights/window/equity in every cell -- only the cost
 model changes; `combined` is the gate cell. It performs NO post-hoc cost or PnL
 arithmetic: every fill/spread/swap (incl. Wednesday x3 and f-scaled swap from 94ded17)
-is inherited by delegating to the engine; base cost objects are never mutated."""
+is inherited by delegating to the engine; base cost objects are never mutated.
+
+Task 10 adds the portfolio null timing benchmark (`_draw_offset`, `_shift_decisions`,
+`portfolio_null`). The PRIMARY null (`circular_shift`) shifts EACH pair's decision array
+by its OWN offset from a per-pair child RNG derived from the master seed (identity
+excluded by construction), re-runs every shifted pair through `run_sleeve`->`simulate`,
+re-aggregates via `aggregate_portfolio`, and scores the reused
+`exposure_adjusted_alpha` against the (constant) hold basket computed ONCE. The null
+percentile/p-value come from this independent-shift distribution via the reused
+`nullbench.percentile_rank`/`p_value`. DIAGNOSTIC-only, non-gating alternatives:
+`common_shift` (one offset for all pairs) and `block_shuffle` (contiguous-block permute
+at the configured `block_len`). Deterministic given `seed`; it only SHIFTS decisions
+(never returns) and re-derives no fill/spread/swap/PnL itself; inputs are never mutated."""
 from __future__ import annotations
 from dataclasses import replace
 from typing import Any, Dict
@@ -53,6 +65,8 @@ from bot.forex.cost_model import CostModel
 from bot.forex.backtest import simulate
 from bot.forex.metrics import max_drawdown
 from bot.forex.evaluate import exposure_adjusted_alpha
+from bot.forex.nullbench import (circular_shift_decisions, block_shuffle_decisions,
+                                 percentile_rank, p_value)
 
 def run_sleeve(bars: pd.DataFrame, decisions, cost: CostModel, f: float = 1.0,
                starting_equity: float = 10000.0) -> Dict[str, Any]:
@@ -197,3 +211,66 @@ def portfolio_cost_stress(frames, decisions_by_pair, base_cost_by_pair,
         alpha, _, _ = portfolio_alpha_under(frames, decisions_by_pair, cbp, weights, eq)
         out[label] = round(float(alpha), 6)
     return out
+
+def _draw_offset(n: int, guard: int, rng: np.random.Generator) -> int:
+    """Circular-shift offset in [guard, n-guard], never 0 or n (both np.roll identities),
+    so the original timing is never resampled as a null. Matches nullbench._draw_offset;
+    guard is clamped so a valid offset always exists for n >= 2."""
+    low = max(1, int(guard))
+    high = max(low + 1, n - int(guard))
+    high = min(high, n)
+    return int(rng.integers(low, high))
+
+def _shift_decisions(decisions_by_pair, method, rngs, common_rng, guard_frac, block_len):
+    """One null resample of the whole book. PRIMARY `circular_shift`: each pair its OWN
+    offset (per-pair rng). `common_shift`: ONE offset (drawn once) applied to all pairs.
+    `block_shuffle`: contiguous-block permute per pair at `block_len` (default 10). Only
+    the DECISION timing is changed -- via the reused nullbench primitives, which return
+    fresh arrays and never mutate the inputs."""
+    shifted = {}
+    common_off = None
+    for p, d in decisions_by_pair.items():
+        d = np.asarray(d, dtype=int)
+        n = len(d)
+        if method == "block_shuffle":
+            bl = int(block_len) if block_len else 10
+            shifted[p] = block_shuffle_decisions(d, bl, rngs[p])
+        elif method == "common_shift":
+            if common_off is None:
+                common_off = _draw_offset(n, max(1, int(guard_frac * n)), common_rng)
+            shifted[p] = circular_shift_decisions(d, common_off)
+        else:  # circular_shift (primary): each pair its own offset
+            off = _draw_offset(n, max(1, int(guard_frac * n)), rngs[p])
+            shifted[p] = circular_shift_decisions(d, off)
+    return shifted
+
+def portfolio_null(frames, decisions_by_pair, cost_by_pair, weights=None, *,
+                   runs: int = 1000, method: str = "circular_shift", seed: int = 12345,
+                   guard_frac: float = 0.02, block_len=None, eq: float = 10000.0):
+    """Portfolio null timing benchmark (spec §10). Execution-faithful: every null run
+    re-runs each shifted sleeve through `run_sleeve`->`simulate` and re-aggregates. The
+    hold basket is constant across runs (always-long, decision-independent) -> computed
+    ONCE. Primary = per-pair INDEPENDENT circular shift; `common_shift`/`block_shuffle`
+    are non-gating diagnostics. Deterministic given `seed`. Returns method, runs,
+    real_alpha, median/p90/p95, and the reused percentile_rank/p_value of the observed
+    alpha within the (primary) null distribution."""
+    pairs = list(decisions_by_pair.keys())
+    real_alpha, _, hold = portfolio_alpha_under(frames, decisions_by_pair, cost_by_pair, weights, eq)
+    hold_return = hold["portfolio_return"]
+    master = np.random.default_rng(seed)
+    child_seeds = {p: int(master.integers(1, 2**31 - 1)) for p in pairs}   # deterministic per-pair
+    rngs = {p: np.random.default_rng(child_seeds[p]) for p in pairs}
+    common_rng = np.random.default_rng(int(master.integers(1, 2**31 - 1)))
+    null = []
+    for _ in range(int(runs)):
+        shifted = _shift_decisions(decisions_by_pair, method, rngs, common_rng, guard_frac, block_len)
+        sleeves = [run_sleeve(frames[p], shifted[p], cost_by_pair[p], 1.0, eq) for p in frames]
+        agg = aggregate_portfolio(sleeves, weights, eq)
+        null.append(exposure_adjusted_alpha(agg["portfolio_return"], agg["avg_net_exposure"], hold_return))
+    arr = np.asarray(null, dtype=float)
+    return {"method": method, "runs": int(runs), "real_alpha": round(float(real_alpha), 6),
+            "median": float(round(np.percentile(arr, 50), 6)),
+            "p90": float(round(np.percentile(arr, 90), 6)),
+            "p95": float(round(np.percentile(arr, 95), 6)),
+            "percentile_rank": percentile_rank(real_alpha, arr),
+            "p_value": float(round(p_value(real_alpha, arr), 6))}
