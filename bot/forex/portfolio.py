@@ -33,8 +33,19 @@ zero-notional/flat behavior, no 1.0 fallback), and
 `portfolio_alpha_under` (bot vs hold-basket exposure-adjusted alpha). These are a
 thin weighting shell: every fill/cost/PnL computation is delegated to the tested
 engine through `run_sleeve`, and the sleeve fraction enters the engine exactly
-once (it is never re-multiplied onto the aggregated returns)."""
+once (it is never re-multiplied onto the aggregated returns).
+
+Task 9 adds the portfolio cost-stress sweep (`_scale_costs`, `portfolio_cost_stress`):
+four RELATIVE-to-base scenarios (base 1x/1x, spread 1.5x/1x, swap 1x/2x, combined
+1.5x/2x) that scale ONLY the supplied base cost models' `spread_mult`/`swap_mult`
+(via `dataclasses.replace`, preserving pip sizes, swap pips, and rollover timing) and
+re-run the SAME bot-vs-hold alpha path (`portfolio_alpha_under`) under each scenario.
+Identical bars/decisions/universe/weights/window/equity in every cell -- only the cost
+model changes; `combined` is the gate cell. It performs NO post-hoc cost or PnL
+arithmetic: every fill/spread/swap (incl. Wednesday x3 and f-scaled swap from 94ded17)
+is inherited by delegating to the engine; base cost objects are never mutated."""
 from __future__ import annotations
+from dataclasses import replace
 from typing import Any, Dict
 import numpy as np
 import pandas as pd
@@ -157,3 +168,32 @@ def portfolio_alpha_under(frames, decisions_by_pair, cost_by_pair, weights=None,
     alpha = exposure_adjusted_alpha(bot["portfolio_return"], bot["avg_net_exposure"],
                                     hold["portfolio_return"])
     return float(alpha), bot, hold
+
+def _scale_costs(cost_by_pair, s_m: float, w_m: float):
+    """Per-pair cost models with spread_mult/swap_mult scaled RELATIVE to the supplied
+    base (never to hardcoded defaults): spread_mult*s_m, swap_mult*w_m. Uses
+    `dataclasses.replace`, so pip sizes, swap pips, and rollover timing are preserved and
+    the input CostModel objects are never mutated. A swap multiplier scales BOTH the long
+    and short swap cost equally (the engine's per-night swap is linear in swap_mult)."""
+    return {p: replace(c, spread_mult=c.spread_mult * s_m, swap_mult=c.swap_mult * w_m)
+            for p, c in cost_by_pair.items()}
+
+def portfolio_cost_stress(frames, decisions_by_pair, base_cost_by_pair,
+                          spread_mult: float, swap_mult: float, weights=None,
+                          eq: float = 10000.0) -> Dict[str, Any]:
+    """Relative-to-base portfolio cost-stress sweep (spec §8.1). Four scenarios, each
+    re-running the SAME bot-vs-hold alpha path (`portfolio_alpha_under`) on IDENTICAL
+    bars/decisions/universe/weights/window/equity -- only the per-pair cost model is
+    scaled (via `_scale_costs`): base (1x,1x), spread (spread_mult,1x), swap (1x,swap_mult),
+    combined (spread_mult,swap_mult). Both bot and hold-basket legs are evaluated under the
+    same scenario costs. Returns {label: portfolio alpha}; `combined` is the gate cell. No
+    post-hoc cost/PnL math -- every fill/spread/swap (Wednesday x3, f-scaled swap 94ded17)
+    is inherited from the engine through run_sleeve/aggregate_portfolio."""
+    cells = (("base", 1.0, 1.0), ("spread", spread_mult, 1.0),
+             ("swap", 1.0, swap_mult), ("combined", spread_mult, swap_mult))
+    out: Dict[str, Any] = {}
+    for label, s_m, w_m in cells:
+        cbp = _scale_costs(base_cost_by_pair, s_m, w_m)
+        alpha, _, _ = portfolio_alpha_under(frames, decisions_by_pair, cbp, weights, eq)
+        out[label] = round(float(alpha), 6)
+    return out
