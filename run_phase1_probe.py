@@ -218,6 +218,9 @@ def main(config_path: str, *, frames: Optional[Dict[str, pd.DataFrame]] = None) 
     out_dir = Path(cfg["reporting"]["base_dir"]); out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "phase1_evaluation.json").write_text(json.dumps(report, indent=2, default=str),
                                                     encoding="utf-8")
+    # presentation-only companion render (JSON is the source of truth and is unchanged)
+    from bot.forex.report_phase1 import render_phase1_markdown
+    (out_dir / "phase1_evaluation.md").write_text(render_phase1_markdown(report), encoding="utf-8")
     print(f"VERDICT: {report['verdict']} — {report['verdict_note']}")
     print(f"selected={report['selection']['selected']} G={report['holdout_detail']['G']} "
           f"gate={json.dumps({k: v for k, v in report['holdout_gate'].items() if k != 'per_pair_holdout_alphas'})}")
