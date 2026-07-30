@@ -50,6 +50,55 @@ def test_swap_distinguishes_long_and_short_sign():
     assert short_swap < 0         # short earns (credit)
     assert long_swap != short_swap
 
+def test_full_week_charges_seven_weighted_units_not_nine():
+    # FX value-date convention: rollovers land on business days only, and the Wednesday
+    # rollover carries the weekend value date (x3). A continuously held position over a
+    # normal Mon->Mon week therefore pays 5 rollovers = 4*1 + 3 = 7.0 weighted units.
+    # Charging Sat + Sun as well (9.0 units) double-counts the weekend the x3 already covers.
+    cost = CostModel(pip=0.0001, long_swap_pips=1.0, short_swap_pips=1.0, rollover_hour_utc=21)
+    t0, t1 = _ms(2026, 6, 1, 0), _ms(2026, 6, 8, 0)      # 2026-06-01 is a Monday
+    rolls = rollovers_in(t0, t1, 21)
+    assert [r.weekday() for r in rolls] == [0, 1, 2, 3, 4]   # Mon..Fri only; no Sat(5)/Sun(6)
+    per_night = 1.0 * 0.0001 / 1.0
+    assert abs(swap_frac(cost, 1, 1.0, t0, t1) - 7.0 * per_night) < 1e-15
+
+def test_weekend_only_interval_charges_zero_swap():
+    # Sat 2026-06-06 00:00 -> Sun 2026-06-07 23:00 spans the Sat and Sun 21:00 instants
+    # and nothing else: no value date rolls over a weekend, so the charge is exactly zero.
+    cost = CostModel(pip=0.0001, long_swap_pips=1.0, short_swap_pips=-1.0, rollover_hour_utc=21)
+    t0, t1 = _ms(2026, 6, 6, 0), _ms(2026, 6, 7, 23)
+    assert rollovers_in(t0, t1, 21) == []
+    assert swap_frac(cost, 1, 1.0, t0, t1) == 0.0
+    assert swap_frac(cost, -1, 1.0, t0, t1) == 0.0
+
+def test_wednesday_still_counts_triple_inside_a_full_week():
+    # Guards the x3 against a weekend filter that removes it too: of the 7.0 weekly units,
+    # exactly 3.0 come from the single Wednesday rollover.
+    cost = CostModel(pip=0.0001, long_swap_pips=1.0, short_swap_pips=1.0, rollover_hour_utc=21)
+    per_night = 1.0 * 0.0001 / 1.0
+    week = swap_frac(cost, 1, 1.0, _ms(2026, 6, 1, 0), _ms(2026, 6, 8, 0))
+    wed_only = swap_frac(cost, 1, 1.0, _ms(2026, 6, 3, 20), _ms(2026, 6, 3, 23))
+    assert abs(wed_only - 3.0 * per_night) < 1e-15
+    assert abs(week - wed_only - 4.0 * per_night) < 1e-15   # the other four nights are x1
+
+def test_long_and_short_use_identical_rollover_counting():
+    # Only the pips value may differ between sides; the set of charged rollovers and the
+    # Wednesday weighting must be identical, so |units| match exactly over a full week.
+    cost = CostModel(pip=0.0001, long_swap_pips=2.0, short_swap_pips=-2.0, rollover_hour_utc=21)
+    t0, t1 = _ms(2026, 6, 1, 0), _ms(2026, 6, 8, 0)
+    long_units = swap_frac(cost, 1, 1.0, t0, t1) / (2.0 * 0.0001)
+    short_units = swap_frac(cost, -1, 1.0, t0, t1) / (-2.0 * 0.0001)
+    assert abs(long_units - 7.0) < 1e-12
+    assert abs(short_units - 7.0) < 1e-12
+    assert abs(long_units - short_units) < 1e-12
+
+def test_interval_boundary_semantics_unchanged_by_weekend_filter():
+    # (t0, t1]: a rollover exactly AT t0 is excluded, one exactly AT t1 is included.
+    # Verified on a business day so the weekend filter cannot mask the boundary rule.
+    assert rollovers_in(_ms(2026, 6, 1, 21), _ms(2026, 6, 2, 20), 21) == []      # at t0 -> excluded
+    at_t1 = rollovers_in(_ms(2026, 6, 1, 20), _ms(2026, 6, 1, 21), 21)           # at t1 -> included
+    assert len(at_t1) == 1 and at_t1[0].weekday() == 0 and at_t1[0].hour == 21
+
 def test_stress_multipliers_are_monotonic():
     # spread widens monotonically with spread_mult
     s1 = spread_frac(1.0000, 1.0002, 1.0)

@@ -95,6 +95,19 @@ def test_swap_flows_through_engine_with_wednesday_triple():
     assert rw < 0 and rt < 0
     assert abs(rw - 3.0 * rt) < 1e-9                        # Wednesday rollover counts x3 through the engine
 
+def test_engine_charges_seven_weekly_units_and_still_scales_with_f():
+    # One held interval spanning a whole Mon->Mon week, flat price, zero spread -> the only
+    # equity move is a single multiplicative swap charge, so the weighted unit count is exact.
+    # Interval 1 = (bar1, bar2] carries pos = decisions[0] = 1 (interval 0 is flat by convention).
+    cost = CostModel(pip=0.0001, long_swap_pips=10.0, short_swap_pips=10.0, rollover_hour_utc=21)
+    week = _bars_at([_ms(2026,5,31,20), _ms(2026,6,1,0), _ms(2026,6,8,0)], [1.0, 1.0, 1.0], spread=0.0)
+    per_night = 10.0 * 0.0001 / 1.0                       # 0.001
+    full = simulate(week, np.array([1,1,1]), cost, f=1.0, starting_equity=100.0)["summary"]["total_return"]
+    half = simulate(week, np.array([1,1,1]), cost, f=0.5, starting_equity=100.0)["summary"]["total_return"]
+    assert abs(full - (-7.0 * per_night)) < 1e-12         # 7.0 units, NOT 9.0 (Sat/Sun excluded)
+    assert abs(half - (-3.5 * per_night)) < 1e-12         # f scaling unchanged by the weekend filter
+    assert abs(half - 0.5 * full) < 1e-12
+
 def test_exposure_uses_filled_positions_not_raw_decisions():
     bars = _bars([1.0, 1.0, 1.0, 1.0], spread=0.0)
     res = simulate(bars, np.array([1, 1, 1, 1]), NO_COST, f=1.0, starting_equity=100.0)["summary"]

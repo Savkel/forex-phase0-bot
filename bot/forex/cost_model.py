@@ -26,7 +26,11 @@ def spread_frac(bid_o: float, ask_o: float, spread_mult: float = 1.0) -> float:
     return (ask_o - bid_o) / mid * float(spread_mult)
 
 def rollovers_in(t0_ms: int, t1_ms: int, rollover_hour_utc: int) -> List[datetime]:
-    """Rollover instants (HH:00 UTC) strictly after t0 and at/<= t1."""
+    """Rollover instants (HH:00 UTC) strictly after t0 and at/<= t1, on BUSINESS DAYS ONLY
+    (Mon-Fri). Saturday and Sunday instants are never charged: no value date rolls over a
+    weekend, which is precisely why `swap_frac` weights the Wednesday rollover x3. Charging
+    Sat/Sun as well would double-count the weekend the x3 already covers. No holiday
+    calendar is applied. Interval semantics (t0, t1] are unchanged."""
     t0 = datetime.fromtimestamp(t0_ms / 1000, tz=timezone.utc)
     t1 = datetime.fromtimestamp(t1_ms / 1000, tz=timezone.utc)
     out: List[datetime] = []
@@ -34,14 +38,17 @@ def rollovers_in(t0_ms: int, t1_ms: int, rollover_hour_utc: int) -> List[datetim
     if day <= t0:
         day += timedelta(days=1)
     while day <= t1:
-        out.append(day)
+        if day.weekday() < 5:                # 0-4 == Mon-Fri; skip Sat (5) and Sun (6)
+            out.append(day)
         day += timedelta(days=1)
     return out
 
 def swap_frac(cost: CostModel, side: int, mid: float, t0_ms: int, t1_ms: int) -> float:
     """Cost fraction (>=0 = drag) for holding `side` over (t0, t1]. Each rollover
     crossed charges swap_pips * pip / mid * swap_mult; Wednesday rollover x3
-    (weekend value date)."""
+    (weekend value date). Rollovers are business-day only (see `rollovers_in`), so a
+    continuously held position pays 7.0 weighted units per normal week (4 x1 + Wed x3).
+    Long and short differ only in `pips`; the counting is identical."""
     if side == 0 or mid <= 0:
         return 0.0
     pips = cost.long_swap_pips if side > 0 else cost.short_swap_pips
