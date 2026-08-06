@@ -143,6 +143,86 @@ def _mid(row: pd.Series, field: str) -> float:
     return (float(row[f"bid_{field}"]) + float(row[f"ask_{field}"])) / 2.0
 
 
+def range_extremes(bars: pd.DataFrame, b: Dict[str, int]) -> Optional[Tuple[float, float]]:
+    """Mid high/low of the candidate's range window, or None when it is empty."""
+    rng = bars[(bars["open_time"] >= b["range_start_ms"])
+               & (bars["open_time"] < b["range_end_ms"])]
+    if rng.empty:
+        return None
+    return (float(((rng["bid_h"] + rng["ask_h"]) / 2.0).max()),
+            float(((rng["bid_l"] + rng["ask_l"]) / 2.0).min()))
+
+
+def execute_signal(bars: pd.DataFrame, idx: Dict[int, int], b: Dict[str, int], *,
+                   spec: SessionSpec, pair: str, day: Any, signal_ms: int, direction: int,
+                   stop_px: Optional[float], slip: float,
+                   range_high: Optional[float] = None,
+                   range_low: Optional[float] = None) -> Optional[Dict[str, Any]]:
+    """Fill one signal and carry it to its exit. THE single execution path.
+
+    The strategy, the null and the session-matched benchmark all route through here, so
+    fills, spread, slippage, exit precedence and the no-overnight rule cannot drift apart
+    between them. `stop_px=None` means no stop at all (the always-long benchmark).
+    """
+    fill_i = idx[int(signal_ms)] + 1
+    if fill_i >= len(bars):
+        return None
+    fill = bars.iloc[fill_i]
+    if int(fill["open_time"]) >= b["exit_ms"]:                 # no room to hold the trade
+        return None
+    entry_px = (float(fill["ask_o"]) + slip) if direction == 1 \
+        else (float(fill["bid_o"]) - slip)
+    trade: Dict[str, Any] = {
+        "pair": pair, "candidate": spec.name,
+        "trading_day": str(pd.Timestamp(day).date()),
+        "signal_ms": int(signal_ms), "entry_ms": int(fill["open_time"]),
+        "direction": int(direction), "entry_px": entry_px, "stop_px": stop_px,
+        "range_high": range_high, "range_low": range_low,
+    }
+
+    first = idx[trade["entry_ms"]]
+    for i in range(first, len(bars)):
+        bar = bars.iloc[i]
+        t = int(bar["open_time"])
+        # The ENTRY bar is already live from its open, so its low/high are in scope — but
+        # its open IS the fill, so the open-time and gap-through branches cannot apply.
+        if i == first:
+            if stop_px is not None:
+                if direction == 1 and float(bar["bid_l"]) <= stop_px:
+                    trade.update(exit_ms=t, exit_px=stop_px - slip, exit_reason="stop")
+                    break
+                if direction == -1 and float(bar["ask_h"]) >= stop_px:
+                    trade.update(exit_ms=t, exit_px=stop_px + slip, exit_reason="stop")
+                    break
+            continue
+        # 1. an open-time exit wins outright; the bar's high/low are NOT consulted.
+        if t >= b["exit_ms"] or t >= b["flat_ms"]:
+            px = (float(bar["bid_o"]) - slip) if direction == 1 \
+                else (float(bar["ask_o"]) + slip)
+            trade.update(exit_ms=t, exit_px=px,
+                         exit_reason="scheduled" if t >= b["exit_ms"] else "flat_by")
+            break
+        if stop_px is None:
+            continue
+        # 2. a gap-through stop fills at the executable open, which is worse.
+        if direction == 1 and float(bar["bid_o"]) <= stop_px:
+            trade.update(exit_ms=t, exit_px=float(bar["bid_o"]) - slip,
+                         exit_reason="gap_stop")
+            break
+        if direction == -1 and float(bar["ask_o"]) >= stop_px:
+            trade.update(exit_ms=t, exit_px=float(bar["ask_o"]) + slip,
+                         exit_reason="gap_stop")
+            break
+        # 3. otherwise an intrabar stop: long on the BID low, short on the ASK high.
+        if direction == 1 and float(bar["bid_l"]) <= stop_px:
+            trade.update(exit_ms=t, exit_px=stop_px - slip, exit_reason="stop")
+            break
+        if direction == -1 and float(bar["ask_h"]) >= stop_px:
+            trade.update(exit_ms=t, exit_px=stop_px + slip, exit_reason="stop")
+            break
+    return trade if "exit_ms" in trade else None                # never leave one open
+
+
 def run_candidate(df: pd.DataFrame, spec: SessionSpec, *, pair: str,
                   expected: np.ndarray, pip: float = 0.0001,
                   slippage_pips: float = 0.0) -> List[Dict[str, Any]]:
@@ -154,83 +234,25 @@ def run_candidate(df: pd.DataFrame, spec: SessionSpec, *, pair: str,
 
     for day in eligible_days(bars, spec, expected):
         b = session_bounds(spec, day)
-        rng = bars[(bars["open_time"] >= b["range_start_ms"])
-                   & (bars["open_time"] < b["range_end_ms"])]
-        if rng.empty:
+        extremes = range_extremes(bars, b)
+        if extremes is None:
             continue
-        hi = float(((rng["bid_h"] + rng["ask_h"]) / 2.0).max())
-        lo = float(((rng["bid_l"] + rng["ask_l"]) / 2.0).min())
+        hi, lo = extremes
 
         window = bars[(bars["open_time"] >= b["entry_start_ms"])
                       & (bars["open_time"] <= b["last_signal_open_ms"])]
-        trade = None
         for _, row in window.iterrows():                       # ONE trade per pair-day
             close = _mid(row, "c")
             direction = 1 if close > hi else (-1 if close < lo else 0)
             if direction == 0:
                 continue
-            fill_i = idx[int(row["open_time"])] + 1
-            if fill_i >= len(bars):
-                break
-            fill = bars.iloc[fill_i]
-            if int(fill["open_time"]) >= b["exit_ms"]:         # no room to hold the trade
-                break
-            entry_px = (float(fill["ask_o"]) + slip) if direction == 1 \
-                else (float(fill["bid_o"]) - slip)
-            trade = {
-                "pair": pair, "candidate": spec.name,
-                "trading_day": str(pd.Timestamp(day).date()),
-                "signal_ms": int(row["open_time"]), "entry_ms": int(fill["open_time"]),
-                "direction": direction, "entry_px": entry_px,
-                "stop_px": lo if direction == 1 else hi,
-                "range_high": hi, "range_low": lo,
-            }
-            break
-        if trade is None:
-            continue
-
-        stop = trade["stop_px"]
-        first = idx[trade["entry_ms"]]
-        for i in range(first, len(bars)):
-            bar = bars.iloc[i]
-            t = int(bar["open_time"])
-            # The ENTRY bar is already live from its open, so its low/high are in scope —
-            # but its open is the fill itself, so the open-time and gap-through branches
-            # cannot apply to it.
-            if i == first:
-                if trade["direction"] == 1 and float(bar["bid_l"]) <= stop:
-                    trade.update(exit_ms=t, exit_px=stop - slip, exit_reason="stop")
-                    break
-                if trade["direction"] == -1 and float(bar["ask_h"]) >= stop:
-                    trade.update(exit_ms=t, exit_px=stop + slip, exit_reason="stop")
-                    break
-                continue
-            # 1. an open-time exit wins outright; the bar's high/low are NOT consulted.
-            if t >= b["exit_ms"] or t >= b["flat_ms"]:
-                px = (float(bar["bid_o"]) - slip) if trade["direction"] == 1 \
-                    else (float(bar["ask_o"]) + slip)
-                trade.update(exit_ms=t, exit_px=px,
-                             exit_reason="scheduled" if t >= b["exit_ms"] else "flat_by")
-                break
-            # 2. a gap-through stop fills at the executable open, which is worse.
-            if trade["direction"] == 1 and float(bar["bid_o"]) <= stop:
-                trade.update(exit_ms=t, exit_px=float(bar["bid_o"]) - slip,
-                             exit_reason="gap_stop")
-                break
-            if trade["direction"] == -1 and float(bar["ask_o"]) >= stop:
-                trade.update(exit_ms=t, exit_px=float(bar["ask_o"]) + slip,
-                             exit_reason="gap_stop")
-                break
-            # 3. otherwise an intrabar stop: long on the BID low, short on the ASK high.
-            if trade["direction"] == 1 and float(bar["bid_l"]) <= stop:
-                trade.update(exit_ms=t, exit_px=stop - slip, exit_reason="stop")
-                break
-            if trade["direction"] == -1 and float(bar["ask_h"]) >= stop:
-                trade.update(exit_ms=t, exit_px=stop + slip, exit_reason="stop")
-                break
-        if "exit_ms" not in trade:
-            continue                                           # never leave one open
-        trades.append(trade)
+            trade = execute_signal(bars, idx, b, spec=spec, pair=pair, day=day,
+                                   signal_ms=int(row["open_time"]), direction=direction,
+                                   stop_px=lo if direction == 1 else hi, slip=slip,
+                                   range_high=hi, range_low=lo)
+            if trade is not None:
+                trades.append(trade)
+            break                                              # no re-entry either way
     return trades
 
 
