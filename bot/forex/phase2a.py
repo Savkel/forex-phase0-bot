@@ -143,17 +143,45 @@ def _mid(row: pd.Series, field: str) -> float:
     return (float(row[f"bid_{field}"]) + float(row[f"ask_{field}"])) / 2.0
 
 
-def range_extremes(bars: pd.DataFrame, b: Dict[str, int]) -> Optional[Tuple[float, float]]:
+_PRICE_COLS = ("bid_o", "bid_h", "bid_l", "bid_c", "ask_o", "ask_h", "ask_l", "ask_c")
+
+
+def bar_arrays(df: pd.DataFrame) -> Dict[str, np.ndarray]:
+    """Column arrays for one pair, built once.
+
+    The null reruns the engine a thousand times; per-row DataFrame access makes that hours
+    rather than minutes. Values and ordering are identical to the frame.
+    """
+    bars = df.sort_values("open_time").reset_index(drop=True)
+    out: Dict[str, np.ndarray] = {"open_time": bars["open_time"].to_numpy("int64")}
+    for c in _PRICE_COLS:
+        out[c] = bars[c].to_numpy(float)
+    out["mid_c"] = (out["bid_c"] + out["ask_c"]) / 2.0
+    out["mid_h"] = (out["bid_h"] + out["ask_h"]) / 2.0
+    out["mid_l"] = (out["bid_l"] + out["ask_l"]) / 2.0
+    return out
+
+
+def bar_index(A: Dict[str, np.ndarray]) -> Dict[int, int]:
+    return {int(t): i for i, t in enumerate(A["open_time"])}
+
+
+def range_extremes(A: Dict[str, np.ndarray], b: Dict[str, int]
+                   ) -> Optional[Tuple[float, float]]:
     """Mid high/low of the candidate's range window, or None when it is empty."""
-    rng = bars[(bars["open_time"] >= b["range_start_ms"])
-               & (bars["open_time"] < b["range_end_ms"])]
-    if rng.empty:
+    t = A["open_time"]
+    m = (t >= b["range_start_ms"]) & (t < b["range_end_ms"])
+    if not m.any():
         return None
-    return (float(((rng["bid_h"] + rng["ask_h"]) / 2.0).max()),
-            float(((rng["bid_l"] + rng["ask_l"]) / 2.0).min()))
+    hi, lo = A["mid_h"][m], A["mid_l"][m]
+    if np.isnan(hi).all() or np.isnan(lo).all():
+        return None
+    # nan-aware, matching the pandas max/min this replaced: a NaN price must not silently
+    # poison the whole range and void the day.
+    return float(np.nanmax(hi)), float(np.nanmin(lo))
 
 
-def execute_signal(bars: pd.DataFrame, idx: Dict[int, int], b: Dict[str, int], *,
+def execute_signal(A: Dict[str, np.ndarray], idx: Dict[int, int], b: Dict[str, int], *,
                    spec: SessionSpec, pair: str, day: Any, signal_ms: int, direction: int,
                    stop_px: Optional[float], slip: float,
                    range_high: Optional[float] = None,
@@ -164,60 +192,61 @@ def execute_signal(bars: pd.DataFrame, idx: Dict[int, int], b: Dict[str, int], *
     fills, spread, slippage, exit precedence and the no-overnight rule cannot drift apart
     between them. `stop_px=None` means no stop at all (the always-long benchmark).
     """
+    times = A["open_time"]
+    n = len(times)
     fill_i = idx[int(signal_ms)] + 1
-    if fill_i >= len(bars):
+    if fill_i >= n:
         return None
-    fill = bars.iloc[fill_i]
-    if int(fill["open_time"]) >= b["exit_ms"]:                 # no room to hold the trade
+    entry_ms = int(times[fill_i])
+    if entry_ms >= b["exit_ms"]:                               # no room to hold the trade
         return None
-    entry_px = (float(fill["ask_o"]) + slip) if direction == 1 \
-        else (float(fill["bid_o"]) - slip)
+    entry_px = (A["ask_o"][fill_i] + slip) if direction == 1 \
+        else (A["bid_o"][fill_i] - slip)
     trade: Dict[str, Any] = {
         "pair": pair, "candidate": spec.name,
         "trading_day": str(pd.Timestamp(day).date()),
-        "signal_ms": int(signal_ms), "entry_ms": int(fill["open_time"]),
-        "direction": int(direction), "entry_px": entry_px, "stop_px": stop_px,
+        "signal_ms": int(signal_ms), "entry_ms": entry_ms,
+        "direction": int(direction), "entry_px": float(entry_px), "stop_px": stop_px,
         "range_high": range_high, "range_low": range_low,
     }
 
-    first = idx[trade["entry_ms"]]
-    for i in range(first, len(bars)):
-        bar = bars.iloc[i]
-        t = int(bar["open_time"])
+    exit_ms, flat_ms = b["exit_ms"], b["flat_ms"]
+    long_ = direction == 1
+    for i in range(fill_i, n):
+        t = int(times[i])
         # The ENTRY bar is already live from its open, so its low/high are in scope — but
         # its open IS the fill, so the open-time and gap-through branches cannot apply.
-        if i == first:
+        if i == fill_i:
             if stop_px is not None:
-                if direction == 1 and float(bar["bid_l"]) <= stop_px:
+                if long_ and A["bid_l"][i] <= stop_px:
                     trade.update(exit_ms=t, exit_px=stop_px - slip, exit_reason="stop")
                     break
-                if direction == -1 and float(bar["ask_h"]) >= stop_px:
+                if not long_ and A["ask_h"][i] >= stop_px:
                     trade.update(exit_ms=t, exit_px=stop_px + slip, exit_reason="stop")
                     break
             continue
         # 1. an open-time exit wins outright; the bar's high/low are NOT consulted.
-        if t >= b["exit_ms"] or t >= b["flat_ms"]:
-            px = (float(bar["bid_o"]) - slip) if direction == 1 \
-                else (float(bar["ask_o"]) + slip)
-            trade.update(exit_ms=t, exit_px=px,
-                         exit_reason="scheduled" if t >= b["exit_ms"] else "flat_by")
+        if t >= exit_ms or t >= flat_ms:
+            px = (A["bid_o"][i] - slip) if long_ else (A["ask_o"][i] + slip)
+            trade.update(exit_ms=t, exit_px=float(px),
+                         exit_reason="scheduled" if t >= exit_ms else "flat_by")
             break
         if stop_px is None:
             continue
         # 2. a gap-through stop fills at the executable open, which is worse.
-        if direction == 1 and float(bar["bid_o"]) <= stop_px:
-            trade.update(exit_ms=t, exit_px=float(bar["bid_o"]) - slip,
+        if long_ and A["bid_o"][i] <= stop_px:
+            trade.update(exit_ms=t, exit_px=float(A["bid_o"][i] - slip),
                          exit_reason="gap_stop")
             break
-        if direction == -1 and float(bar["ask_o"]) >= stop_px:
-            trade.update(exit_ms=t, exit_px=float(bar["ask_o"]) + slip,
+        if not long_ and A["ask_o"][i] >= stop_px:
+            trade.update(exit_ms=t, exit_px=float(A["ask_o"][i] + slip),
                          exit_reason="gap_stop")
             break
         # 3. otherwise an intrabar stop: long on the BID low, short on the ASK high.
-        if direction == 1 and float(bar["bid_l"]) <= stop_px:
+        if long_ and A["bid_l"][i] <= stop_px:
             trade.update(exit_ms=t, exit_px=stop_px - slip, exit_reason="stop")
             break
-        if direction == -1 and float(bar["ask_h"]) >= stop_px:
+        if not long_ and A["ask_h"][i] >= stop_px:
             trade.update(exit_ms=t, exit_px=stop_px + slip, exit_reason="stop")
             break
     return trade if "exit_ms" in trade else None                # never leave one open
@@ -228,31 +257,30 @@ def run_candidate(df: pd.DataFrame, spec: SessionSpec, *, pair: str,
                   slippage_pips: float = 0.0) -> List[Dict[str, Any]]:
     """Signals and fills for one pair, one candidate. Returns trades; measures nothing."""
     slip = float(slippage_pips) * float(pip)
-    bars = df.sort_values("open_time").reset_index(drop=True)
-    idx = {int(t): i for i, t in enumerate(bars["open_time"].to_numpy("int64"))}
+    A = bar_arrays(df)
+    idx = bar_index(A)
+    times, mid_c = A["open_time"], A["mid_c"]
     trades: List[Dict[str, Any]] = []
 
-    for day in eligible_days(bars, spec, expected):
+    for day in eligible_days(df, spec, expected):
         b = session_bounds(spec, day)
-        extremes = range_extremes(bars, b)
+        extremes = range_extremes(A, b)
         if extremes is None:
             continue
         hi, lo = extremes
 
-        window = bars[(bars["open_time"] >= b["entry_start_ms"])
-                      & (bars["open_time"] <= b["last_signal_open_ms"])]
-        for _, row in window.iterrows():                       # ONE trade per pair-day
-            close = _mid(row, "c")
-            direction = 1 if close > hi else (-1 if close < lo else 0)
-            if direction == 0:
-                continue
-            trade = execute_signal(bars, idx, b, spec=spec, pair=pair, day=day,
-                                   signal_ms=int(row["open_time"]), direction=direction,
-                                   stop_px=lo if direction == 1 else hi, slip=slip,
-                                   range_high=hi, range_low=lo)
-            if trade is not None:
-                trades.append(trade)
-            break                                              # no re-entry either way
+        w = (times >= b["entry_start_ms"]) & (times <= b["last_signal_open_ms"])
+        pos = np.flatnonzero(w & ((mid_c > hi) | (mid_c < lo)))
+        if not len(pos):
+            continue
+        i = int(pos[0])                                        # ONE trade per pair-day
+        direction = 1 if mid_c[i] > hi else -1
+        trade = execute_signal(A, idx, b, spec=spec, pair=pair, day=day,
+                               signal_ms=int(times[i]), direction=direction,
+                               stop_px=lo if direction == 1 else hi, slip=slip,
+                               range_high=hi, range_low=lo)
+        if trade is not None:                                  # no re-entry either way
+            trades.append(trade)
     return trades
 
 

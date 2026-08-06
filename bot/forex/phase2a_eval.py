@@ -33,6 +33,8 @@ from bot.forex.market_grid import M15_MS
 from bot.forex.phase2a import (
     SPECS,
     SessionSpec,
+    bar_arrays,
+    bar_index,
     eligible_days,
     execute_signal,
     range_extremes,
@@ -81,14 +83,14 @@ def session_matched_benchmark(df: pd.DataFrame, spec: SessionSpec, *, pair: str,
                               slippage_pips: float = 0.0) -> List[Dict[str, Any]]:
     """Always long on every eligible pair-day, same schedule and same execution path."""
     slip = float(slippage_pips) * float(pip)
-    bars = df.sort_values("open_time").reset_index(drop=True)
-    idx = {int(t): i for i, t in enumerate(bars["open_time"].to_numpy("int64"))}
+    A = bar_arrays(df)
+    idx = bar_index(A)
     out: List[Dict[str, Any]] = []
-    for day in eligible_days(bars, spec, expected):
+    for day in eligible_days(df, spec, expected):
         b = session_bounds(spec, day)
         if b["entry_start_ms"] not in idx:
             continue
-        t = execute_signal(bars, idx, b, spec=spec, pair=pair, day=day,
+        t = execute_signal(A, idx, b, spec=spec, pair=pair, day=day,
                            signal_ms=b["entry_start_ms"], direction=1,
                            stop_px=None, slip=slip)
         if t is not None:
@@ -154,27 +156,43 @@ def permute_objects(objects: Dict[str, Dict[Any, Any]], rng: np.random.Generator
                      f"{max_tries} tries; the day set is too small to permute")
 
 
+def day_cache(A: Dict[str, np.ndarray], spec: SessionSpec,
+              days: Sequence[Any]) -> Dict[Any, Any]:
+    """Per-day bounds and range extremes, computed ONCE and reused by every null run."""
+    return {day: (session_bounds(spec, day), range_extremes(A, session_bounds(spec, day)))
+            for day in days}
+
+
 def apply_objects(df: pd.DataFrame, spec: SessionSpec, *, pair: str, expected: np.ndarray,
                   objects: Dict[Any, Any], pip: float = 0.0001,
-                  slippage_pips: float = 0.0) -> List[Dict[str, Any]]:
-    """Re-run the engine with permuted decisions, rebuilding everything on the target day."""
+                  slippage_pips: float = 0.0, A: Optional[Dict[str, np.ndarray]] = None,
+                  idx: Optional[Dict[int, int]] = None,
+                  cache: Optional[Dict[Any, Any]] = None) -> List[Dict[str, Any]]:
+    """Re-run the engine with permuted decisions, rebuilding everything on the target day.
+
+    `A`/`idx`/`cache` are pure memoisation of day-invariant work; passing them changes
+    nothing about the result, only how often it is recomputed.
+    """
     slip = float(slippage_pips) * float(pip)
-    bars = df.sort_values("open_time").reset_index(drop=True)
-    idx = {int(t): i for i, t in enumerate(bars["open_time"].to_numpy("int64"))}
+    if A is None:
+        A = bar_arrays(df)
+    if idx is None:
+        idx = bar_index(A)
+    if cache is None:
+        cache = day_cache(A, spec, list(objects))
     out: List[Dict[str, Any]] = []
     for day, obj in objects.items():
         if obj is None:
             continue
         offset, direction = obj
-        b = session_bounds(spec, day)
+        b, extremes = cache[day]
         signal_ms = b["entry_start_ms"] + int(offset) * M15_MS
         if signal_ms > b["last_signal_open_ms"] or signal_ms not in idx:
             continue                      # the target day's window is shorter: NO_TRADE
-        extremes = range_extremes(bars, b)
         if extremes is None:
             continue
         hi, lo = extremes                 # the TARGET day's own range builds the stop
-        t = execute_signal(bars, idx, b, spec=spec, pair=pair, day=day,
+        t = execute_signal(A, idx, b, spec=spec, pair=pair, day=day,
                            signal_ms=signal_ms, direction=int(direction),
                            stop_px=lo if direction == 1 else hi, slip=slip,
                            range_high=hi, range_low=lo)
@@ -198,13 +216,18 @@ def run_null(frames: Dict[str, pd.DataFrame], *, spec: SessionSpec, expected: np
                                    pip=pips.get(p, 0.0001))]
     real_alpha = float(daily_series(real, pairs, days).sum())
 
+    arrays = {p: bar_arrays(frames[p]) for p in pairs}
+    indexes = {p: bar_index(arrays[p]) for p in pairs}
+    caches = {p: day_cache(arrays[p], spec, list(objects[p])) for p in pairs}
+
     alphas: List[float] = []
     for i in range(int(runs)):
         rng = np.random.default_rng(int(seed) + i)
         perm = permute_objects(objects, rng)
         trades = [t for p in pairs
                   for t in apply_objects(frames[p], spec, pair=p, expected=expected,
-                                         objects=perm[p], pip=pips.get(p, 0.0001))]
+                                         objects=perm[p], pip=pips.get(p, 0.0001),
+                                         A=arrays[p], idx=indexes[p], cache=caches[p])]
         alphas.append(float(daily_series(trades, pairs, days).sum()))
     arr = np.array(alphas)
     return {"real": real_alpha, "alphas": alphas, "runs": int(runs), "seed": int(seed),
