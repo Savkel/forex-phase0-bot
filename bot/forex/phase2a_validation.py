@@ -52,6 +52,11 @@ PIPS = {"USD_JPY": 0.01}
 UNIVERSE = ("AUD_USD", "EUR_USD", "GBP_USD", "USD_JPY")
 
 
+def _opt(v: Any) -> Optional[float]:
+    """Keep None as None: an all-undefined null has no distribution to report."""
+    return None if v is None else float(v)
+
+
 def assert_validation_only(frames: Dict[str, pd.DataFrame]) -> None:
     """Refuse a single bar from any other segment. Runs BEFORE any measurement."""
     for pair, df in sorted(frames.items()):
@@ -95,6 +100,7 @@ def fingerprint(frames: Dict[str, pd.DataFrame],
 
 def run_validation(frames: Dict[str, pd.DataFrame], *, expected: np.ndarray,
                    expected_fingerprint: Optional[str] = None,
+                   supersedes: Optional[Dict[str, str]] = None,
                    measure_fn: Callable[..., Dict[str, Any]] = None,
                    null_fn: Callable[..., Dict[str, Any]] = None) -> Dict[str, Any]:
     """The single validation pass. Verdict-first result; confirmation never opened.
@@ -128,9 +134,21 @@ def run_validation(frames: Dict[str, pd.DataFrame], *, expected: np.ndarray,
             if sorted(m[field]) != sorted(UNIVERSE):
                 raise ValueError(f"{name}: {field} covers {sorted(m[field])}, not the "
                                  f"locked universe {sorted(UNIVERSE)}")
-        m["null"] = {"runs": int(null["runs"]), "seed": int(null["seed"]),
-                     "percentile_rank": float(null["percentile_rank"]),
-                     "real": float(null["real"])}
+        m["null"] = {
+            "statistic": null.get("statistic", "volatility_matched_alpha"),
+            "real": float(null["real"]),
+            "min": _opt(null.get("min")),
+            "median": _opt(null.get("median")),
+            "max": _opt(null.get("max")),
+            "percentile_rank": float(null["percentile_rank"]),
+            "runs": int(null["runs"]), "seed": int(null["seed"]),
+            "status": null.get("status", "OK"),
+            "undefined_replicates": int(null.get("undefined_replicates", 0)),
+            "diagnostic_raw": null.get("diagnostic_raw"),
+        }
+        # The gating statistic is now the SAME volatility-matched alpha as the alpha gate,
+        # and an undefined replicate fails closed rather than scoring an empty zero.
+        m["null_status"] = m["null"]["status"]
         measured.append(m)
 
     selection = select_candidate(measured)
@@ -161,8 +179,12 @@ def run_validation(frames: Dict[str, pd.DataFrame], *, expected: np.ndarray,
         "universe": sorted(frames),
         "fingerprint": fp,
         "engine": "injected" if injected else "production",
+        "gating_statistic": "volatility_matched_alpha",
+        "supersedes": supersedes,
         "null_settings": {"runs": int(NULL_RUNS), "seed": int(NULL_SEED),
-                          "method": "session-preserving day-object permutation"},
+                          "method": "session-preserving day-object permutation",
+                          "statistic": "volatility_matched_alpha",
+                          "k_per_replicate": True},
         "gates": dict(GATES),
         "candidates": graded,
         "confirmation": {"opened": opened, "unlocks": unlocks, "reason": seal_reason},
@@ -178,6 +200,11 @@ def render_markdown(result: Dict[str, Any]) -> str:
     L.append("")
     L.append(f"Research only. Segment: validation `{result['window']['start']}` → "
              f"`{result['window']['end']}`. Universe: {', '.join(result['universe'])}.")
+    if result.get("supersedes"):
+        L.append("")
+        L.append(f"> Supersedes report `{result['supersedes'].get('sha256', '')[:16]}…` — "
+                 f"{result['supersedes'].get('reason', '')}")
+        L.append("")
     L.append(f"Input fingerprint `{result['fingerprint'][:16]}…`. Null: "
              f"{result['null_settings']['runs']} runs, seed "
              f"{result['null_settings']['seed']}, "
@@ -192,8 +219,15 @@ def render_markdown(result: Dict[str, Any]) -> str:
         L.append(f"- vol-matched alpha: `{c['alpha']:.6f}` (k = `{c['k']:.4f}`, "
                  f"benchmark {c['benchmark_status']})")
         L.append(f"- stressed alpha: `{c['stressed_alpha']:.6f}`")
+        def _f(v):        # an all-undefined null has no distribution to print
+            return "n/a" if v is None else f"{v:.6f}"
+        L.append(f"- null ({c['null']['statistic']}, {c['null']['runs']} runs, seed "
+                 f"{c['null']['seed']}): real `{c['null']['real']:.6f}` vs replicates "
+                 f"min `{_f(c['null']['min'])}` / median `{_f(c['null']['median'])}` / "
+                 f"max `{_f(c['null']['max'])}`")
         L.append(f"- null percentile: `{c['null']['percentile_rank']:.1f}` "
-                 f"(threshold {GATES['min_null_percentile']})")
+                 f"(threshold {GATES['min_null_percentile']}, status "
+                 f"{c['null']['status']})")
         L.append(f"- positive pairs: `{c['positive_pairs']}`; worst pair alpha: "
                  f"`{c['worst_pair_alpha']:.6f}`")
         L.append(f"- trades: `{c['n_trades']}`; per pair: `{c['trades_per_pair']}`")

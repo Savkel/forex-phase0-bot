@@ -209,18 +209,23 @@ def run_null(frames: Dict[str, pd.DataFrame], *, spec: SessionSpec, expected: np
     pairs = sorted(frames)
     objects = {p: day_objects(frames[p], spec, pair=p, expected=expected,
                               pip=pips.get(p, 0.0001)) for p in pairs}
-    days = sorted({str(pd.Timestamp(d).date()) for p in pairs for d in objects[p]})
 
-    real = [t for p in pairs
-            for t in run_candidate(frames[p], spec, pair=p, expected=expected,
-                                   pip=pips.get(p, 0.0001))]
-    real_alpha = float(daily_series(real, pairs, days).sum())
+    # The gating statistic IS the alpha gate. The real value comes from the SAME code
+    # path `measure_candidate` uses, so the two can never mean different things again.
+    base = _alpha_block(frames, spec, expected, pips, 0.0)
+    days = base["days"]
+    B, bench_sum = base["bench_series"], base["bench_sum"]
+    real_alpha = base["alpha"]
+    raw_real = base["strat_sum"]
 
     arrays = {p: bar_arrays(frames[p]) for p in pairs}
     indexes = {p: bar_index(arrays[p]) for p in pairs}
     caches = {p: day_cache(arrays[p], spec, list(objects[p])) for p in pairs}
 
     alphas: List[float] = []
+    raws: List[float] = []
+    ks: List[float] = []
+    undefined = 0
     for i in range(int(runs)):
         rng = np.random.default_rng(int(seed) + i)
         perm = permute_objects(objects, rng)
@@ -228,10 +233,44 @@ def run_null(frames: Dict[str, pd.DataFrame], *, spec: SessionSpec, expected: np
                   for t in apply_objects(frames[p], spec, pair=p, expected=expected,
                                          objects=perm[p], pip=pips.get(p, 0.0001),
                                          A=arrays[p], idx=indexes[p], cache=caches[p])]
-        alphas.append(float(daily_series(trades, pairs, days).sum()))
-    arr = np.array(alphas)
-    return {"real": real_alpha, "alphas": alphas, "runs": int(runs), "seed": int(seed),
-            "percentile_rank": float(100.0 * (arr < real_alpha).mean()) if len(arr) else 0.0}
+        S = daily_series(trades, pairs, days)
+        vs = volatility_scale(S, B)            # k is RE-DERIVED for every replicate
+        if vs["status"] != "OK":
+            undefined += 1
+            ks.append(float("nan"))
+            alphas.append(float("nan"))
+        else:
+            ks.append(float(vs["k"]))
+            alphas.append(float(S.sum() - vs["k"] * bench_sum))
+        raws.append(float(S.sum()))
+
+    arr = np.array(alphas, dtype=float)
+    raw_arr = np.array(raws, dtype=float)
+    ok = base["benchmark_status"] == "OK" and undefined == 0
+    finite = arr[~np.isnan(arr)] if len(arr) else arr
+    pct = float(100.0 * (arr < real_alpha).mean()) if len(arr) and ok else 0.0
+    return {
+        "statistic": "volatility_matched_alpha",
+        "real": float(real_alpha), "alphas": alphas, "k_replicates": ks,
+        # None, not NaN: NaN is not valid strict JSON and the report must stay writable
+        # even when every replicate came back undefined.
+        "min": float(np.min(finite)) if len(finite) else None,
+        "median": float(np.median(finite)) if len(finite) else None,
+        "max": float(np.max(finite)) if len(finite) else None,
+        "percentile_rank": pct,
+        "runs": int(runs), "seed": int(seed),
+        "status": "OK" if ok else "UNDEFINED",
+        "undefined_replicates": int(undefined),
+        "benchmark_status": base["benchmark_status"],
+        "diagnostic_raw": {
+            "statistic": "raw_return_sum", "real": float(raw_real),
+            "median": float(np.nanmedian(raw_arr)) if len(raw_arr) else 0.0,
+            "percentile_rank": (float(100.0 * (raw_arr < raw_real).mean())
+                                if len(raw_arr) else 0.0),
+            "note": "DIAGNOSTIC ONLY -- not gated; this is the statistic the superseded "
+                    "v1 report compared against the null.",
+        },
+    }
 
 
 # --- gates and selection ------------------------------------------------------------------
@@ -272,7 +311,9 @@ def _alpha_block(frames, spec, expected, pips, slippage_pips) -> Dict[str, Any]:
                          - k * daily_series(bench[p], pairs, days).sum()) for p in pairs}
     return {"alpha": float(S.sum() - k * B.sum()), "k": vs["k"],
             "benchmark_status": vs["status"], "per_pair_alpha": per_pair,
-            "strat": strat, "eligible": elig, "days": days}
+            "strat": strat, "bench": bench, "eligible": elig, "days": days,
+            "strat_sum": float(S.sum()), "bench_sum": float(B.sum()),
+            "bench_series": B}
 
 
 def measure_candidate(frames: Dict[str, pd.DataFrame], spec: SessionSpec, *,
@@ -315,6 +356,8 @@ def evaluate_candidate(result: Dict[str, Any]) -> Dict[str, Any]:
     failed: List[str] = []
     if result.get("benchmark_status") != "OK":
         failed.append("benchmark_undefined")
+    if result.get("null_status", "OK") != "OK":
+        failed.append("null_undefined")      # an undefined replicate fails closed
     if not result["alpha"] > 0:
         failed.append("alpha_not_positive")
     if not result["null_percentile"] >= GATES["min_null_percentile"]:

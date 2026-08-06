@@ -172,3 +172,51 @@ def test_the_report_leads_with_the_verdict():
     assert "CLOSED_FAIL" in md.splitlines()[0] or "CLOSED_FAIL" in md.splitlines()[1]
     assert "confirmation" in md.lower()
     json.dumps(out)                                    # must be serialisable as-is
+
+
+# --- corrected null wiring ---------------------------------------------------------------
+
+def _null_stub(pct=95.0, status="OK"):
+    def fn(frames, spec, **kw):
+        return {"statistic": "volatility_matched_alpha", "real": 0.11,
+                "min": -0.02, "median": 0.01, "max": 0.05,
+                "percentile_rank": pct, "runs": kw["runs"], "seed": kw["seed"],
+                "status": status, "undefined_replicates": 0 if status == "OK" else 2,
+                "diagnostic_raw": {"statistic": "raw_return_sum", "real": -0.014,
+                                   "median": 0.12, "percentile_rank": 0.0}}
+    return fn
+
+
+def test_the_report_names_its_gating_statistic_and_persists_the_distribution():
+    out = run_validation(_frames(), expected=np.array([], dtype="int64"),
+                         measure_fn=lambda f, s, **k: dict(_measurement(s.name)),
+                         null_fn=_null_stub())
+    assert out["gating_statistic"] == "volatility_matched_alpha"
+    assert out["null_settings"]["statistic"] == "volatility_matched_alpha"
+    assert out["null_settings"]["k_per_replicate"] is True
+    # `gating_statistic` is the RUNNER's constant, not something the null reported.
+    assert "gating_statistic" not in _null_stub()(None, None, runs=1, seed=1)
+    for c in out["candidates"]:
+        n = c["null"]
+        # the runner must persist the distribution FAITHFULLY, not re-derive it
+        assert (n["min"], n["median"], n["max"]) == (-0.02, 0.01, 0.05)
+        assert n["real"] == 0.11 and n["undefined_replicates"] == 0
+        assert n["diagnostic_raw"]["statistic"] == "raw_return_sum"
+
+def test_an_undefined_null_blocks_the_candidate():
+    out = run_validation(_frames(), expected=np.array([], dtype="int64"),
+                         measure_fn=lambda f, s, **k: dict(_measurement(s.name)),
+                         null_fn=_null_stub(status="UNDEFINED"))
+    assert out["verdict"] == "CLOSED_FAIL"
+    for c in out["candidates"]:
+        assert "null_undefined" in c["failed"]
+
+def test_the_v2_report_records_what_it_supersedes():
+    sup = {"sha256": "a" * 64, "reason": "v1 gated on a raw return sum, not alpha"}
+    out = run_validation(_frames(), expected=np.array([], dtype="int64"),
+                         supersedes=sup,
+                         measure_fn=lambda f, s, **k: dict(_measurement(s.name)),
+                         null_fn=_null_stub())
+    assert out["supersedes"] == sup
+    md = render_markdown(out)
+    assert "Supersedes report" in md and "raw return sum" in md

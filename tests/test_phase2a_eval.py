@@ -295,3 +295,62 @@ def test_a_hand_assembled_verdict_cannot_open_confirmation():
         open_confirmation(forged)
     with pytest.raises(ConfirmationLocked, match="no measurement record"):
         open_confirmation({**forged, "candidates": []})
+
+
+# --- the gating null statistic must BE the alpha gate ---------------------------------
+
+def test_the_null_statistic_is_the_same_volatility_matched_alpha_as_the_gate():
+    # The original run compared a RAW return sum against the null while gating on
+    # benchmark-relative alpha: two different quantities wearing one name.
+    frames = {"EUR_USD": _breakouts(["2026-06-08", "2026-06-15"]),
+              "GBP_USD": _breakouts(["2026-06-09", "2026-06-16"])}
+    m = measure_candidate(frames, SPEC, expected=EXP, null_percentile=95.0)
+    n = run_null(frames, spec=SPEC, expected=EXP, runs=4)
+    assert n["statistic"] == "volatility_matched_alpha"
+    assert n["real"] == pytest.approx(m["alpha"], abs=1e-12)
+
+def test_every_replicate_carries_its_own_benchmark_scale():
+    frames = {"EUR_USD": _breakouts(["2026-06-08", "2026-06-15"]),
+              "GBP_USD": _breakouts(["2026-06-09", "2026-06-16"])}
+    n = run_null(frames, spec=SPEC, expected=EXP, runs=6)
+    assert len(n["k_replicates"]) == 6
+    assert len(set(round(k, 12) for k in n["k_replicates"])) > 1
+
+def test_the_persisted_null_carries_its_distribution_and_provenance():
+    frames = {"EUR_USD": _breakouts(["2026-06-08", "2026-06-15"]),
+              "GBP_USD": _breakouts(["2026-06-09", "2026-06-16"])}
+    n = run_null(frames, spec=SPEC, expected=EXP, runs=5, seed=NULL_SEED)
+    for f in ("statistic", "real", "min", "median", "max", "percentile_rank",
+              "runs", "seed", "status", "diagnostic_raw"):
+        assert f in n, f
+    assert n["min"] <= n["median"] <= n["max"]
+    assert n["runs"] == 5 and n["seed"] == NULL_SEED
+    assert n["diagnostic_raw"]["statistic"] == "raw_return_sum"
+
+def _constant_exit(days):
+    """Tradeable range, but an identical exit price every day: the benchmark has ZERO
+    volatility, so no scale k exists."""
+    df = _frame()
+    for d in pd.bdate_range("2026-06-08", "2026-06-26"):
+        b = session_bounds(SPEC, d)
+        _set(df, b["range_start_ms"], o=1.0, h=1.005, l=0.995, c=1.0)
+    for d in days:
+        b = session_bounds(SPEC, pd.Timestamp(d))
+        _set(df, b["entry_start_ms"], o=1.0, h=1.02, l=1.0, c=1.02)
+    return df
+
+def test_an_undefined_benchmark_in_any_replicate_fails_the_null_closed():
+    flat = {"EUR_USD": _constant_exit(["2026-06-08", "2026-06-15"]),
+            "GBP_USD": _constant_exit(["2026-06-09", "2026-06-16"])}
+    n = run_null(flat, spec=SPEC, expected=EXP, runs=3)
+    assert n["status"] == "UNDEFINED"
+    assert n["undefined_replicates"] == 3        # every replicate, counted
+    assert n["min"] is None and n["median"] is None and n["max"] is None
+    r = evaluate_candidate({**_result(), "null_status": n["status"]})
+    assert r["eligible"] is False and "null_undefined" in r["failed"]
+
+def test_the_corrected_null_is_still_deterministic():
+    frames = {"EUR_USD": _breakouts(["2026-06-08", "2026-06-15"]),
+              "GBP_USD": _breakouts(["2026-06-09", "2026-06-16"])}
+    kw = dict(spec=SPEC, expected=EXP, runs=6, seed=NULL_SEED)
+    assert run_null(frames, **kw)["alphas"] == run_null(frames, **kw)["alphas"]
