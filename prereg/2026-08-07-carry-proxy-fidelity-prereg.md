@@ -67,9 +67,17 @@ this document does not require them.
 2. **Explicit maintainer approval for repeated `labs-api.oanda.com` access**, having considered
    the site's terms. The endpoint is undocumented and unsupported.
 
-**Commit-before-run.** The resolved `divisionId` / `tradingGroupId`, the evidence used, and the
-precedence level it came from must be **committed to version control before the first financing
-request**. A run executed against the committed division **is** the single evaluation run of
+**Commit-before-run artifacts.** All of the following must be **committed to version control
+before the first financing request** — every one of them is knowable in advance:
+
+1. the resolved `divisionId` / `tradingGroupId`, the evidence used, and the precedence level it
+   came from;
+2. the **exact frozen anchor start and end UTC timestamps** (Section 3.1);
+3. the **acquisition protocol and its run identifier**;
+4. the CBPOL availability/PIT table (Section 6) and the documented-discontinuity reading
+   (Section 8), both covering the frozen anchor interval plus the causal buffer.
+
+No timestamp produced by the acquisition itself appears in this list. A run executed against the committed division **is** the single evaluation run of
 Section 9 and consumes it. A post-run challenge to the division is admissible **only** when it
 rests on a **dated external event** (a change of account entity, or a correction issued by
 OANDA) — never on re-reading evidence that was already available at commit time — and the
@@ -102,20 +110,29 @@ the primary series. Depth is never traded for comparability.
 it had no acceptance role, and specifying it fully would add sources without affecting any
 verdict. It is neither computed nor reported here.
 
-### 3.1 Calibration window (deterministic)
+### 3.1 Anchor interval (frozen before acquisition)
 
-The calibration window is **the maximal contiguous span of dates the financing endpoint accepts
-(does not reject) as of the first successful request** — not the subset of dates that return
-rows, which would collapse at every weekend. It is discovered by a preregistered bisection on
-the endpoint's own `"Time parameter must be equal or less than 1 year from today"` rejection
-boundary. Only the exact quoted rejection string counts as a rejection; any transient response
-(HTTP 429, any 5xx, timeout, or malformed body) is retried up to three times with fixed 5-second
-waits, and if it still does not resolve to either a rejection or a rows payload, the study
-returns **UNDETERMINED**. If the rolling boundary advances mid-bisection (the endpoint accepts a
-date it previously rejected), the bisection is void and the study returns **UNDETERMINED**. Its
-resolved endpoints and the UTC timestamp of that first request must be **committed before any
-`tau_D` is computed**. The window is never extended, shortened, shifted, or re-discovered on a
-later date.
+The anchor interval is **not discovered by requests**. It is chosen and **frozen as exact UTC
+start and end timestamps, committed before any request is issued** — a timestamp produced *by*
+acquisition cannot be a commit-before-run input, so the earlier bisection-discovery rule is
+**withdrawn**.
+
+The frozen interval must lie inside the span the endpoint is documented to serve (it rejects any
+`time` more than one year before the request date). At run time:
+
+- if the endpoint rejects **any** date inside the frozen interval, the study returns
+  **UNDETERMINED**. The interval is never re-frozen, shortened, shifted or re-chosen;
+- any transient response (HTTP 429, any 5xx, timeout, or malformed body) is retried up to three
+  times with fixed 5-second waits; if it still resolves to neither a rejection nor a rows
+  payload, the study returns **UNDETERMINED**.
+
+**Terminology.** "Anchor interval" and "calibration window" denote the same frozen interval
+throughout this document; every other section's use of "calibration window" means exactly the
+interval frozen here.
+
+The **actual first and last request timestamps** are not committed in advance — they are
+**recorded during execution** in the immutable run/provenance artifact (Section 12), together
+with the preregistered run identifier.
 
 **CBPOL is an economic proxy, not tradable carry.** It is administratively consistent but not
 economically identical across currencies or through time; policy instruments differ by country
@@ -251,14 +268,17 @@ failure) rather than selecting between them.
 **Artifact requirement (both axes pinned).** The designated per-currency availability source,
 and the resulting `(v, avail_ts, effective_date)` table, must be **committed before the first
 financing request** — so no availability judgment can be made after seeing any fidelity
-quantity. Because the calibration window is not yet known at commit time, coverage is pinned in
-absolute terms on both axes:
+quantity. Coverage is pinned to the **frozen anchor interval** of Section 3.1 — never to an
+arbitrary commit-date lookback:
 
 - **currency axis:** every currency for which a BIS CBPOL series exists;
-- **date axis:** every level in force from `commit_date - 400 days` through `commit_date`
-  (400 days strictly covers any rolling ~12-month window the endpoint can serve).
+- **date axis:** every level in force at any point in the frozen anchor interval, **plus the
+  preregistered causal buffer**: the single most recent level in force at or before the anchor
+  start, however far back it is dated. The buffer is data-defined, not a fixed lookback, and
+  exists solely because the Section 6 rule needs the level prevailing on the first anchor day.
 
-Any in-window value absent from the committed table returns **UNDETERMINED**. **Post-hoc
+Any value in the anchor interval or its causal buffer absent from the committed table returns
+**UNDETERMINED**. **Post-hoc
 supplementation of the table is prohibited** — a missing row is never filled in after the window
 or any target value has been seen.
 
@@ -383,9 +403,9 @@ event.
 
 **Artifact requirement (both axes pinned).** The reading must be **committed before the first
 financing request**, so its strictness is fixed in advance of any measurement. Coverage is pinned
-in absolute terms exactly as in Section 6: **every currency for which a BIS CBPOL series
-exists**, over **`commit_date - 400 days` through `commit_date`**. Any eligible currency with no
-committed reading, or any in-window qualifying event absent from it, returns **UNDETERMINED**.
+exactly as in Section 6: **every currency for which a BIS CBPOL series exists**, over the
+**frozen anchor interval plus its causal buffer**. Any eligible currency with no committed
+reading, or any qualifying event in that span absent from it, returns **UNDETERMINED**.
 Post-hoc supplementation is prohibited.
 
 If any qualifying event falls inside the calibration window for **any** eligible currency, the
@@ -463,9 +483,14 @@ the verdict of the present study.
 3. No per-currency or per-instrument parameters. No smoothing or lookback variants.
 4. All constants are frozen in this document before the first request.
 5. One run. Fixed seed. The result is reported whatever it is.
-6. **The calibration window is permanently development data.** On first use it can never serve
-   as carry validation or confirmation. Any later strategy research interval must end before the
-   calibration window begins, and the calibration window is barred from any confirmation segment.
+6. **Every date in the frozen anchor interval becomes a permanent development/calibration date
+   for the carry programme.** On first use those dates can never serve as carry validation or
+   confirmation. Any later carry research interval must end before the anchor interval begins,
+   and the anchor interval is barred from every future carry confirmation segment.
+   **This does not reopen, inspect, or otherwise touch Phase 2A's sealed confirmation segment:**
+   no price, return, or performance quantity of any kind enters this study, which reads only
+   broker financing rates and central-bank policy rates. Phase 2A's confirmation segment remains
+   sealed and unopened.
 7. Nothing in this document locks a strategy universe, candidate set, benchmark, null,
    performance split, rebalance frequency or confirmation segment. Those remain open and require
    their own preregistration.
@@ -474,8 +499,12 @@ the verdict of the present study.
 
 ## 12. Deliverable
 
-A single report stating: the resolved division and the evidence precedence level used; the
-calibration window endpoints and the UTC timestamp of the first request; the eligible instrument
+A single report, plus an **immutable run/provenance artifact** recording — during execution —
+the preregistered **run identifier**, the **actual first request timestamp**, the **actual last
+request timestamp**, and the request/response counts and any retries.
+
+The report states: the resolved division and the evidence precedence level used; the frozen
+anchor interval start/end and the run identifier; the eligible instrument
 list and `N`; `n`; the selected block length `b`; `tau_bar` and its equal-tail percentile
 interval; the per-instrument `f_i` diagnostic; explicit confirmation that no `tau_D` was
 undefined; the committed `scipy` / `arch` / `numpy`
