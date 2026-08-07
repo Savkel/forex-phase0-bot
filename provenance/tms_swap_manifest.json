@@ -1,19 +1,236 @@
 {
  "source": "OANDA TMS Brokers S.A. public document archive (https://www.oanda.com/eu-en/documents)",
  "index_snapshot_sha256": "a929d3e81bb4c2ac1d251ac9eac34210dedd956b1d49cde6c64a431eb0c2bb2b",
- "retrieved_utc": "2026-08-07T17:39:53+00:00",
+ "retrieved_utc": "2026-08-07T18:00:26+00:00",
  "parser": "bot/forex/tms_swap.py",
- "parser_sha256": "4485b41a98e7e6b2c4aefb51bdea45ef1030a59a7b530d45f56167bc39128866",
- "git_head_at_generation": "303713097eef85d31b54064c043a2d4110062bb6",
+ "parser_sha256": "fd2780900695c59b07fca08c5fc6dec2b05ce2b7a24e7a31bd37d18e97933734",
+ "git_head_at_generation": "4ba893a6f868f8b466bcef868ba61aab88dacc8e",
  "documents_in_index": 171,
  "parsed_ok": 170,
  "excluded": [
   {
    "filename": "punkty_swapowe_tms_en_2023_03_20.pdf",
    "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/punkty_swapowe_tms_en_2023_03_20.pdf",
-   "reason": "TmsParseError: published spreadsheet error '#VALUE!': the affected rate is not present in the document and must not be inferred"
+   "reason": "TmsParseError: published spreadsheet error '#VALUE!': the affected rate is not present in the document and must not be inferred",
+   "scope": "whole document",
+   "justification": "The parser scans for spreadsheet-error tokens across the whole body, before the equities cut and before any run structure is computed. It therefore cannot attribute the token to a specific instrument, and excludes the document as a whole. This is deliberately broader than the affected cell: a document whose only error token sits in the never-parsed equities table would also be excluded. Fail-closed on a corrupt source is preferred to inferring a rate."
   }
  ],
+ "interval_resolution": {
+  "rule": "The PDF's printed 'Valid from' interval is authoritative; the archive index label is recorded for audit only.",
+  "disagreements": 16,
+  "details": [
+   {
+    "filename": "punkty_swapowe_tms_en_2023.11.06.pdf",
+    "index_label": "Table of Swap Points (06.11.23 - 10.11.23)",
+    "index_interval": [
+     "2023-11-06",
+     "2023-11-10"
+    ],
+    "pdf_interval": [
+     "2023-11-06",
+     "2023-11-12"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "punkty_swapowe_tms_en_2023.12.18.pdf",
+    "index_label": "Table of Swap Points (18.12.23 - 24.12.23)",
+    "index_interval": [
+     "2023-12-18",
+     "2023-12-24"
+    ],
+    "pdf_interval": [
+     "2023-12-18",
+     "2023-12-26"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "punkty_swapowe_tms_en_2024.02.26.pdf",
+    "index_label": "Table of Swap Points (26.02.24 - 03.03.24)",
+    "index_interval": [
+     "2024-02-26",
+     "2024-03-03"
+    ],
+    "pdf_interval": [
+     "2024-02-26",
+     "2024-03-02"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2024.07.15.pdf",
+    "index_label": "Table of Swap Points (15.07.24 - 23.07.24)",
+    "index_interval": [
+     "2024-07-15",
+     "2024-07-23"
+    ],
+    "pdf_interval": [
+     "2024-07-15",
+     "2024-07-21"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2024.09.02.pdf",
+    "index_label": "Table of Swap Points (02.09.24 - 09.09.24)",
+    "index_interval": [
+     "2024-09-02",
+     "2024-09-09"
+    ],
+    "pdf_interval": [
+     "2024-09-02",
+     "2024-09-08"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2024.11.04.pdf",
+    "index_label": "Table of Swap Points (04.11.24 - 10.11.24)",
+    "index_interval": [
+     "2024-11-04",
+     "2024-11-10"
+    ],
+    "pdf_interval": [
+     "2024-11-04",
+     "2024-11-17"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2024.12.09.pdf",
+    "index_label": "Table of Swap Points (09.12.24 - 16.12.24)",
+    "index_interval": [
+     "2024-12-09",
+     "2024-12-16"
+    ],
+    "pdf_interval": [
+     "2024-12-09",
+     "2024-12-15"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.01.02.pdf",
+    "index_label": "Table of Swap Points (02.01.25 - 06.01.25)",
+    "index_interval": [
+     "2025-01-02",
+     "2025-01-06"
+    ],
+    "pdf_interval": [
+     "2025-01-02",
+     "2025-01-05"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.06.30.pdf",
+    "index_label": "Table of Swap Points (30.06.25 - 07.07.25)",
+    "index_interval": [
+     "2025-06-30",
+     "2025-07-07"
+    ],
+    "pdf_interval": [
+     "2025-06-30",
+     "2025-07-06"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.06.30_0.pdf",
+    "index_label": "Table of Swap Points (07.08.26 - 07.07.25)",
+    "index_interval": [
+     "2026-08-07",
+     "2025-07-07"
+    ],
+    "pdf_interval": [
+     "2025-06-30",
+     "2025-07-06"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.07.07.pdf",
+    "index_label": "Table of Swap Points (07.08.26 - 13.07.25)",
+    "index_interval": [
+     "2026-08-07",
+     "2025-07-13"
+    ],
+    "pdf_interval": [
+     "2025-07-07",
+     "2025-07-13"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.07.28.pdf",
+    "index_label": "Table of Swap Points (28.07.25 - 10.08.25)",
+    "index_interval": [
+     "2025-07-28",
+     "2025-08-10"
+    ],
+    "pdf_interval": [
+     "2025-07-28",
+     "2025-08-03"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.08.18.pdf",
+    "index_label": "Table of Swap Points (18.08.25 - 24.08.25)",
+    "index_interval": [
+     "2025-08-18",
+     "2025-08-24"
+    ],
+    "pdf_interval": [
+     "2025-08-17",
+     "2025-08-24"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.12.15.pdf",
+    "index_label": "Table of Swap Points (15.12.25 - 22.12.25)",
+    "index_interval": [
+     "2025-12-15",
+     "2025-12-22"
+    ],
+    "pdf_interval": [
+     "2025-12-15",
+     "2025-12-21"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2025.12.22.pdf",
+    "index_label": "Table of Swap Points (22.12.25 - 11.01.26)",
+    "index_interval": [
+     "2025-12-22",
+     "2026-01-11"
+    ],
+    "pdf_interval": [
+     "2025-12-22",
+     "2026-01-04"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   },
+   {
+    "filename": "swap_points_tms_en_2026.03.16.pdf",
+    "index_label": "Table of Swap Points (16.03.26 - 22.03.26)",
+    "index_interval": [
+     "2026-03-16",
+     "2026-03-22"
+    ],
+    "pdf_interval": [
+     "2026-03-16",
+     "2026-03-23"
+    ],
+    "resolution": "PDF printed 'Valid from' is authoritative"
+   }
+  ],
+  "note": "Two index labels render the current date as the start for documents the CMS marks as currently valid; these are rendering artifacts, not published intervals."
+ },
  "coverage": {
   "first_valid_from": "2023-03-27",
   "last_valid_to": "2026-08-02",
@@ -100,7 +317,7 @@
      "2024-11-11",
      "2024-11-17"
     ],
-    "precedence": "later valid_from supersedes for shared dates"
+    "precedence": "DOCUMENTED ONLY, NOT ENFORCED: resolve_duplicates keys on the exact (valid_from, valid_to) tuple, so these partially overlapping intervals are distinct keys and no conflict is raised. Any consumer building a date->rate map must implement 'later valid_from supersedes for shared dates' itself."
    },
    {
     "earlier": [
@@ -111,7 +328,7 @@
      "2025-08-17",
      "2025-08-24"
     ],
-    "precedence": "later valid_from supersedes for shared dates"
+    "precedence": "DOCUMENTED ONLY, NOT ENFORCED: resolve_duplicates keys on the exact (valid_from, valid_to) tuple, so these partially overlapping intervals are distinct keys and no conflict is raised. Any consumer building a date->rate map must implement 'later valid_from supersedes for shared dates' itself."
    },
    {
     "earlier": [
@@ -122,7 +339,14 @@
      "2026-03-23",
      "2026-03-29"
     ],
-    "precedence": "later valid_from supersedes for shared dates"
+    "precedence": "DOCUMENTED ONLY, NOT ENFORCED: resolve_duplicates keys on the exact (valid_from, valid_to) tuple, so these partially overlapping intervals are distinct keys and no conflict is raised. Any consumer building a date->rate map must implement 'later valid_from supersedes for shared dates' itself."
+   }
+  ],
+  "excluded_documents_not_reflected_in_gaps": [
+   {
+    "filename": "punkty_swapowe_tms_en_2023_03_20.pdf",
+    "would_have_covered": "the week beginning 2023-03-20",
+    "effect": "coverage.first_valid_from is 2023-03-27 because coverage is computed over parsed documents only; the excluded week is an unusable indexed document, not an unpublished one."
    }
   ]
  },
@@ -2182,5 +2406,6 @@
    "n_rows": 64,
    "error": null
   }
- ]
+ ],
+ "known_open_limitation": "Merged symbol runs: if a text layer emits two symbol columns adjacently (I,I,P,P) instead of interleaved (I,P,I,P), the runs merge and the 2k split silently pairs each instrument with another instrument's rate. No archive document produces that ordering under the current extractor, but the run-kind/length abstraction cannot detect it. Closing it requires corroborating block boundaries from PDF layout coordinates. Until then this dataset is NOT certified for strategy use."
 }

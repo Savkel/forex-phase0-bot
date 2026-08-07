@@ -9,6 +9,16 @@ publish (see the Terms and Conditions of brokerage services).
 The parser is fail-closed by design: a block it cannot fully align raises
 `TmsParseError` rather than silently dropping instruments. A silent omission
 would look exactly like an instrument that was not quoted that week.
+
+KNOWN OPEN LIMITATION - do not treat output as verified until closed. If a text
+layer emits two symbol columns adjacently (`I,I,P,P`) rather than interleaved
+(`I,P,I,P`), the two runs merge into one `I` run and one `2k` value run. That is
+structurally identical to a legitimate continuation block, so the split at the
+`2 * k` branch below silently pairs each instrument with another instrument's
+rate. None of the 171 archive documents produces that ordering under the current
+extractor, but the run-kind/length abstraction cannot detect it. Closing this
+requires an independent corroboration of block boundaries from PDF layout
+coordinates (x-clustering of columns), which this module does not yet do.
 """
 from __future__ import annotations
 
@@ -208,6 +218,29 @@ def parse_swap_schedule(
     lines = [ln.strip() for ln in body.split("\n") if ln.strip()]
     runs = _runs(lines)
 
+    # --- structural integrity checks, independent of any value ----------------
+    # (2) Caption completeness: a block carrying one column caption but not the
+    #     other is a broken block, not a legitimate uncaptioned continuation.
+    for i, (kind, _) in enumerate(runs):
+        if kind == "CAP_L" and not any(k == "CAP_S" for k, _ in runs[i + 1: i + 4]):
+            raise TmsParseError(
+                "long-column caption without a matching short-column caption: the block is "
+                "truncated and its values cannot be assigned"
+            )
+        if kind == "CAP_S" and not any(k == "CAP_L" for k, _ in runs[max(0, i - 3): i]):
+            raise TmsParseError(
+                "short-column caption without a matching long-column caption: the block is "
+                "truncated and its values cannot be assigned"
+            )
+    # (3) Adjacent instrument runs mean one symbol column was split or lost; the
+    #     boundary between them is not recoverable from structure.
+    for i in range(1, len(runs)):
+        if runs[i][0] == "I" and runs[i - 1][0] == "I":
+            raise TmsParseError(
+                f"adjacent instrument runs ({runs[i - 1][1][-1]!r} then {runs[i][1][0]!r}) with "
+                "no values between them: the symbol column boundary is not recoverable"
+            )
+
     rows: List[SwapRow] = []
     values: Dict[str, Tuple[float, float]] = {}
     consumed: set = set()
@@ -268,6 +301,17 @@ def parse_swap_schedule(
             f"{len(unclaimed)} unclaimed value run(s) with no owning instrument column; "
             f"first is {len(first_unclaimed)} value(s) starting {first_unclaimed[0]!r} "
             "(orphan values mean a symbol column was lost)"
+        )
+
+    # Final grid invariant. Entailed by the per-block alignment plus the
+    # unclaimed-run check, so it is an assertion rather than live coverage: it has
+    # never been observed to fire. Kept so no future code path can bypass it.
+    n_instruments = sum(len(v) for k, v in runs if k == "I")
+    n_values = sum(len(v) for k, v in runs if k == "P")
+    if n_values != 2 * n_instruments:
+        raise TmsParseError(
+            f"value conservation failed: {n_instruments} instrument(s) require "
+            f"{2 * n_instruments} value(s) but the table has {n_values}"
         )
 
     if not rows:

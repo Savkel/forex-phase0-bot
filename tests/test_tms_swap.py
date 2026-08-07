@@ -238,6 +238,32 @@ def test_two_conflicting_validity_headers_raise():
         parse_swap_schedule(text)
 
 
+def test_lost_symbol_column_fails_closed():
+    """A lost column leaves surplus values with no owning instrument column."""
+    text = _HEAD + _CAPTIONED + (
+        "Instrument\nUSDJPY.pro\n\nLong swap\n3.00%\n4.00%\n\nShort swap\n-3.00%\n-4.00%\n"
+    )
+    with pytest.raises(TmsParseError, match="unclaimed"):
+        parse_swap_schedule(text)
+
+
+def test_block_with_a_long_caption_but_no_short_caption_raises():
+    """A half-captioned block is a broken block, not a continuation block."""
+    text = _HEAD + _CAPTIONED + "Instrument\nUSDJPY.pro\n\nLong swap\n3.00%\n4.00%\n"
+    with pytest.raises(TmsParseError, match="caption"):
+        parse_swap_schedule(text)
+
+
+def test_adjacent_instrument_runs_raise():
+    """Two instrument runs with no values between them mean a split/lost column."""
+    text = _HEAD + _CAPTIONED + (
+        "Instrument\nUSDJPY.pro\n\n(continued)\n\nUSDCHF.pro\n\n"
+        "3.00%\n4.00%\n-3.00%\n-4.00%\n"
+    )
+    with pytest.raises(TmsParseError, match="adjacent"):
+        parse_swap_schedule(text)
+
+
 def test_section_boundary_without_an_equities_table_raises():
     text = _HEAD + _CAPTIONED + "Symbol\n\nUSDJPY.pro\n\nLong swap\n1.00%\n\nShort swap\n-1.00%\n"
     with pytest.raises(TmsParseError, match="boundary"):
