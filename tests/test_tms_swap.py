@@ -110,6 +110,31 @@ def test_pins_interior_and_tail_of_the_merged_value_block():
     assert rows["USDZAR.pro"].short_pct == pytest.approx(0.71)
 
 
+def test_form_feed_page_break_does_not_truncate_the_table():
+    """A page break glued to the `Symbol` boundary must not hide a value column."""
+    s = parse_swap_schedule(_fixture("schedule_2024_09_30.txt"))
+    assert s.valid_from == dt.date(2024, 9, 30)
+    assert len(s.rows) == 75
+    assert s.by_instrument["EURTRY.pro"].long_pct == pytest.approx(-58.62)
+    assert s.by_instrument["EURTRY.pro"].short_pct == pytest.approx(28.50)
+
+
+def test_parses_polish_language_schedule():
+    s = parse_swap_schedule(_fixture("schedule_pl_2025_04_28.txt"))
+    assert s.valid_from == dt.date(2025, 4, 28)
+    assert s.valid_to == dt.date(2025, 5, 4)
+    assert s.units == "percent_per_annum"
+    assert len(s.rows) == 70
+    assert "EURUSD.pro" in s.by_instrument
+
+
+def test_spreadsheet_error_sentinel_raises():
+    """A published `#VALUE!` cell means a rate is unrecoverable - never guess around it."""
+    text = _HEAD + "Instrument\nEURUSD.pro\nGBPUSD.pro\n\nLong swap\n1.00%\n#VALUE!\n\nShort swap\n-1.00%\n-2.00%\n"
+    with pytest.raises(TmsParseError, match="spreadsheet error"):
+        parse_swap_schedule(text)
+
+
 def test_crlf_input_parses_identically_to_lf():
     text = _fixture("schedule_2026_07_27.txt")
     assert parse_swap_schedule(text.replace("\n", "\r\n")).rows == parse_swap_schedule(text).rows
@@ -163,6 +188,54 @@ def test_duplicate_instrument_with_identical_values_is_collapsed():
     text = _HEAD + _CAPTIONED + "Instrument\nEURUSD.pro\n\nLong swap\n1.00%\n\nShort swap\n-1.00%\n"
     s = parse_swap_schedule(text)
     assert [r.instrument for r in s.rows] == ["EURUSD.pro", "GBPUSD.pro"]
+
+
+_EQUITIES_TAIL = (
+    "Symbol\n\nLong Swap\n\nShort swap\n\nEquities CFD'S\n\nAdditional cost of keeping\n"
+    "a short position open\n\nA_CFD.US\n\n-6.64%\n\n0.14%\n\n0.50%\n"
+)
+
+
+def test_premature_symbol_line_above_the_equities_table_raises():
+    """A stray `Symbol` must not silently truncate the FX table."""
+    text = _HEAD + _CAPTIONED + "Symbol\n\nInstrument\nUSDJPY.pro\nUSDCHF.pro\n\n" \
+        "Long swap\n3.00%\n4.00%\n\nShort swap\n-3.00%\n-4.00%\n\n" + _EQUITIES_TAIL
+    with pytest.raises(TmsParseError, match="boundary"):
+        parse_swap_schedule(text)
+
+
+def test_spreadsheet_error_below_the_section_cut_is_still_detected():
+    text = _HEAD + _CAPTIONED + _EQUITIES_TAIL.replace("-6.64%", "#VALUE!")
+    with pytest.raises(TmsParseError, match="spreadsheet error"):
+        parse_swap_schedule(text)
+
+
+def test_units_that_cannot_be_established_raise():
+    """`units` scales every rate; guessing it silently changes the whole document."""
+    text = (
+        "Swap Points Table\n\nValid from 2024.01.08 – 2024.01.14\n\n"
+        + _CAPTIONED
+    )
+    with pytest.raises(TmsParseError, match="units"):
+        parse_swap_schedule(text)
+
+
+def test_legacy_units_are_detected_positively_not_by_absence():
+    text = (
+        "Swap Points Table\n\nValid from 2023.05.15 – 2023.05.21 Published swap points are "
+        "charged in\npercentage points.\n\n" + _CAPTIONED
+    )
+    assert parse_swap_schedule(text).units == "percentage_points"
+
+
+def test_two_conflicting_validity_headers_raise():
+    text = _HEAD + _CAPTIONED + (
+        "Valid from 2024.01.01 – 2024.01.07 Published swap points are\n"
+        "calculated in percentage points per annum.\n\nInstrument\nUSDJPY.pro\n\n"
+        "Long swap\n3.00%\n\nShort swap\n-3.00%\n"
+    )
+    with pytest.raises(TmsParseError, match="validity header"):
+        parse_swap_schedule(text)
 
 
 def test_section_boundary_without_an_equities_table_raises():

@@ -1,10 +1,134 @@
 {
  "source": "OANDA TMS Brokers S.A. public document archive (https://www.oanda.com/eu-en/documents)",
- "retrieved_utc": "2026-08-07",
- "documents": 171,
- "parsed_ok": 168,
+ "index_snapshot_sha256": "a929d3e81bb4c2ac1d251ac9eac34210dedd956b1d49cde6c64a431eb0c2bb2b",
+ "retrieved_utc": "2026-08-07T17:39:53+00:00",
  "parser": "bot/forex/tms_swap.py",
- "note": "Raw PDFs are NOT redistributed; only URL + SHA256 provenance is recorded. Research use only.",
+ "parser_sha256": "4485b41a98e7e6b2c4aefb51bdea45ef1030a59a7b530d45f56167bc39128866",
+ "git_head_at_generation": "303713097eef85d31b54064c043a2d4110062bb6",
+ "documents_in_index": 171,
+ "parsed_ok": 170,
+ "excluded": [
+  {
+   "filename": "punkty_swapowe_tms_en_2023_03_20.pdf",
+   "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/punkty_swapowe_tms_en_2023_03_20.pdf",
+   "reason": "TmsParseError: published spreadsheet error '#VALUE!': the affected rate is not present in the document and must not be inferred"
+  }
+ ],
+ "coverage": {
+  "first_valid_from": "2023-03-27",
+  "last_valid_to": "2026-08-02",
+  "distinct_intervals": 169,
+  "gaps": [
+   {
+    "from": "2023-07-10",
+    "to": "2023-07-10",
+    "days": 1,
+    "weekdays_uncovered": 1,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2023-09-04",
+    "to": "2023-09-10",
+    "days": 7,
+    "weekdays_uncovered": 5,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2023-10-30",
+    "to": "2023-11-05",
+    "days": 7,
+    "weekdays_uncovered": 5,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2024-01-02",
+    "to": "2024-01-07",
+    "days": 6,
+    "weekdays_uncovered": 4,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2024-03-03",
+    "to": "2024-03-03",
+    "days": 1,
+    "weekdays_uncovered": 0,
+    "classification": "weekend/non-trading only"
+   },
+   {
+    "from": "2024-04-01",
+    "to": "2024-04-01",
+    "days": 1,
+    "weekdays_uncovered": 1,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2024-09-09",
+    "to": "2024-09-09",
+    "days": 1,
+    "weekdays_uncovered": 1,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2025-01-06",
+    "to": "2025-01-06",
+    "days": 1,
+    "weekdays_uncovered": 1,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2025-08-04",
+    "to": "2025-08-10",
+    "days": 7,
+    "weekdays_uncovered": 5,
+    "classification": "genuine uncovered interval"
+   },
+   {
+    "from": "2026-01-05",
+    "to": "2026-01-11",
+    "days": 7,
+    "weekdays_uncovered": 5,
+    "classification": "genuine uncovered interval"
+   }
+  ],
+  "overlaps": [
+   {
+    "earlier": [
+     "2024-11-04",
+     "2024-11-17"
+    ],
+    "later": [
+     "2024-11-11",
+     "2024-11-17"
+    ],
+    "precedence": "later valid_from supersedes for shared dates"
+   },
+   {
+    "earlier": [
+     "2025-08-11",
+     "2025-08-17"
+    ],
+    "later": [
+     "2025-08-17",
+     "2025-08-24"
+    ],
+    "precedence": "later valid_from supersedes for shared dates"
+   },
+   {
+    "earlier": [
+     "2026-03-16",
+     "2026-03-23"
+    ],
+    "later": [
+     "2026-03-23",
+     "2026-03-29"
+    ],
+    "precedence": "later valid_from supersedes for shared dates"
+   }
+  ]
+ },
+ "terms_note": "No automated-access prohibition was identified in the reviewed public terms/robots guidance; bounded private research retrieval was performed under that interpretation. This is not a legal claim.",
+ "redistribution_note": "Raw PDFs are NOT redistributed; only URL + SHA256 provenance is recorded.",
+ "caveat": "This manifest describes the retrieved set as listed in the indexed snapshot above. It is not a claim about documents absent from that index.",
  "entries": [
   {
    "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/punkty_swapowe_tms_en_2023_03_20.pdf",
@@ -16,31 +140,7 @@
    "valid_to": null,
    "units": null,
    "n_rows": null,
-   "error": "TmsParseError: cannot align 43 instrument(s) starting at 'NZDJPY.pro' with a long/short value block (next run: Px73)"
-  },
-  {
-   "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/punkty_swapowe_tms_pl_2025.04.28.pdf",
-   "filename": "punkty_swapowe_tms_pl_2025.04.28.pdf",
-   "sha256": "7ecc4c9337ff7a66e50b09265357b1d71e7f33cc2ad7c8062f8cac35777984fc",
-   "bytes": 1740218,
-   "status": "fail",
-   "valid_from": null,
-   "valid_to": null,
-   "units": null,
-   "n_rows": null,
-   "error": "TmsParseError: no 'Valid from <date> - <date>' header found"
-  },
-  {
-   "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/swap_points_tms_en_2024.09.30.pdf",
-   "filename": "swap_points_tms_en_2024.09.30.pdf",
-   "sha256": "8211d16ba6d5f8cc11ff231bc7987a78bd0a21552873ca1a0a0cf42ac0db59e7",
-   "bytes": 1492776,
-   "status": "fail",
-   "valid_from": null,
-   "valid_to": null,
-   "units": null,
-   "n_rows": null,
-   "error": "TmsParseError: cannot align 41 instrument(s) starting at 'EURTRY.pro' with a long/short value block (next run: Px41)"
+   "error": "TmsParseError: published spreadsheet error '#VALUE!': the affected rate is not present in the document and must not be inferred"
   },
   {
    "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/punkty_swapowe_tms_en_2023_03_27.pdf",
@@ -955,6 +1055,18 @@
    "error": null
   },
   {
+   "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/swap_points_tms_en_2024.09.30.pdf",
+   "filename": "swap_points_tms_en_2024.09.30.pdf",
+   "sha256": "8211d16ba6d5f8cc11ff231bc7987a78bd0a21552873ca1a0a0cf42ac0db59e7",
+   "bytes": 1492776,
+   "status": "ok",
+   "valid_from": "2024-09-30",
+   "valid_to": "2024-10-06",
+   "units": "percent_per_annum",
+   "n_rows": 75,
+   "error": null
+  },
+  {
    "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/swap_points_tms_en_2024.10.07.pdf",
    "filename": "swap_points_tms_en_2024.10.07.pdf",
    "sha256": "55f8453eb3c789142c53f8d39f9b371e3f6f81b11f3ddc411aa209bde0141852",
@@ -1298,6 +1410,18 @@
    "status": "ok",
    "valid_from": "2025-04-22",
    "valid_to": "2025-04-27",
+   "units": "percent_per_annum",
+   "n_rows": 70,
+   "error": null
+  },
+  {
+   "url": "https://www.oanda.com/eu-en/sites/default/files/document_files/punkty_swapowe_tms_pl_2025.04.28.pdf",
+   "filename": "punkty_swapowe_tms_pl_2025.04.28.pdf",
+   "sha256": "7ecc4c9337ff7a66e50b09265357b1d71e7f33cc2ad7c8062f8cac35777984fc",
+   "bytes": 1740218,
+   "status": "ok",
+   "valid_from": "2025-04-28",
+   "valid_to": "2025-05-04",
    "units": "percent_per_annum",
    "n_rows": 70,
    "error": null

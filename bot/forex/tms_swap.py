@@ -47,20 +47,40 @@ class SwapSchedule:
         return {r.instrument: r for r in self.rows}
 
 
+# English and Polish editions of the same document carry the same table under a
+# different validity caption.
 _HEADER = re.compile(
-    r"Valid\s+from\s*(\d{4})\.(\d{2})\.(\d{2})\s*\D{1,4}?\s*(\d{4})\.(\d{2})\.(\d{2})"
+    r"(?:Valid\s+from|Obowiązuje\s+w\s+dniach)\s*"
+    r"(\d{4})\.(\d{2})\.(\d{2})\s*\D{1,4}?\s*(\d{4})\.(\d{2})\.(\d{2})"
+)
+# Units are established POSITIVELY from the preamble. Absence of evidence is not
+# evidence of the legacy edition: `units` scales every rate, so an undetermined
+# preamble raises rather than defaulting.
+_PER_ANNUM = re.compile(r"per\s+annum|w\s+skali\s+roku", re.IGNORECASE)
+_LEGACY_UNITS = re.compile(r"percentage\s+points|punktach\s+procentowych", re.IGNORECASE)
+# Published spreadsheet errors (EN and PL locales): the rate simply is not in the
+# document and must never be inferred.
+_SPREADSHEET_ERROR = re.compile(
+    r"#(VALUE|REF|N/A|N/D|DIV/0|DZIEL/0|NAME|NAZWA|NUM|LICZBA|NULL|SPILL|CALC|ARG|ADR)[!?]",
+    re.IGNORECASE,
 )
 # Instrument symbols are upper-case with an optional lower-case account/section
 # suffix (.pro/.std/.stp/.cash). The upper-case base is what keeps prose lines
 # such as "Instrument" or "Long swap" out of the instrument runs.
 _INSTRUMENT = re.compile(r"^[A-Z0-9][A-Z0-9_\-]{1,14}(?:\.[a-z]{2,5})?$")
 _PERCENT = re.compile(r"^-?\d+[.,]\d+%$")
-_CAPTION_LONG = re.compile(r"^long swap$", re.IGNORECASE)
-_CAPTION_SHORT = re.compile(r"^short swap$", re.IGNORECASE)
+_CAPTION_LONG = re.compile(r"^(?:long swap|długa pozycja)$", re.IGNORECASE)
+_CAPTION_SHORT = re.compile(r"^(?:short swap|krótka pozycja)$", re.IGNORECASE)
 # Signatures of the equities/ETF table, which carries a third column ("additional
 # cost of keeping a short position open") and must never be read as long/short
 # pairs. The cut is only accepted when the discarded tail really is that table.
-_EQUITIES_SIGNATURE = re.compile(r"Equities|Additional cost|_CFD\.", re.IGNORECASE)
+_EQUITIES_SIGNATURE = re.compile(
+    r"Equities|Additional cost|Dodatkowy koszt|_CFD\.", re.IGNORECASE
+)
+# How far into the discarded tail the equities signature must appear. Scanning to
+# EOF would be satisfied by any document that has an equities table anywhere,
+# which is all of them - it would not test that the cut is at its start.
+_BOUNDARY_LOOKAHEAD_LINES = 8
 # The FOREX/indices/crypto table ends where the equities table begins; that one
 # carries a third column and must not be parsed as long/short pairs. The `Symbol`
 # column header is the reliable boundary: in the 2023 layout the "Equities CFD'S"
@@ -122,25 +142,66 @@ def parse_swap_schedule(
     text: str, *, source_url: Optional[str] = None, sha256: Optional[str] = None
 ) -> SwapSchedule:
     text = text.replace(chr(13) + chr(10), chr(10)).replace(chr(13), chr(10))
-    header = _HEADER.search(text)
-    if header is None:
-        raise TmsParseError("no 'Valid from <date> - <date>' header found")
+    text = text.replace(chr(12), chr(10))  # form feed = page break, not a glued line
+    headers = list(_HEADER.finditer(text))
+    if not headers:
+        raise TmsParseError("no 'Valid from <date> - <date>' validity header found")
+    intervals = {h.groups() for h in headers}
+    if len(intervals) > 1:
+        raise TmsParseError(
+            f"{len(intervals)} conflicting validity headers in one document; refusing to stamp "
+            "rows with a guessed week"
+        )
+    header = headers[0]
     g = [int(x) for x in header.groups()]
     valid_from = dt.date(g[0], g[1], g[2])
     valid_to = dt.date(g[3], g[4], g[5])
     if valid_to < valid_from:
         raise TmsParseError(f"validity interval ends before it starts: {valid_from}..{valid_to}")
 
-    units = "percent_per_annum" if "per annum" in text[: header.end() + 200] else "percentage_points"
+    # The preamble is everything from the header up to the first data value.
+    preamble = text[header.start():]
+    for m in re.finditer(r"^-?\d+[.,]\d+%$", preamble, re.MULTILINE):
+        preamble = preamble[: m.start()]
+        break
+    per_annum = bool(_PER_ANNUM.search(preamble))
+    legacy = bool(_LEGACY_UNITS.search(preamble))
+    if per_annum:
+        units = "percent_per_annum"
+    elif legacy:
+        units = "percentage_points"
+    else:
+        raise TmsParseError(
+            "cannot establish units from the preamble: neither an annualised marker "
+            "('per annum' / 'w skali roku') nor a legacy one ('percentage points' / "
+            "'punktach procentowych') is present"
+        )
 
     body = text[header.end():]
-    end = _SECTION_END.search(body) or _SECTION_END_FALLBACK.search(body)
+
+    # Scan for published spreadsheet errors across the WHOLE body, before any
+    # truncation, so a bad cell below the section cut cannot hide.
+    bad_cell = _SPREADSHEET_ERROR.search(body)
+    if bad_cell is not None:
+        raise TmsParseError(
+            f"published spreadsheet error {bad_cell.group(0)!r}: the affected rate is not "
+            "present in the document and must not be inferred"
+        )
+
+    boundaries = list(_SECTION_END.finditer(body))
+    if len(boundaries) > 1:
+        raise TmsParseError(
+            f"{len(boundaries)} 'Symbol' section boundaries found; the equities boundary is "
+            "ambiguous and the table would be truncated at a guess"
+        )
+    end = boundaries[0] if boundaries else _SECTION_END_FALLBACK.search(body)
     if end is not None:
-        tail = body[end.start():]
-        if not _EQUITIES_SIGNATURE.search(tail):
+        tail_lines = [ln for ln in body[end.start():].split("\n") if ln.strip()]
+        window = "\n".join(tail_lines[:_BOUNDARY_LOOKAHEAD_LINES])
+        if not _EQUITIES_SIGNATURE.search(window):
             raise TmsParseError(
-                f"unexpected section boundary {tail.splitlines()[0]!r}: the discarded tail does "
-                "not look like the equities table"
+                f"unexpected section boundary {tail_lines[0]!r}: the equities table does not "
+                f"start within {_BOUNDARY_LOOKAHEAD_LINES} lines of the cut"
             )
         body = body[: end.start()]
 
