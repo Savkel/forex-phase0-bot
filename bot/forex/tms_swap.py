@@ -10,15 +10,11 @@ The parser is fail-closed by design: a block it cannot fully align raises
 `TmsParseError` rather than silently dropping instruments. A silent omission
 would look exactly like an instrument that was not quoted that week.
 
-KNOWN OPEN LIMITATION - do not treat output as verified until closed. If a text
-layer emits two symbol columns adjacently (`I,I,P,P`) rather than interleaved
-(`I,P,I,P`), the two runs merge into one `I` run and one `2k` value run. That is
-structurally identical to a legitimate continuation block, so the split at the
-`2 * k` branch below silently pairs each instrument with another instrument's
-rate. None of the 171 archive documents produces that ordering under the current
-extractor, but the run-kind/length abstraction cannot detect it. Closing this
-requires an independent corroboration of block boundaries from PDF layout
-coordinates (x-clustering of columns), which this module does not yet do.
+Symbol/rate pairing is NOT decided here. `parse_swap_document` cross-checks this
+flattened parse against `bot.forex.tms_layout`, which establishes the association
+from PDF layout geometry, and refuses on any disagreement. Text order alone can
+silently mispair (two symbol columns landing adjacently merge into one run), so
+the geometric corroboration is what makes the output trustworthy.
 """
 from __future__ import annotations
 
@@ -151,6 +147,13 @@ def _runs(lines: Sequence[str]) -> List[Tuple[str, List[str]]]:
 def parse_swap_schedule(
     text: str, *, source_url: Optional[str] = None, sha256: Optional[str] = None
 ) -> SwapSchedule:
+    """Parse the FLATTENED TEXT layer. NOT authoritative for symbol/rate pairing.
+
+    Its pairing follows token order and can be silently wrong. Callers ingesting
+    real documents must use `parse_swap_document`, which corroborates every row
+    against layout geometry. This function is exposed for text-layer unit tests
+    and as an implementation detail of `parse_swap_document`.
+    """
     text = text.replace(chr(13) + chr(10), chr(10)).replace(chr(13), chr(10))
     text = text.replace(chr(12), chr(10))  # form feed = page break, not a glued line
     headers = list(_HEADER.finditer(text))
@@ -344,3 +347,41 @@ def resolve_duplicates(
                 f"{prior.source_url or prior.sha256} vs {s.source_url or s.sha256}"
             )
     return out
+
+
+def require_layout_agreement(text_rows, layout_rows) -> None:
+    """Refuse unless the flattened-text pairing matches the coordinate-anchored one.
+
+    The text layer cannot establish symbol/rate association on its own: its
+    pairing follows token order, so a reordered extraction yields wrong pairs
+    that look entirely normal. Geometry is the independent authority; this gate
+    is what stops the text parser deciding a pairing by itself.
+    """
+    from_text = {r.instrument: (r.long_pct, r.short_pct) for r in text_rows}
+    from_layout = {r.instrument: (r.long_pct, r.short_pct) for r in layout_rows}
+    mismatched = sorted(
+        k for k in set(from_text) | set(from_layout) if from_text.get(k) != from_layout.get(k)
+    )
+    if mismatched:
+        example = mismatched[0]
+        raise TmsParseError(
+            f"text and layout extractions disagree for {len(mismatched)} instrument(s); "
+            f"e.g. {example!r}: text={from_text.get(example)} layout={from_layout.get(example)}"
+        )
+
+
+def parse_swap_document(
+    data: bytes, *, source_url: Optional[str] = None, sha256: Optional[str] = None
+) -> SwapSchedule:
+    """Parse a swap-point PDF, with symbol/rate pairing corroborated by geometry."""
+    import io as _io
+
+    from pdfminer.high_level import extract_text as _extract_text
+
+    from bot.forex.tms_layout import rows_from_tokens, tokens_from_pdf
+
+    schedule = parse_swap_schedule(
+        _extract_text(_io.BytesIO(data)), source_url=source_url, sha256=sha256
+    )
+    require_layout_agreement(schedule.rows, rows_from_tokens(tokens_from_pdf(data)))
+    return schedule

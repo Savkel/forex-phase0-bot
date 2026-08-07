@@ -1,10 +1,10 @@
 {
  "source": "OANDA TMS Brokers S.A. public document archive (https://www.oanda.com/eu-en/documents)",
  "index_snapshot_sha256": "a929d3e81bb4c2ac1d251ac9eac34210dedd956b1d49cde6c64a431eb0c2bb2b",
- "retrieved_utc": "2026-08-07T18:00:26+00:00",
- "parser": "bot/forex/tms_swap.py",
- "parser_sha256": "fd2780900695c59b07fca08c5fc6dec2b05ce2b7a24e7a31bd37d18e97933734",
- "git_head_at_generation": "4ba893a6f868f8b466bcef868ba61aab88dacc8e",
+ "retrieved_utc": "2026-08-07T21:15:40+00:00",
+ "parser": "bot/forex/tms_swap.parse_swap_document (text) + bot/forex/tms_layout (coordinate anchors)",
+ "parser_sha256": "8b5798ba657140ca1d0202bf2b6d58a5f7fb3477821f93ef755010dbda0b6d2a",
+ "git_head_at_generation": "a4c7cdd0928a9365906944e02ac6ab539cec8879",
  "documents_in_index": 171,
  "parsed_ok": 170,
  "excluded": [
@@ -2407,5 +2407,11 @@
    "error": null
   }
  ],
- "known_open_limitation": "Merged symbol runs: if a text layer emits two symbol columns adjacently (I,I,P,P) instead of interleaved (I,P,I,P), the runs merge and the 2k split silently pairs each instrument with another instrument's rate. No archive document produces that ordering under the current extractor, but the run-kind/length abstraction cannot detect it. Closing it requires corroborating block boundaries from PDF layout coordinates. Until then this dataset is NOT certified for strategy use."
+ "layout_parser_sha256": "077eb0f9b24e8be5bc67a966458ba2f7ce8d7edea0c53eab3171e8abcf04889a",
+ "pairing_authority": "Symbol/rate association is established from PDF layout geometry (column header anchors + y-row clustering). The flattened text extraction is parsed independently and every instrument must agree; any disagreement raises.",
+ "reproducibility_check": {
+  "cells_compared": 15165,
+  "changed_rate_mappings": 0,
+  "note": "Every instrument-week rate from the earlier text-only run was reproduced exactly by the geometry-corroborated run."
+ }
 }
