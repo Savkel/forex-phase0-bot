@@ -1,0 +1,152 @@
+{
+ "_note": "HARD PRE-RUN GATE. Stage A is BLOCKED until every routed leg below has verified H1 bid+ask coverage over the required window AND a common book-level execution timestamp exists for every evaluable rebalance. Missing coverage blocks BEFORE any performance is computed; no routed leg may be dropped, substituted or re-routed after results. Nothing here has been fetched.",
+ "preregistration": "prereg/2026-08-08-tms-carry-kill-test-prereg.md",
+ "hybrid_warning": "Financing is OANDA TMS Brokers S.A. (EU) '.pro'. Prices/spreads would come from the OANDA v20 practice environment, a different division with different instrument names and different spreads. Stage A is explicitly a HYBRID approximation and is never a replication of a .pro account.",
+ "environment": "api-fxpractice.oanda.com (OANDA v20 practice)",
+ "granularity": "H1",
+ "price_component": "BA (bid and ask candles)",
+ "alignment": {
+  "alignmentTimezone": "UTC",
+  "dailyAlignment": 0
+ },
+ "required_window_utc": [
+  "2023-04-03T00:00:00Z",
+  "2026-08-05T00:00:00Z"
+ ],
+ "routed_legs": [
+  {
+   "tms_instrument": "AUDUSD.pro",
+   "v20_instrument": "AUD_USD",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "AUD_USD__H4__BA.csv",
+    "AUD_USD__M15__BA__a0__w1388959200000-1782506700000.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURHUF.pro",
+   "v20_instrument": "EUR_HUF",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURNOK.pro",
+   "v20_instrument": "EUR_NOK",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURPLN.pro",
+   "v20_instrument": "EUR_PLN",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURSEK.pro",
+   "v20_instrument": "EUR_SEK",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURTRY.pro",
+   "v20_instrument": "EUR_TRY",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURUSD.pro",
+   "v20_instrument": "EUR_USD",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "EUR_USD__H4__BA.csv",
+    "EUR_USD__M15__BA__a0__w1388959200000-1782506700000.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURZAR.pro",
+   "v20_instrument": "EUR_ZAR",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "GBPUSD.pro",
+   "v20_instrument": "GBP_USD",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "GBP_USD__H4__BA.csv",
+    "GBP_USD__M15__BA__a0__w1388959200000-1782506700000.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "NZDUSD.pro",
+   "v20_instrument": "NZD_USD",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "NZD_USD__H4__BA.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDCAD.pro",
+   "v20_instrument": "USD_CAD",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "USD_CAD__H4__BA.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDCHF.pro",
+   "v20_instrument": "USD_CHF",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "USD_CHF__H4__BA.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDCZK.pro",
+   "v20_instrument": "USD_CZK",
+   "cache_status": "absent",
+   "existing_files": [],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDJPY.pro",
+   "v20_instrument": "USD_JPY",
+   "cache_status": "cached_other_granularity",
+   "existing_files": [
+    "USD_JPY__H4__BA.csv",
+    "USD_JPY__M15__BA__a0__w1388959200000-1782506700000.csv"
+   ],
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  }
+ ],
+ "n_routed_legs": 14,
+ "readiness": "BLOCKED - 0 of 14 routed legs have verified H1 bid/ask coverage",
+ "common_execution_timestamp_requirement": "For EVERY instant at which the book transacts - tau_j for each evaluable rebalance AND tau_{j+1} for each of them, including the 10 gap-boundary exits and the terminal exit at 2026-08-03 - the first H1 timestamp at or after the target at which ALL 14 routed legs have complete bid+ask, within 48h. No asynchronous fills.",
+ "price_component_field": "H1 candle OPEN for all fills and returns: mid=(bid_open+ask_open)/2, buys at ask_open, sells at bid_open. The close is never used - it would consume an hour of information after the decision instant."
+}
