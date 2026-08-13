@@ -1,5 +1,5 @@
 {
- "_note": "ROUTING-CORRECTED HARD PRE-RUN GATE. No cache inspection or price access occurred during this correction. BLOCKED until every emitted leg and common transaction instant passes the unchanged rule.",
+ "_note": "ROUTING-CORRECTED HARD PRE-RUN GATE. Pre-performance readiness verified without strategy-performance computation.",
  "preregistration": "prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md",
  "supersedes": "prereg/2026-08-14-tms-carry-no-try-price-readiness.json",
  "prior_design_readiness_disposition": "SUPERSEDED_UNEXECUTED",
@@ -20,96 +20,115 @@
   {
    "tms_instrument": "AUDUSD.pro",
    "v20_instrument": "AUD_USD",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "REUSED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "1935c5b9b2bfba36db871127507aa8783218f83c391d227b2935cd51909c667c"
   },
   {
    "tms_instrument": "EURHUF.pro",
    "v20_instrument": "EUR_HUF",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "REUSED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "fa0b094b2a51090983936e2188189577f4175533d657f0a849e0d53a7c35a099"
   },
   {
    "tms_instrument": "EURNOK.pro",
    "v20_instrument": "EUR_NOK",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "REUSED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "e0a0538837308bf155ced5c43bd6ef9ae497cd81ee7659858859c3ab17fe2998"
   },
   {
    "tms_instrument": "EURPLN.pro",
    "v20_instrument": "EUR_PLN",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "REUSED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "9574ab9b949d8b30262909306e869e9c6b03ce3d448b2a74879829090ea06caa"
   },
   {
    "tms_instrument": "EURSEK.pro",
    "v20_instrument": "EUR_SEK",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "REUSED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "78a732c412fe8288f3bf7a6217a1a79b4a52330c44ad1499b6368bfc9fa69ac1"
   },
   {
    "tms_instrument": "EURUSD.pro",
    "v20_instrument": "EUR_USD",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "69eb5ae48b2b2bf91a8f23608fdac24fe3f303699eee1403c511c52d25c263bc"
   },
   {
    "tms_instrument": "EURZAR.pro",
    "v20_instrument": "EUR_ZAR",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "4e5b1479ab19a4483881446977467c56c8215e95adab7aa1dae2e27766f94dd1"
   },
   {
    "tms_instrument": "GBPUSD.pro",
    "v20_instrument": "GBP_USD",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "5a745800892dc3df1b43f9722652c9ebf65a82ea25fa63bd6fab907104da607e"
   },
   {
    "tms_instrument": "NZDUSD.pro",
    "v20_instrument": "NZD_USD",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "9d71e931e8c71ed8c5a7129f7e57688cc966fd3c8a31c22d1a18a8aaed46f38e"
   },
   {
    "tms_instrument": "USDCAD.pro",
    "v20_instrument": "USD_CAD",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "515c131f1ef6a8193b6e4877edbbf5d8a1349c585d450786c48e7861f2786e22"
   },
   {
    "tms_instrument": "USDCHF.pro",
    "v20_instrument": "USD_CHF",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "3c8249eb8a2db2ab544d1b7b7cb11c7c996c3f3d2a48022ee695c9aa42e0b2c4"
   },
   {
    "tms_instrument": "USDCZK.pro",
    "v20_instrument": "USD_CZK",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "f673cb336b5d3b6f5d48e56668bc85134fbf63a0f901980c24ae2b08ea186bc0"
   },
   {
    "tms_instrument": "USDJPY.pro",
    "v20_instrument": "USD_JPY",
-   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
-   "h1_ba_coverage_verified": false,
-   "sha256": null
+   "cache_status": "NEWLY_FETCHED_EXACT_WINDOW",
+   "h1_ba_coverage_verified": true,
+   "sha256": "5c86bf3f6fce167303d83ebe5dceeccfb127c6d4862ab45ee2832e32d81875d8"
   }
  ],
  "n_routed_legs": 13,
- "readiness": "BLOCKED - 0 of 13 routed legs verified under revised design",
- "common_execution_timestamp_requirement": "At every transaction target from the frozen mask, one common H1 timestamp at or after target with complete bid+ask for all routed legs, within 48h; no asynchronous fills."
+ "readiness": "PASS - 13 of 13 routed legs verified under revised design",
+ "readiness_summary": {
+  "cache_reused": 5,
+  "newly_fetched": 8,
+  "blocked": 0,
+  "transaction_instants_covered": 168,
+  "transaction_instants_required": 168
+ },
+ "validated_range_utc": [
+  "2023-04-03T00:00:00Z",
+  "2026-08-05T00:00:00Z"
+ ],
+ "validation_contract_applies_to_each_routed_leg": {
+  "source": "OANDA v20 practice",
+  "granularity": "H1",
+  "components": "bid+ask",
+  "field": "OPEN",
+  "coverage": "PASS",
+  "required_common_transaction_instants": "168 of 168 PASS"
+ },
+ "common_execution_timestamp_requirement": "PASS: every one of 168 frozen transaction targets resolves to the first eligible common H1 timestamp at or after its nominal target with complete bid+ask OPEN for all 13 routed legs; each mechanical delay is within 48h, with no arbitrary later selection or asynchronous fills."
 }
