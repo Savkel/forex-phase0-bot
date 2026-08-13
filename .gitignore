@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 data/forex_ohlcv/
+data/tms_swap_archive/
 reports/
 .env
 # local Claude governance docs (not part of the published bot)
