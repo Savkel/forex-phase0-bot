@@ -13,7 +13,7 @@ Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from 
 ## GOVERNANCE
 
 - Permanent constitution: `CLAUDE.md`
-- Active specification: `prereg/2026-08-14-tms-carry-no-try-kill-test-prereg.md`
+- Active specification: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md`
 - Emitted locked artifacts: the universe, mask, and price-readiness JSON files named below.
 - Agent entrypoint: `AGENTS.md`
 
@@ -31,13 +31,13 @@ Direct OANDA TMS `.pro` cross-sectional carry. Stage A is a historical DEVELOPME
 
 ## ACTIVE LOCKED SPEC
 
-- Prior preregistration: `prereg/2026-08-08-tms-carry-kill-test-prereg.md` — `SUPERSEDED_UNEXECUTED`; its EUR_TRY readiness shortfall produced no performance result.
-- Active preregistration: `prereg/2026-08-14-tms-carry-no-try-kill-test-prereg.md`
-- Universe: `prereg/2026-08-14-tms-carry-no-try-universe.json`
-- Financing/data-availability mask: `prereg/2026-08-14-tms-carry-no-try-mask.json`
-- Price readiness: `prereg/2026-08-14-tms-carry-no-try-price-readiness.json`
+- Prior preregistrations: original `2026-08-08` and no-TRY EUR_GBP-execution commit/spec `2c81d140` — both `SUPERSEDED_UNEXECUTED`; neither produced a performance result.
+- Active preregistration: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md`
+- Universe: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-universe.json`
+- Financing/data-availability mask: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-mask.json`
+- Price readiness: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json`
 
-Frozen revised essentials: certified source remains intact; active grid excludes TRY and has 35 financing pairs, 14 currencies, `k=4`, and 13 cost-blind routed price legs. GBP exposure genuinely routes through `EUR_GBP` plus `EUR_USD`; `GBP_USD` is not an execution leg. The causal mask remains 167 defined/157 evaluable rebalances; common OANDA v20 practice H1 bid/ask timestamps and candle OPEN semantics are unchanged. Historical execution remains explicitly hybrid: TMS `.pro` financing with v20 practice prices.
+Frozen revised essentials: certified source remains intact; active grid excludes TRY and has 35 financing pairs, 14 currencies, `k=4`, and 13 cost-blind routed price legs. GBP routes directly and exclusively through `GBP_USD`; `EUR_GBP` remains financing evidence but is not an execution leg. The causal mask remains 167 defined/157 evaluable rebalances; common OANDA v20 practice H1 bid/ask timestamps and candle OPEN semantics are unchanged. Historical execution remains explicitly hybrid: TMS `.pro` financing with v20 practice prices.
 
 ## CERTIFIED INFRASTRUCTURE
 
@@ -53,7 +53,7 @@ Revised price readiness is reset and BLOCKED at 0/13 legs. No cache was inspecte
 
 ## NEXT GATE
 
-Revised no-TRY Stage-A price readiness under the newly frozen 13-leg routing set. This is a separate approval gate; no strategy performance may run.
+No-TRY direct-GBP Stage-A price readiness under the corrected 13-leg routing set. This is a separate approval gate; no strategy performance may run.
 
 ## MEMORY SYNCHRONIZATION
 

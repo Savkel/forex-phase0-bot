@@ -1,0 +1,352 @@
+{
+ "_note": "FINAL ROUTING-CORRECTED FROZEN Stage-A artifact. TRY excluded; GBP routes directly through GBPUSD by explicit human architectural choice before performance access. EURGBP remains in the financing observation grid only.",
+ "preregistration": "prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md",
+ "supersedes": "prereg/2026-08-14-tms-carry-no-try-kill-test-prereg.md",
+ "prior_disposition": "SUPERSEDED_UNEXECUTED",
+ "provenance": {
+  "financing_source": "OANDA TMS Brokers S.A. public document archive (https://www.oanda.com/eu-en/documents)",
+  "index_snapshot_sha256": "a929d3e81bb4c2ac1d251ac9eac34210dedd956b1d49cde6c64a431eb0c2bb2b",
+  "retrieved_utc": "2026-08-07T21:15:40+00:00",
+  "tms_swap_sha256": "8b5798ba657140ca1d0202bf2b6d58a5f7fb3477821f93ef755010dbda0b6d2a",
+  "tms_layout_sha256": "077eb0f9b24e8be5bc67a966458ba2f7ce8d7edea0c53eab3171e8abcf04889a",
+  "documents_parsed": 170,
+  "distinct_printed_intervals": 169,
+  "signal_intervals_after_end_date_collapse": 168
+ },
+ "continuous_pro_fx_pairs_source": [
+  "AUDCAD.pro",
+  "AUDCHF.pro",
+  "AUDJPY.pro",
+  "AUDNZD.pro",
+  "AUDUSD.pro",
+  "CADCHF.pro",
+  "CADJPY.pro",
+  "CHFJPY.pro",
+  "CHFPLN.pro",
+  "EURAUD.pro",
+  "EURCAD.pro",
+  "EURCHF.pro",
+  "EURCZK.pro",
+  "EURGBP.pro",
+  "EURHUF.pro",
+  "EURJPY.pro",
+  "EURNOK.pro",
+  "EURNZD.pro",
+  "EURPLN.pro",
+  "EURSEK.pro",
+  "EURTRY.pro",
+  "EURUSD.pro",
+  "EURZAR.pro",
+  "GBPAUD.pro",
+  "GBPCAD.pro",
+  "GBPCHF.pro",
+  "GBPJPY.pro",
+  "GBPNZD.pro",
+  "GBPPLN.pro",
+  "GBPUSD.pro",
+  "NZDJPY.pro",
+  "NZDUSD.pro",
+  "USDCAD.pro",
+  "USDCHF.pro",
+  "USDCZK.pro",
+  "USDJPY.pro"
+ ],
+ "investable_financing_pairs": [
+  "AUDCAD.pro",
+  "AUDCHF.pro",
+  "AUDJPY.pro",
+  "AUDNZD.pro",
+  "AUDUSD.pro",
+  "CADCHF.pro",
+  "CADJPY.pro",
+  "CHFJPY.pro",
+  "CHFPLN.pro",
+  "EURAUD.pro",
+  "EURCAD.pro",
+  "EURCHF.pro",
+  "EURCZK.pro",
+  "EURGBP.pro",
+  "EURHUF.pro",
+  "EURJPY.pro",
+  "EURNOK.pro",
+  "EURNZD.pro",
+  "EURPLN.pro",
+  "EURSEK.pro",
+  "EURUSD.pro",
+  "EURZAR.pro",
+  "GBPAUD.pro",
+  "GBPCAD.pro",
+  "GBPCHF.pro",
+  "GBPJPY.pro",
+  "GBPNZD.pro",
+  "GBPPLN.pro",
+  "GBPUSD.pro",
+  "NZDJPY.pro",
+  "NZDUSD.pro",
+  "USDCAD.pro",
+  "USDCHF.pro",
+  "USDCZK.pro",
+  "USDJPY.pro"
+ ],
+ "currencies": [
+  "AUD",
+  "CAD",
+  "CHF",
+  "CZK",
+  "EUR",
+  "GBP",
+  "HUF",
+  "JPY",
+  "NOK",
+  "NZD",
+  "PLN",
+  "SEK",
+  "USD",
+  "ZAR"
+ ],
+ "N": 14,
+ "k_per_leg": 4,
+ "numeraire": "USD",
+ "target_weight_convention": {
+  "sum_w": 0,
+  "sum_abs_w": 2,
+  "long_count": 4,
+  "short_count": 4,
+  "weight_per_selected_currency": 0.25
+ },
+ "pair_incidence_degree": {
+  "AUD": 7,
+  "CAD": 6,
+  "CHF": 7,
+  "CZK": 2,
+  "EUR": 13,
+  "GBP": 8,
+  "HUF": 1,
+  "JPY": 7,
+  "NOK": 1,
+  "NZD": 5,
+  "PLN": 3,
+  "SEK": 1,
+  "USD": 8,
+  "ZAR": 1
+ },
+ "routes": {
+  "AUD": {
+   "kind": "direct",
+   "legs": [
+    [
+     "AUDUSD.pro",
+     1
+    ]
+   ]
+  },
+  "CAD": {
+   "kind": "direct",
+   "legs": [
+    [
+     "USDCAD.pro",
+     -1
+    ]
+   ]
+  },
+  "CHF": {
+   "kind": "direct",
+   "legs": [
+    [
+     "USDCHF.pro",
+     -1
+    ]
+   ]
+  },
+  "CZK": {
+   "kind": "direct",
+   "legs": [
+    [
+     "USDCZK.pro",
+     -1
+    ]
+   ]
+  },
+  "EUR": {
+   "kind": "direct",
+   "legs": [
+    [
+     "EURUSD.pro",
+     1
+    ]
+   ]
+  },
+  "GBP": {
+   "kind": "direct",
+   "legs": [
+    [
+     "GBPUSD.pro",
+     1
+    ]
+   ]
+  },
+  "HUF": {
+   "kind": "via_EUR",
+   "legs": [
+    [
+     "EURHUF.pro",
+     -1
+    ],
+    [
+     "EURUSD.pro",
+     1
+    ]
+   ]
+  },
+  "JPY": {
+   "kind": "direct",
+   "legs": [
+    [
+     "USDJPY.pro",
+     -1
+    ]
+   ]
+  },
+  "NOK": {
+   "kind": "via_EUR",
+   "legs": [
+    [
+     "EURNOK.pro",
+     -1
+    ],
+    [
+     "EURUSD.pro",
+     1
+    ]
+   ]
+  },
+  "NZD": {
+   "kind": "direct",
+   "legs": [
+    [
+     "NZDUSD.pro",
+     1
+    ]
+   ]
+  },
+  "PLN": {
+   "kind": "via_EUR",
+   "legs": [
+    [
+     "EURPLN.pro",
+     -1
+    ],
+    [
+     "EURUSD.pro",
+     1
+    ]
+   ]
+  },
+  "SEK": {
+   "kind": "via_EUR",
+   "legs": [
+    [
+     "EURSEK.pro",
+     -1
+    ],
+    [
+     "EURUSD.pro",
+     1
+    ]
+   ]
+  },
+  "USD": {
+   "kind": "numeraire",
+   "legs": []
+  },
+  "ZAR": {
+   "kind": "via_EUR",
+   "legs": [
+    [
+     "EURZAR.pro",
+     -1
+    ],
+    [
+     "EURUSD.pro",
+     1
+    ]
+   ]
+  }
+ },
+ "routing_proof": {
+  "pair_order": [
+   "AUDUSD.pro",
+   "EURHUF.pro",
+   "EURNOK.pro",
+   "EURPLN.pro",
+   "EURSEK.pro",
+   "EURUSD.pro",
+   "EURZAR.pro",
+   "GBPUSD.pro",
+   "NZDUSD.pro",
+   "USDCAD.pro",
+   "USDCHF.pro",
+   "USDCZK.pro",
+   "USDJPY.pro"
+  ],
+  "basis": "For every active c != USD, routed unit exposure equals e_c - e_USD; linearity proves all zero-sum targets.",
+  "verified": true
+ },
+ "representation_gate": {
+  "thresholds": {
+   "min_r2": 0.9,
+   "max_rel_eps": 0.25
+  },
+  "full_grid": {
+   "rows": 35,
+   "currencies": 14,
+   "min_r2": 0.9998809771364597,
+   "max_rel_eps": 0.04310300855494444,
+   "worst_date": "2023-03-27",
+   "verdict": "PASS"
+  },
+  "over_identified_subgraph": {
+   "rows": 31,
+   "currencies": 10,
+   "currency_list": [
+    "AUD",
+    "CAD",
+    "CHF",
+    "CZK",
+    "EUR",
+    "GBP",
+    "JPY",
+    "NZD",
+    "PLN",
+    "USD"
+   ],
+   "min_r2": 0.9998157238143299,
+   "max_rel_eps": 0.050378839981634956,
+   "worst_date": "2023-03-27",
+   "verdict": "PASS",
+   "excluded_degree_1_currencies": [
+    "HUF",
+    "NOK",
+    "SEK",
+    "ZAR"
+   ]
+  },
+  "dates_breaching": 0
+ },
+ "persistence_diagnostics": {
+  "_role": "FINANCING-ONLY DIAGNOSTIC; not a gate or effective sample size.",
+  "consecutive_kendall_tau_mean": 0.9681516088701719,
+  "consecutive_kendall_tau_min": 0.8021978021978022,
+  "selected_set_overlap_mean": 7.7604790419161676,
+  "selected_set_overlap_min": 7,
+  "distinct_selected_set_states": 13,
+  "always_long": [
+   "HUF",
+   "ZAR"
+  ],
+  "always_short": [
+   "CHF",
+   "JPY"
+  ]
+ }
+}
