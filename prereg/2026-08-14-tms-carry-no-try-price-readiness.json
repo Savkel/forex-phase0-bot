@@ -1,0 +1,115 @@
+{
+ "_note": "REVISED HARD PRE-RUN GATE. No cache inspection or price access occurred during this revision. BLOCKED until every emitted leg and common transaction instant passes the unchanged rule.",
+ "preregistration": "prereg/2026-08-14-tms-carry-no-try-kill-test-prereg.md",
+ "supersedes": "prereg/2026-08-08-tms-carry-price-readiness.json",
+ "prior_design_readiness_disposition": "SUPERSEDED_UNEXECUTED",
+ "hybrid_warning": "Financing is OANDA TMS .pro; execution prices will be OANDA v20 practice. This is a HYBRID approximation, never .pro replication.",
+ "environment": "api-fxpractice.oanda.com (OANDA v20 practice)",
+ "granularity": "H1",
+ "price_component": "BA (bid and ask candles)",
+ "price_field": "OPEN",
+ "alignment": {
+  "alignmentTimezone": "UTC",
+  "dailyAlignment": 0
+ },
+ "required_window_utc": [
+  "2023-04-03T00:00:00Z",
+  "2026-08-05T00:00:00Z"
+ ],
+ "routed_legs": [
+  {
+   "tms_instrument": "AUDUSD.pro",
+   "v20_instrument": "AUD_USD",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURGBP.pro",
+   "v20_instrument": "EUR_GBP",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURHUF.pro",
+   "v20_instrument": "EUR_HUF",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURNOK.pro",
+   "v20_instrument": "EUR_NOK",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURPLN.pro",
+   "v20_instrument": "EUR_PLN",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURSEK.pro",
+   "v20_instrument": "EUR_SEK",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURUSD.pro",
+   "v20_instrument": "EUR_USD",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "EURZAR.pro",
+   "v20_instrument": "EUR_ZAR",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "NZDUSD.pro",
+   "v20_instrument": "NZD_USD",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDCAD.pro",
+   "v20_instrument": "USD_CAD",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDCHF.pro",
+   "v20_instrument": "USD_CHF",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDCZK.pro",
+   "v20_instrument": "USD_CZK",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  },
+  {
+   "tms_instrument": "USDJPY.pro",
+   "v20_instrument": "USD_JPY",
+   "cache_status": "NOT_ASSESSED_IN_REVISION_GATE",
+   "h1_ba_coverage_verified": false,
+   "sha256": null
+  }
+ ],
+ "n_routed_legs": 13,
+ "readiness": "BLOCKED - 0 of 13 routed legs verified under revised design",
+ "common_execution_timestamp_requirement": "At every transaction target from the frozen mask, one common H1 timestamp at or after target with complete bid+ask for all routed legs, within 48h; no asynchronous fills."
+}
