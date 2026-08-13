@@ -4,9 +4,9 @@
 
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
-- Last state verification: 2026-08-13, before this handoff repair.
-- Project-state commit observed before the handoff update: `0926f557f91355042dd48322f0ac096fa5a93fe7`.
-- Push status observed then: local `main` was 9 ahead / 0 behind `origin/main`; commits were unpushed.
+- Last state verification: 2026-08-14, before this handoff update.
+- Project-state commit observed before the handoff update: `36a1c26bde1a1bf14508797e53cafae449a6775f`.
+- Push status observed then: local `main` was 11 ahead / 0 behind `origin/main`; commits were unpushed.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -44,7 +44,7 @@ TMS ingestion is fail-closed and certified through flattened-text/layout-geometr
 
 ## DATA STATE
 
-Certified financing provenance and emitted artifacts exist. The raw corpus, parsed output, and generation scripts remain under `C:\Users\Savvas\AppData\Local\Temp\claude\E--Claude-forex-bot\6f68a067-3cdf-4b0c-8ea3-b6a846c47d3c\scratchpad\` (verified present 2026-08-13: 183 PDFs, 7 archive ZIPs, `parsed_all.json`, and named scripts). This session-temporary path must not silently become a permanent dependency. Raw data remains local and gitignored; no relocation occurred.
+The certified corpus and reproducibility aids now have a stable project-local, gitignored home at `data/tms_swap_archive/`. Relocation was verified network-free and byte-preserving: all 226 source files were classified; 222 retained source records mapped exactly by size and SHA-256 to 218 unique destination files; all 171 manifest-backed documents matched committed provenance; and `parsed_all.json` was copied byte-for-byte. The old Claude session-temporary corpus remains intact at `C:\Users\Savvas\AppData\Local\Temp\claude\E--Claude-forex-bot\6f68a067-3cdf-4b0c-8ea3-b6a846c47d3c\scratchpad\`, but it is no longer the required working dependency. Raw and derived data remain local and gitignored.
 
 ## CURRENT BLOCKER
 
@@ -52,7 +52,7 @@ Frozen price readiness is blocked: 0/14 routed legs have verified H1 bid/ask cov
 
 ## NEXT GATE
 
-Stable relocation of the certified temporary TMS corpus to a project-local gitignored location, without refetching or reparsing.
+Stage-A price readiness under the frozen specification. Historical OANDA access requires explicit human approval; no access has been authorized or performed by this checkpoint.
 
 ## MEMORY SYNCHRONIZATION
 
