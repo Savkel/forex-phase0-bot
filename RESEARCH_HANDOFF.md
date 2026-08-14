@@ -5,8 +5,8 @@
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
 - Last state verification: 2026-08-14, before this handoff update.
-- Project-state commit observed before the handoff update: `1b2c8c12b13679635de0314575ae65ccfd235a4a`.
-- Push status observed then: local `main` was 21 ahead / 0 behind `origin/main`; commits were unpushed.
+- Project-state commit observed before the handoff update: `fac1ccec40f1b86c7663f206996ae5e465225251`.
+- Push status observed then: local `main` was 27 ahead / 0 behind `origin/main`; commits were unpushed.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -36,12 +36,14 @@ Direct OANDA TMS `.pro` cross-sectional carry. Stage A is a historical DEVELOPME
 - Universe: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-universe.json`
 - Financing/data-availability mask: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-mask.json`
 - Price readiness: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json`
+- Financing readiness: `prereg/2026-08-14-tms-carry-financing-readiness.json`
+- Persistent Stage-A lineage: `prereg/2026-08-14-tms-carry-stage-a-lineage.json`
 
 Frozen revised essentials: certified source remains intact; active grid excludes TRY and has 35 financing pairs, 14 currencies, `k=4`, and 13 cost-blind routed price legs. GBP routes directly and exclusively through `GBP_USD`; `EUR_GBP` remains financing evidence but is not an execution leg. The causal mask remains 167 defined/157 evaluable rebalances; common OANDA v20 practice H1 bid/ask timestamps and candle OPEN semantics are unchanged. Historical execution remains explicitly hybrid: TMS `.pro` financing with v20 practice prices.
 
 ## CERTIFIED INFRASTRUCTURE
 
-TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. The completed Stage-A implementation and immutable pre-run freeze are at `1b2c8c12b13679635de0314575ae65ccfd235a4a`; canonical freeze-manifest SHA-256 `e1424d47245a933bdd775073c53be0c8c5061e735491611f39880af34f5991c0`. Latest full-suite verification: 561 passed on 2026-08-14.
+TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. The corrected Stage-A implementation is frozen by local commit `fac1ccec40f1b86c7663f206996ae5e465225251`; canonical freeze-manifest SHA-256 `53d6c807df2c1682950ad7bf18f7c9c09d64520e6a2d4b0c331713fa2e8ec991`. Latest full-suite verification: 576 passed on 2026-08-14.
 
 ## DATA STATE
 
@@ -49,13 +51,15 @@ The certified corpus and reproducibility aids now have a stable project-local, g
 
 Price readiness is certified in the active committed artifact: all 13 routed OANDA v20 practice H1 bid/ask caches cover the frozen range with deterministic SHA-256 evidence (5 reused, 8 newly fetched). All 168 frozen transaction targets resolve to the first eligible synchronous all-leg H1 OPEN timestamp; maximum mechanical closure delay was 22 hours. Raw price caches remain local and gitignored.
 
+Financing readiness is certified under the venue-evidenced held-leg model: evidence identity `7e93e702816833ba5ed2de7432c1476af576186fb52da462de2e4c48a3f26dbf`, 5,211 baseline events, 911 closed-market non-events, and 5,211/5,211 required inputs available. No synthetic or shifted holiday valuation is used.
+
 ## CURRENT BLOCKER
 
-Price readiness is complete at 13/13 legs and 168/168 frozen transaction targets; financing provenance verifies 171 documents. `STAGE_A_FROZEN_READY` is complete. Stage A remains unexecuted, has no verdict, and `REAL_STAGE_A_PERFORMANCE_COMPUTED = NO`. The blocker is separate explicit human authorization bound to the exact frozen run and manifest for the single Stage-A historical execution.
+`STAGE_A_FROZEN_READY` is complete. Persistent lineage retains consumed operational Attempt 1 and two `PRE_STATISTICS_INFRA_DEFECT` records; economics never started, post-statistics defect count is 0, and the corrected-economic-execution allowance is unused. The next operational attempt is 2. Stage A remains unexecuted, has no verdict, and `REAL_STAGE_A_PERFORMANCE_COMPUTED = NO`. The blocker is separate explicit human authorization bound to the exact frozen run and manifest for operational Attempt 2.
 
 ## NEXT GATE
 
-Separate explicit human authorization for the SINGLE frozen Stage-A historical execution, bound to freeze manifest `e1424d47245a933bdd775073c53be0c8c5061e735491611f39880af34f5991c0`. Any change to a manifest-bound scientific, code, data, or runtime identity before execution invalidates authorization and requires a new pre-run freeze; inputs must never be silently regenerated or substituted.
+Separate explicit human authorization for the single frozen Stage-A historical execution as operational Attempt 2, bound to freeze manifest `53d6c807df2c1682950ad7bf18f7c9c09d64520e6a2d4b0c331713fa2e8ec991`. Any change to a manifest-bound scientific, code, data, runtime, or lineage identity before execution invalidates authorization and requires a new pre-run freeze; inputs must never be silently regenerated or substituted.
 
 ## MEMORY SYNCHRONIZATION
 
