@@ -1,0 +1,20 @@
+{
+  "gate_definition_sha256": "0f80d27b3b497be775552fc819a7f7618466912ca003255b68bc23777f5d5538",
+  "implementation_sha256": "0714e87a3bb651ebf4a48675946df3e830f6fd742bf0b5468413d33d78d40427",
+  "runtime": {
+    "arch": "7.2.0",
+    "implementation": "CPython",
+    "numpy": "1.26.3",
+    "pandas": "2.3.0",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.11.9",
+    "scipy": "1.11.4"
+  },
+  "schema_version": 1,
+  "source_files": {
+    "bot/forex/stage_a_carry.py": "34b68cec9e384ee9acee9226ea96c15e4abeafc4e54b07a5663d547a7cb1635c",
+    "bot/forex/stage_a_orchestration.py": "9a32e62e5c1071a1e63e1f1f890e5c717398c0e707324a7ab5e6ebc3b0e975f8",
+    "bot/forex/stage_a_preflight.py": "f96cd456187fab627fdf772f1d032a72857e82460e4b26c96d6f3b05bc1085bb",
+    "run_stage_a_carry.py": "b1bc66352b054515762d60bc76899243f80770863faf39192a847ba92a0d1e8d"
+  }
+}
