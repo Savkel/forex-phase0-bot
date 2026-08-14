@@ -5,8 +5,8 @@
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
 - Last state verification: 2026-08-14, before this handoff update.
-- Project-state commit observed before the handoff update: `fac1ccec40f1b86c7663f206996ae5e465225251`.
-- Push status observed then: local `main` was 27 ahead / 0 behind `origin/main`; commits were unpushed.
+- Project-state commit observed before the handoff update: `d4159b60e6466825a95cfe2af455c0a2bc54fa05`.
+- Push status observed then: local `main` was 32 ahead / 0 behind `origin/main`; commits were unpushed.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -27,7 +27,7 @@ Precedence: constitution; committed preregistration/artifacts; verified Git/code
 
 ## ACTIVE RESEARCH
 
-Direct OANDA TMS `.pro` cross-sectional carry. Stage A is a historical DEVELOPMENT kill-test with no historical OOS claim and has not executed. A valid FAIL means `CLOSED_FAIL`; all gates passing means only `SURVIVES_KILL_TEST` and permits prospective Stage B, not research PASS or trading permission.
+Direct OANDA TMS `.pro` cross-sectional carry. Stage A is a historical DEVELOPMENT kill-test with no historical OOS claim. It remains OPEN with no valid auditable strategy verdict. Attempt 2 is immutable `VOID_RETAINED`; Attempt 3 crossed the economics boundary but became infrastructure-invalid after a 3,600-second execution timeout and produced no auditable result. No execution is currently authorized.
 
 ## ACTIVE LOCKED SPEC
 
@@ -43,7 +43,7 @@ Frozen revised essentials: certified source remains intact; active grid excludes
 
 ## CERTIFIED INFRASTRUCTURE
 
-TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. The corrected Stage-A implementation is frozen by local commit `fac1ccec40f1b86c7663f206996ae5e465225251`; canonical freeze-manifest SHA-256 `53d6c807df2c1682950ad7bf18f7c9c09d64520e6a2d4b0c331713fa2e8ec991`. Latest full-suite verification: 576 passed on 2026-08-14.
+TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Latest full-suite verification at this frozen baseline: 597 passed on 2026-08-14.
 
 ## DATA STATE
 
@@ -55,11 +55,11 @@ Financing readiness is certified under the venue-evidenced held-leg model: evide
 
 ## CURRENT BLOCKER
 
-Attempt 2 crossed `ECONOMICS_STARTED` but its immutable result is `VOID_RETAINED` because mandatory numeric G1-G5 audit operands were not retained. Its provisional disposition is not scientific evidence. Stage A remains OPEN with no valid auditable verdict. Human governance permits outcome-independent infrastructure-only correction and another execution of the exact unchanged scientific experiment; Stage A closes only on a valid auditable strategy verdict or technical impossibility.
+Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Attempt 3 is infrastructure-invalid because the execution process timed out after 3,600 seconds before an auditable result was serialized. Its immutable failure-evidence SHA-256 is `da336df7c75375f2b4d94a8724615d0eaeb9c79d4ec13e55de60c52d66c80b11`. The scientific strategy/specification remains unchanged. Stage A remains OPEN with no valid auditable strategy verdict, and no execution is currently authorized.
 
 ## NEXT GATE
 
-Complete the two outcome-blind auditability safeguards, review/test them, and create a new immutable freeze for the exact unchanged Stage-A experiment. No old authorization or freeze is reusable.
+Implementation-only runtime profiling/optimization while preserving exact calculations, followed by review, a new immutable freeze, and separately authorized execution. No execution is currently authorized.
 
 ## MEMORY SYNCHRONIZATION
 
