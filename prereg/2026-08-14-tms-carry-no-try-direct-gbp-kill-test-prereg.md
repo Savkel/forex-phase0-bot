@@ -315,3 +315,21 @@ must be corrected before a new freeze. Thus the current post-statistics material
 zero and the single corrected-economic-execution allowance remains unused. A future manifest must
 inherit Attempt 1 and both pre-statistics defects across run/freeze IDs; it may not reset the next
 operational attempt to 1.
+
+### 10.7 Infrastructure-invalid run policy (human governance amendment)
+
+This amendment supersedes only the Stage-A-closing interpretation of the second-defect rule above.
+Stage A closes only on a valid, auditable strategy verdict or when reliable evaluation becomes
+technically impossible. An infrastructure defect invalidates and VOIDs only the affected execution,
+which remains immutable; outcome-independent infrastructure-only correction may permit another
+execution of the exact same scientific experiment. It cannot change the strategy, universe,
+parameters, gates, window, benchmark, inference, or thresholds.
+
+Attempt 2 exposed a provisional disposition through a defective, unauditable result artifact. That
+disposition is not scientific evidence, and any later historical execution is not independent
+confirmation. The next valid auditable execution is the decisive Stage-A evaluation. A valid gate
+failure closes the family without tuning or rescue; all-gates survival has only the preregistered
+`SURVIVES_KILL_TEST` meaning. Every invalid run and authorization remains retained and consumed;
+each later execution requires reviewed infrastructure, a new immutable freeze, and new explicit
+human authorization. Reliable evaluation becoming technically impossible closes infrastructure
+without manufacturing a strategy verdict.

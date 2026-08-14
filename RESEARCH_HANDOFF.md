@@ -55,11 +55,11 @@ Financing readiness is certified under the venue-evidenced held-leg model: evide
 
 ## CURRENT BLOCKER
 
-`STAGE_A_FROZEN_READY` is complete. Persistent lineage retains consumed operational Attempt 1 and two `PRE_STATISTICS_INFRA_DEFECT` records; economics never started, post-statistics defect count is 0, and the corrected-economic-execution allowance is unused. The next operational attempt is 2. Stage A remains unexecuted, has no verdict, and `REAL_STAGE_A_PERFORMANCE_COMPUTED = NO`. The blocker is separate explicit human authorization bound to the exact frozen run and manifest for operational Attempt 2.
+Attempt 2 crossed `ECONOMICS_STARTED` but its immutable result is `VOID_RETAINED` because mandatory numeric G1-G5 audit operands were not retained. Its provisional disposition is not scientific evidence. Stage A remains OPEN with no valid auditable verdict. Human governance permits outcome-independent infrastructure-only correction and another execution of the exact unchanged scientific experiment; Stage A closes only on a valid auditable strategy verdict or technical impossibility.
 
 ## NEXT GATE
 
-Separate explicit human authorization for the single frozen Stage-A historical execution as operational Attempt 2, bound to freeze manifest `53d6c807df2c1682950ad7bf18f7c9c09d64520e6a2d4b0c331713fa2e8ec991`. Any change to a manifest-bound scientific, code, data, runtime, or lineage identity before execution invalidates authorization and requires a new pre-run freeze; inputs must never be silently regenerated or substituted.
+Complete the two outcome-blind auditability safeguards, review/test them, and create a new immutable freeze for the exact unchanged Stage-A experiment. No old authorization or freeze is reusable.
 
 ## MEMORY SYNCHRONIZATION
 
