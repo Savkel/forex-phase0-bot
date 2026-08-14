@@ -5,8 +5,8 @@
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
 - Last state verification: 2026-08-14, before this handoff update.
-- Project-state commit observed before the handoff update: `56bacb1538f69fd93fa467d05cd781b7732395ae`.
-- Push status observed then: local `main` was 15 ahead / 0 behind `origin/main`; commits were unpushed.
+- Project-state commit observed before the handoff update: `1b2c8c12b13679635de0314575ae65ccfd235a4a`.
+- Push status observed then: local `main` was 21 ahead / 0 behind `origin/main`; commits were unpushed.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -41,7 +41,7 @@ Frozen revised essentials: certified source remains intact; active grid excludes
 
 ## CERTIFIED INFRASTRUCTURE
 
-TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Latest full-suite verification: 501 passed on 2026-08-13 at project-state commit `c6fff17`; subsequent continuity changes were documentation only, so the suite was not rerun.
+TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. The completed Stage-A implementation and immutable pre-run freeze are at `1b2c8c12b13679635de0314575ae65ccfd235a4a`; canonical freeze-manifest SHA-256 `e1424d47245a933bdd775073c53be0c8c5061e735491611f39880af34f5991c0`. Latest full-suite verification: 561 passed on 2026-08-14.
 
 ## DATA STATE
 
@@ -51,11 +51,11 @@ Price readiness is certified in the active committed artifact: all 13 routed OAN
 
 ## CURRENT BLOCKER
 
-Price readiness is complete (`PRICE_READINESS_COMMITTED`) at 13/13 legs and 168/168 frozen transaction targets. Stage A remains unexecuted and has no verdict. The current blocker is explicit human approval for Stage-A implementation and pre-run validation; performance execution is a later, separate approval gate.
+Price readiness is complete at 13/13 legs and 168/168 frozen transaction targets; financing provenance verifies 171 documents. `STAGE_A_FROZEN_READY` is complete. Stage A remains unexecuted, has no verdict, and `REAL_STAGE_A_PERFORMANCE_COMPUTED = NO`. The blocker is separate explicit human authorization bound to the exact frozen run and manifest for the single Stage-A historical execution.
 
 ## NEXT GATE
 
-Stage-A implementation and pre-run validation under the frozen no-TRY/direct-GBP preregistration — NO performance execution. Performance execution requires a separate later approval.
+Separate explicit human authorization for the SINGLE frozen Stage-A historical execution, bound to freeze manifest `e1424d47245a933bdd775073c53be0c8c5061e735491611f39880af34f5991c0`. Any change to a manifest-bound scientific, code, data, or runtime identity before execution invalidates authorization and requires a new pre-run freeze; inputs must never be silently regenerated or substituted.
 
 ## MEMORY SYNCHRONIZATION
 
