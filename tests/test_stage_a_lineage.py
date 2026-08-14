@@ -137,3 +137,17 @@ def test_stable_lineage_overlay_rejects_gap_and_tamper(tmp_path):
     marker=next(tmp_path.glob("*.authorization-consumed.json"))
     raw=json.loads(marker.read_text()); raw["run_id"]="tampered"; marker.write_text(json.dumps(raw))
     with pytest.raises(LineageError): resolve_lineage_state(base,store)
+
+
+def test_new_freeze_manifest_binds_current_lineage_and_financing_readiness():
+    root=Path(__file__).resolve().parents[1]
+    manifest=json.loads((root/"prereg/2026-08-14-tms-carry-stage-a-orchestration-manifest.json").read_text())
+    meta=manifest["freeze_metadata"]
+    assert meta["old_freeze_execution_eligible"] is False
+    assert meta["financing_readiness"]["records_sha256"]=="7e93e702816833ba5ed2de7432c1476af576186fb52da462de2e4c48a3f26dbf"
+    assert meta["financing_readiness"]["actual_venue_evidenced_held_pair_events"]==5211
+    assert meta["financing_readiness"]["closed_market_no_event_records"]==911
+    assert meta["lineage"]["next_operational_attempt"]==2
+    assert meta["lineage"]["pre_statistics_infra_defect_count"]==2
+    assert meta["lineage"]["post_statistics_material_defect_count"]==0
+    assert meta["lineage"]["corrected_economic_execution_used"] is False

@@ -1,6 +1,23 @@
 {
+  "schema_version": 1,
+  "implementation_sha256": "c0c455d1ba5ee6ebf28a32b017b77edb2491712d1b63101d5fae30ee6b1901b5",
   "gate_definition_sha256": "0f80d27b3b497be775552fc819a7f7618466912ca003255b68bc23777f5d5538",
-  "implementation_sha256": "7dfabce8f6578b7b2ac69e228656799b3cb61533962d2aac304c05fc26f1e202",
+  "source_files": {
+    "bot/forex/stage_a_carry.py": "af4145754c9619ba3e5d7eb6cb04dae31a8627b6ccb1a2d48acf3f3300a64c64",
+    "bot/forex/stage_a_lineage.py": "e6f8b3c893fa22739aaa58f09952e5ea677cabbba165a70d25e93f799be65d96",
+    "bot/forex/stage_a_orchestration.py": "66cbbd804126baa9cc964577c13021cba55eabcecd19c5a4d31f85aecfba111c",
+    "bot/forex/stage_a_preflight.py": "d800a59efcae959cca3bbd044d7d3106072e81b637d00829536d9a1347ba3ac0",
+    "run_stage_a_carry.py": "89ff1c732d8592384f11f6cab8ae4e803b402c036364fce4f5151ee3ec4525d8"
+  },
+  "runtime": {
+    "arch": "7.2.0",
+    "implementation": "CPython",
+    "numpy": "1.26.3",
+    "pandas": "2.3.0",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "python": "3.11.9",
+    "scipy": "1.11.4"
+  },
   "final_freeze": {
     "accounting_scenarios": {
       "D360": {"denominator": 360},
@@ -11,7 +28,7 @@
       "readiness": "786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
       "universe": "461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0"
     },
-    "active_prereg_sha256": "38e72c864f4ad50037bd56b8f80065d1839bd666691141eee5ee7ddf2d4e89b6",
+    "active_prereg_sha256": "168268dc9297e11a2095bb779ca75cec23b5cb1a1f07ce2eb0ec724caa4b217c",
     "benchmark": {"count": 1000, "seed": 20260809},
     "bootstrap": {"replicates": 10000, "seed": 20260808},
     "cache_sha256": {
@@ -34,25 +51,54 @@
       "manifest_sha256": "163dd0d639bd0b1e33c4717480e5d7ee997b4dcca2c7811b7b9a70e0b64b38e9"
     },
     "dependency_spec_sha256": "80590e0555abae9ec2ade90ce5c84f81e28569b36c1c4fddf62309f2acf61949",
+    "stage_lineage": {
+      "stage_lineage_id": "stage-a-tms-pro-carry-development-v1",
+      "registry_sha256": "32abfa50f82d4f166b0169d2d417609c64e604966cb2e6cf63ad098e4f2f9e9a"
+    },
     "output_schema_version": 1,
     "price_leg_count": 13,
     "transaction_count": 168,
     "transaction_map_sha256": "3e088bec0996850abb030e68ec73912cca5b04100b1293b274efdc61099f8404"
   },
-  "runtime": {
-    "arch": "7.2.0",
-    "implementation": "CPython",
-    "numpy": "1.26.3",
-    "pandas": "2.3.0",
-    "platform": "Windows-10-10.0.19045-SP0",
-    "python": "3.11.9",
-    "scipy": "1.11.4"
-  },
-  "schema_version": 1,
-  "source_files": {
-    "bot/forex/stage_a_carry.py": "34b68cec9e384ee9acee9226ea96c15e4abeafc4e54b07a5663d547a7cb1635c",
-    "bot/forex/stage_a_orchestration.py": "054141746c03d5bf83b7f77ce5183e24078e89d4e48bc3d4070709cf4c87a361",
-    "bot/forex/stage_a_preflight.py": "f96cd456187fab627fdf772f1d032a72857e82460e4b26c96d6f3b05bc1085bb",
-    "run_stage_a_carry.py": "8b149e342e5357d6bca25eb5e9defc56923789d629c7e576c4fd50167c212bcf"
+  "freeze_metadata": {
+    "implementation_commit": "c659b4dd193b1f76665b7148125f8ab5d63ad5ba",
+    "corrected_source_set_sha256": "b0790fd939d97bf006145812a90d04f555282d784fa1a6a36d01e9c71aa2b881",
+    "old_freeze_sha256": "e1424d47245a933bdd775073c53be0c8c5061e735491611f39880af34f5991c0",
+    "old_freeze_execution_eligible": false,
+    "financing_readiness": {
+      "file_sha256": "978a01f1c2de89754ee8d622177190839b94aa42190152f82b686f2e5425b07b",
+      "records_sha256": "7e93e702816833ba5ed2de7432c1476af576186fb52da462de2e4c48a3f26dbf",
+      "potential_calendar_candidates": 796,
+      "potential_held_route_records": 6122,
+      "actual_venue_evidenced_held_pair_events": 5211,
+      "closed_market_no_event_records": 911,
+      "events_with_all_required_inputs": 5211,
+      "genuinely_required_missing_input_events": 0
+    },
+    "lineage": {
+      "stage_lineage_id": "stage-a-tms-pro-carry-development-v1",
+      "registry_sha256": "32abfa50f82d4f166b0169d2d417609c64e604966cb2e6cf63ad098e4f2f9e9a",
+      "attempt_1_authorization_consumed": true,
+      "attempt_1_economics_started": false,
+      "attempt_1_disposition": "UNDETERMINED_SUSPENDED",
+      "next_operational_attempt": 2,
+      "pre_statistics_infra_defect_count": 2,
+      "post_statistics_material_defect_count": 0,
+      "corrected_economic_execution_used": false,
+      "economics_boundary": "PRE_STATISTICS",
+      "performance_verdict": null,
+      "attempt_1_evidence_sha256": {
+        "authorization": "842aa7138bd19cab7e95922d783dac11e3c17a0d520fcf8bf1ebda00170df67f",
+        "integrity": "dd152ea20aaa3ecce230aa8c8dfd27a7b3fad0bc5a2a56d10cfbad63d8fabb4d",
+        "integrity_failure": "4f08601912421072c69cf1292cf4921fb638bced1d9c3b0fba8b4a27829ba966"
+      }
+    },
+    "governance": {
+      "authorization_single_use": true,
+      "no_overwrite": true,
+      "no_rescue": true,
+      "economics_started_irreversible": true,
+      "pre_statistics_defects_do_not_consume_corrected_economic_allowance": true
+    }
   }
 }
