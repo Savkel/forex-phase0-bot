@@ -267,3 +267,51 @@ source-insufficient denominator is covered by mandatory `D360`/`D365`; holiday m
 closed-market cashflow timing are unavailable; baseline accounting therefore uses only
 venue-evidenced events, with the preregistered adverse financing/holiday sensitivity reporting the
 remaining uncertainty. Stage B inherits this rule.
+
+### 10.6 Pre-statistics infrastructure-defect governance
+
+This clarification is frozen by explicit human decision while
+`REAL_STAGE_A_PERFORMANCE_COMPUTED = NO`. It separates defects adjudicated before any real
+economic/statistical calculation from the existing post-statistics material-defect/VOID policy;
+it does not change any scientific parameter, universe, route, signal, gate or threshold.
+
+The research begins in `PRE_STATISTICS`. It transitions irreversibly to `ECONOMICS_STARTED`
+immediately before the first computation on real Stage-A data capable of producing any economic
+or statistical performance quantity, including PnL/returns, financing cashflow contributing to
+equity, benchmark performance, IC, MDD, stress, LOCO or a gate statistic. Metadata, hash, schema,
+timestamp and preflight operations do not cross this boundary. Once crossed, Stage A can never
+return to `PRE_STATISTICS`.
+
+A material implementation, data or integrity defect is a `PRE_STATISTICS_INFRA_DEFECT` only when
+it is discovered before `ECONOMICS_STARTED`, independently demonstrated, reviewer-confirmed,
+defined outcome-independently, no performance statistic or result has been computed or inspected,
+and its correction uses no performance information. It blocks execution/freeze, creates no
+Stage-A verdict, and does not consume the one corrected-economic-execution allowance. It must be
+retained permanently in lineage and requires correction, review, tests, a completely new immutable
+freeze and new explicit human authorization. Authorization consumption and operational attempt
+history are never reset; attempt identifiers increase monotonically across run and freeze IDs.
+
+After `ECONOMICS_STARTED`, the pre-statistics correction window is permanently closed. Any later
+qualifying material implementation/data defect remains governed by Section 10.2 without
+relaxation: the original result/artifact is retained immutably, at most one corrected economic
+execution is permitted under the unchanged scientific specification, and a second qualifying
+post-statistics material defect yields `SUSPENDED_INFRA` with no further Stage-A execution.
+
+Four separate histories are binding and may not be conflated: operational authorization/execution
+attempt lineage; pre-statistics infrastructure-defect history; post-statistics qualifying
+material-defect count; and corrected-economic-execution allowance. Multiple pre-statistics defects
+create no additional post-statistics allowance. Infrastructure correction cannot change a
+scientific choice; any scientific change requires its own explicit human preregistration gate.
+No authorization is reusable, no corrected infrastructure state may execute without a fresh
+manifest and explicit authorization, and no correction triggers automatic execution.
+
+Current lineage is frozen as follows. Operational Attempt 1 remains retained and its authorization
+consumed. Its pre-statistics integrity failure occurred before economics began; no performance
+result or Stage-A verdict exists. Root cause `ORCHESTRATOR_INTEGRITY_DEFECT` is classified
+`PRE_STATISTICS_INFRA_DEFECT`, with immutable evidence retained and no performance-result VOID.
+The independently reviewed cross-freeze lineage defect is also a `PRE_STATISTICS_INFRA_DEFECT`:
+it materially affects authorization count, correction eligibility and terminal governance and
+must be corrected before a new freeze. Thus the current post-statistics material-defect count is
+zero and the single corrected-economic-execution allowance remains unused. A future manifest must
+inherit Attempt 1 and both pre-statistics defects across run/freeze IDs; it may not reset the next
+operational attempt to 1.
