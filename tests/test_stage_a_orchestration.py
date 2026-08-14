@@ -6,7 +6,8 @@ import pytest
 from bot.forex.stage_a_orchestration import (
     ArtifactStore, AssembledRealInputs, Authorization, FrozenRunConfig, IntegrityError, RealInputPlan, RunState,
     RunStateMachine, build_run_id, canonical_bytes, execute_synthetic_fixture,
-    assemble_real_inputs, execute_real_authorized, record_material_defect, validate_integrity_snapshot,
+    _required_financing_open_days, assemble_real_inputs, execute_real_authorized,
+    record_material_defect, validate_integrity_snapshot,
 )
 
 
@@ -262,6 +263,53 @@ def test_real_assembler_parses_synthetic_financing_mask_and_thirteen_caches(tmp_
     assert assembled.deep_integrity["status"]=="DEEP_INTEGRITY_PASSED"
     assert len(assembled.signal_steps)==2 and assembled.signal_steps[-1].kind=="terminal"
     assert len(assembled.financing_events)==1
+
+
+def test_required_financing_days_ignore_all_leg_closure_but_reject_partial_gap():
+    from datetime import datetime, timezone
+    from bot.forex.stage_a_carry import OpenQuote, SignalStep
+    start=int(datetime(2023,4,3,tzinfo=timezone.utc).timestamp()*1000)
+    end=int(datetime(2023,4,10,tzinfo=timezone.utc).timestamp()*1000)
+    good_friday=int(datetime(2023,4,7,21,tzinfo=timezone.utc).timestamp()*1000)
+    monday=int(datetime(2023,4,3,21,tzinfo=timezone.utc).timestamp()*1000)
+    currencies=("AUD","CAD","CHF","CZK","EUR","GBP","JPY","USD")
+    pairs={c:f"{c}USD.pro" for c in currencies if c!="USD"}
+    opens={p:OpenQuote(1,1) for p in pairs.values()}
+    signals=[SignalStep(start,{c:float(8-i) for i,c in enumerate(currencies)},opens),
+             SignalStep(end,None,opens,"terminal")]
+    available={p:{monday} for p in pairs.values()}
+    routes={c:{"legs":[[pairs[c],1]]} if c!="USD" else {"legs":[]} for c in currencies}
+    days=_required_financing_open_days(signals,available,routes,
+                                        lambda t,required:{p:opens[p] for p in required})
+    assert good_friday not in set().union(*available.values())
+    assert list(days)==[datetime(2023,4,3,tzinfo=timezone.utc).date()]
+    # An inactive universe leg is irrelevant.
+    days=_required_financing_open_days(signals,{**available,"NZDUSD.pro":set()},routes,
+                                        lambda t,required:{p:opens[p] for p in required})
+    assert list(days)
+
+
+def test_required_financing_days_require_eurusd_only_for_eligible_eur_cross():
+    from datetime import datetime, timezone
+    from bot.forex.stage_a_carry import OpenQuote, SignalStep
+    start=int(datetime(2024,2,1,tzinfo=timezone.utc).timestamp()*1000)
+    end=int(datetime(2024,2,2,tzinfo=timezone.utc).timestamp()*1000)
+    rollover=int(datetime(2024,2,1,21,tzinfo=timezone.utc).timestamp()*1000)
+    currencies=("AUD","CAD","CHF","CZK","EUR","GBP","HUF","USD")
+    routes={
+        "AUD":{"legs":[["AUDUSD.pro",1]]}, "CAD":{"legs":[["USDCAD.pro",-1]]},
+        "CHF":{"legs":[["USDCHF.pro",-1]]}, "CZK":{"legs":[["EURCZK.pro",-1],["EURUSD.pro",1]]},
+        "EUR":{"legs":[["EURUSD.pro",1]]}, "GBP":{"legs":[["GBPUSD.pro",1]]},
+        "HUF":{"legs":[["EURHUF.pro",-1],["EURUSD.pro",1]]}, "USD":{"legs":[]},
+    }
+    opens={p:OpenQuote(1,1) for p in {leg[0] for route in routes.values() for leg in route["legs"]}}
+    signals=[SignalStep(start,{c:float(8-i) for i,c in enumerate(currencies)},opens),
+             SignalStep(end,None,opens,"terminal")]
+    availability={p:{rollover} for p in opens}
+    availability["EURUSD.pro"]=set()
+    with pytest.raises(IntegrityError,match="missing required financing conversion OPEN"):
+        _required_financing_open_days(signals,availability,routes,
+                                      lambda t,required:{p:opens[p] for p in required})
 
 
 def test_economic_exception_is_retained_and_cannot_silently_rerun(monkeypatch,tmp_path):

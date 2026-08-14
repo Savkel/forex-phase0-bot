@@ -270,6 +270,7 @@ def run_accounting_path(initial_equity: float, steps: Sequence[AccountingStep],
         for event in by_step.get(i,[]):
             for pair,q in positions.items():
                 if q==0: continue
+                if pair not in event.opens: continue
                 cash=position_financing_cashflow_usd(
                     event.schedule,pair,q,event.opens[pair].mid,denominator,
                     rollover_multiplier(event.day,pair) if event.days_charged is None else event.days_charged,
@@ -468,23 +469,21 @@ def accounting_steps_from_signals(signal_steps: Sequence[SignalStep],
 def build_financing_events(signal_steps: Sequence[SignalStep],
                            schedules: Sequence[FinancingSchedule],
                            opens_21utc_by_day: Mapping[date,Mapping[str,OpenQuote]]) -> list[FinancingEvent]:
-    """Construct contemporaneous daily 21:00 financing events for held evaluable intervals."""
+    """Construct events only for venue-evidenced business-day 21:00 OPENs while held."""
     events=[]
     for i,(start,end) in enumerate(zip(signal_steps,signal_steps[1:])):
         if start.scores is None:
             continue
         start_dt=datetime.fromtimestamp(start.timestamp/1000,tz=timezone.utc)
         end_dt=datetime.fromtimestamp(end.timestamp/1000,tz=timezone.utc)
-        day=start_dt.date()
-        while day<=end_dt.date():
+        for day,opens in sorted(opens_21utc_by_day.items()):
             instant=datetime.combine(day,time(21),tzinfo=timezone.utc)
-            if start_dt<=instant<end_dt and day.weekday()<5:
+            if start_dt<=instant<end_dt:
+                if day.weekday()>=5:
+                    raise ValueError("financing OPEN supplied for a weekend")
                 schedule=select_accounting_schedule(schedules,day)
-                if day not in opens_21utc_by_day:
-                    raise ValueError(f"missing 21:00 H1 OPEN financing valuation for {day}")
                 # Each instrument's frozen rollover exception is applied inside the path.
-                events.append(FinancingEvent(day,schedule,opens_21utc_by_day[day],None,after_step=i))
-            day+=timedelta(days=1)
+                events.append(FinancingEvent(day,schedule,opens,None,after_step=i))
     return events
 
 

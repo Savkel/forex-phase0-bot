@@ -488,6 +488,32 @@ class AssembledRealInputs:
     deep_integrity: Mapping[str,object]
 
 
+def _required_financing_open_days(signal_steps: Sequence[object],
+                                  available_by_leg: Mapping[str,set[int]],
+                                  routes: Mapping[str,object],
+                                  opens_at: Callable[[int,set[str]],Mapping[str,object]]) -> dict:
+    """Per-held-leg venue-evidenced 21:00 OPENs; unrelated legs are never required."""
+    from datetime import datetime, timezone
+    from bot.forex.stage_a_carry import currency_targets, pair_positions
+    result={}
+    for start,end in zip(signal_steps,signal_steps[1:]):
+        if start.scores is None: continue
+        held=set(pair_positions(currency_targets(start.scores,4),routes))
+        union=set().union(*(available_by_leg[p] for p in held)) if held else set()
+        for timestamp in sorted(union):
+            instant=datetime.fromtimestamp(timestamp/1000,tz=timezone.utc)
+            if not (start.timestamp<=timestamp<end.timestamp and instant.hour==21 and
+                    instant.minute==0 and instant.second==0 and instant.weekday()<5): continue
+            eligible={p for p in held if timestamp in available_by_leg[p]}
+            conversions={"EURUSD.pro"} if any(p.startswith("EUR") and p!="EURUSD.pro"
+                                               for p in eligible) else set()
+            missing=[p for p in conversions if timestamp not in available_by_leg[p]]
+            if missing:
+                raise IntegrityError(f"missing required financing conversion OPEN at {timestamp}: {missing[0]}")
+            result[instant.date()]=opens_at(timestamp,eligible|conversions)
+    return result
+
+
 def assemble_real_inputs(root: Path,plan: RealInputPlan) -> AssembledRealInputs:
     """Future pre-statistics phase: assemble real inputs and run representation/look-ahead checks."""
     from datetime import date, datetime, timezone
@@ -513,12 +539,14 @@ def assemble_real_inputs(root: Path,plan: RealInputPlan) -> AssembledRealInputs:
         frames[name]=frame
     tms_by_v20={x["v20_instrument"]:x["tms_instrument"] for x in readiness["routed_legs"]}
     resolved=dict(plan.transaction_mapping)
-    def opens_at(timestamp: int) -> dict[str,OpenQuote]:
+    def opens_at(timestamp: int, required: set[str] | None = None) -> dict[str,OpenQuote]:
         result={}
         for name,frame in frames.items():
+            tms=tms_by_v20[name]
+            if required is not None and tms not in required: continue
             if timestamp not in frame.index: raise IntegrityError(f"missing common OPEN: {name}/{timestamp}")
             row=frame.loc[timestamp]
-            result[tms_by_v20[name]]=OpenQuote(float(row["bid_o"]),float(row["ask_o"]))
+            result[tms]=OpenQuote(float(row["bid_o"]),float(row["ask_o"]))
         return result
     evaluable={pd.Timestamp(x["decision_utc"]).value//10**6:x for x in mask["evaluable_rebalances"]}
     excluded={pd.Timestamp(x).value//10**6 for x in mask["excluded_rebalances"]}
@@ -541,20 +569,14 @@ def assemble_real_inputs(root: Path,plan: RealInputPlan) -> AssembledRealInputs:
     sub=universe["representation_gate"]["over_identified_subgraph"]["currency_list"]
     signals=build_causal_signal_steps(decisions,schedules,universe["currencies"],
                                       universe["investable_financing_pairs"],sub,k=4)
-    days={}
-    first=datetime.fromtimestamp(signals[0].timestamp/1000,tz=timezone.utc).date()
-    last=datetime.fromtimestamp(signals[-1].timestamp/1000,tz=timezone.utc).date()
-    day=first
-    while day<=last:
-        if day.weekday()<5:
-            timestamp=int(datetime(day.year,day.month,day.day,21,tzinfo=timezone.utc).timestamp()*1000)
-            days[day]=opens_at(timestamp)
-        day=pd.Timestamp(day+pd.Timedelta(days=1)).date()
+    availability={tms_by_v20[name]:set(map(int,frame.index)) for name,frame in frames.items()}
+    days=_required_financing_open_days(signals,availability,universe["routes"],opens_at)
     events=build_financing_events(signals,schedules,days)
     deep={"status":"DEEP_INTEGRITY_PASSED","run_id":plan.run_id,
           "representation_schedules_checked":sum(x.scores is not None for x in signals),
           "lookahead_assertions":lookahead,"signal_steps":len(signals),
-          "financing_events":len(events),"fill_field":"H1_OPEN_BID_ASK",
+          "financing_events":len(events),"financing_valuation_timestamps":len(days),
+          "fill_field":"H1_OPEN_BID_ASK",
           "N":14,"k":4,"currency_gross":2,"try_absent":True,
           "gbp_direct":universe["routes"]["GBP"]["legs"]==[["GBPUSD.pro",1]],
           "performance_computed":False}

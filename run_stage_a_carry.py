@@ -11,12 +11,17 @@ from bot.forex.stage_a_orchestration import (Authorization,build_real_input_plan
 
 def main(argv=None) -> int:
     parser=argparse.ArgumentParser()
-    parser.add_argument("mode",nargs="?",choices=("preflight","execute"),default="preflight")
+    parser.add_argument("mode",nargs="?",choices=("preflight","correction-preflight","execute"),default="preflight")
     parser.add_argument("--authorization-file",type=Path)
     args=parser.parse_args(argv)
     root=Path(__file__).resolve().parent
     if args.mode=="execute" and args.authorization_file is None:
         raise PermissionError("Stage-A performance execution is not authorized without a separate run-bound human authorization file")
+    if args.mode=="correction-preflight":
+        from bot.forex.stage_a_preflight import project_preflight
+        report=project_preflight(root)
+        print(json.dumps(report,sort_keys=True))
+        return 0
     plan,report=build_real_input_plan(root)
     if args.mode=="execute":
         raw=json.loads(args.authorization_file.read_text(encoding="utf-8"))

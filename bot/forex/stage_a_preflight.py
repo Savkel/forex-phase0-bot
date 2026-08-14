@@ -16,12 +16,13 @@ FROZEN_WINDOW=["2023-04-03T00:00:00Z","2026-08-05T00:00:00Z"]
 FROZEN_LEGS=("AUD_USD","EUR_HUF","EUR_NOK","EUR_PLN","EUR_SEK","EUR_USD","EUR_ZAR",
              "GBP_USD","NZD_USD","USD_CAD","USD_CHF","USD_CZK","USD_JPY")
 FROZEN_SHA256={
-    "spec":"38e72c864f4ad50037bd56b8f80065d1839bd666691141eee5ee7ddf2d4e89b6",
+    "spec":"8e5cd59ee61335a56d44f508373a8cd6a7970e049e82b5fc91aaf3e2cc5e6c45",
     "universe":"461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0",
     "mask":"5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
     "readiness":"786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
     "manifest":"163dd0d639bd0b1e33c4717480e5d7ee997b4dcca2c7811b7b9a70e0b64b38e9",
     "financing":"b6cdd250c208b2ec614356d78999e36bd30881a407fed56a1b2a219894569c94",
+    "financing_readiness":"978a01f1c2de89754ee8d622177190839b94aa42190152f82b686f2e5425b07b",
 }
 
 
@@ -112,7 +113,8 @@ def project_preflight(root: Path) -> dict:
     readiness=_read(root/artifacts["readiness"]); mask=_read(root/artifacts["mask"])
     protected={"spec":root/spec,**{k:root/v for k,v in artifacts.items()},
                "manifest":root/"provenance/tms_swap_manifest.json",
-               "financing":root/"data/tms_swap_archive/derived/parsed_all.json"}
+               "financing":root/"data/tms_swap_archive/derived/parsed_all.json",
+               "financing_readiness":root/"prereg/2026-08-14-tms-carry-financing-readiness.json"}
     for name,path in protected.items():
         if not path.is_file() or _sha(path)!=FROZEN_SHA256[name]:
             raise ValueError(f"frozen {name} identity mismatch")
@@ -157,4 +159,25 @@ def project_preflight(root: Path) -> dict:
     report["future_output_schema"]=future_output_schema(report["fingerprints"])
     report["transaction_instants"]="168/168 first eligible common H1 OPEN metadata"
     report["maximum_delay_hours"]=int(max(delays))
+    financing_readiness=_read(protected["financing_readiness"])
+    records=financing_readiness.get("records",[])
+    record_bytes=(json.dumps(records,sort_keys=True,separators=(",",":"),ensure_ascii=True)+"\n").encode("ascii")
+    summary={"potential_calendar_candidates":len(records),
+             "potential_held_route_records":sum(int(x[1]).bit_count() for x in records),
+             "actual_venue_evidenced_held_pair_events":sum(int(x[2]).bit_count() for x in records),
+             "closed_market_no_event_records":sum((int(x[1]) & ~int(x[2])).bit_count() for x in records),
+             "events_with_all_required_inputs":sum(int(x[3]).bit_count() for x in records),
+             "genuinely_required_missing_input_events":sum((int(x[2]) & ~int(x[3])).bit_count() for x in records)}
+    source_paths={"prereg/2026-08-14-tms-carry-no-try-direct-gbp-universe.json":artifacts["universe"],
+                  "prereg/2026-08-14-tms-carry-no-try-direct-gbp-mask.json":artifacts["mask"],
+                  "prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json":artifacts["readiness"],
+                  "data/tms_swap_archive/derived/parsed_all.json":Path("data/tms_swap_archive/derived/parsed_all.json")}
+    if (hashlib.sha256(record_bytes).hexdigest()!=financing_readiness.get("records_sha256") or
+            financing_readiness.get("records_sha256")!="7e93e702816833ba5ed2de7432c1476af576186fb52da462de2e4c48a3f26dbf" or
+            summary!=financing_readiness.get("summary") or
+            any(financing_readiness.get("source_sha256",{}).get(k)!=_sha(root/v)
+                for k,v in source_paths.items()) or summary["genuinely_required_missing_input_events"]!=0):
+        raise ValueError("venue-evidenced financing-readiness identity mismatch")
+    report["financing_readiness"]={**summary,"records_sha256":financing_readiness["records_sha256"]}
+    report["execution_eligible"]=False
     return report

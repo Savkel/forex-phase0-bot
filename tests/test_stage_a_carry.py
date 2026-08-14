@@ -283,3 +283,23 @@ def test_financing_event_builder_uses_contemporaneous_schedule_and_rollover_rule
     events=build_financing_events(signals,[schedule],{date(2025,10,2):opens})
     assert len(events)==1 and events[0].days_charged is None
     assert rollover_multiplier(events[0].day,"USDCAD.pro")==3
+
+
+def test_financing_event_builder_does_not_invent_good_friday_from_weekday():
+    opens={"AUDUSD.pro":OpenQuote(1,1)}
+    schedule=FinancingSchedule(date(2023,4,3),date(2023,4,9),{"AUDUSD.pro":(1,-1)})
+    start=int(datetime(2023,4,3,tzinfo=UTC).timestamp()*1000)
+    end=int(datetime(2023,4,10,tzinfo=UTC).timestamp()*1000)
+    signals=[SignalStep(start,{"AUD":1,"USD":-1},opens),SignalStep(end,None,opens,"terminal")]
+    # No venue OPEN was observed on Good Friday; weekday status alone must not create an event.
+    events=build_financing_events(signals,[schedule],{})
+    assert events==[]
+
+
+def test_financing_event_builder_requires_schedule_for_actual_venue_open():
+    opens={"AUDUSD.pro":OpenQuote(1,1)}
+    start=int(datetime(2023,4,3,tzinfo=UTC).timestamp()*1000)
+    end=int(datetime(2023,4,4,tzinfo=UTC).timestamp()*1000)
+    signals=[SignalStep(start,{"AUD":1,"USD":-1},opens),SignalStep(end,None,opens,"terminal")]
+    with pytest.raises(ValueError,match="authoritative financing schedule"):
+        build_financing_events(signals,[],{date(2023,4,3):opens})
