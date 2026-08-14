@@ -223,3 +223,47 @@ cache identity: 14 active no-TRY currencies, `k=4`, direct `GBP_USD`, 13 price l
 certified transaction instants remain binding. `PRICE_READINESS_COMMITTED` remains valid; no
 refetch or readiness rerun is required. Stage A has not executed and no result or permission
 follows from this clarification.
+
+### 10.5 Venue-evidenced financing events (pre-performance clarification)
+
+This rule was frozen by explicit human decision after the first authorized attempt stopped in
+pre-statistics integrity and before any economic or performance statistic was computed. Attempt 1
+remains `UNDETERMINED_SUSPENDED`: it has no Stage-A verdict and no performance result artifact.
+The prior freeze manifest remains immutable historical evidence but is ineligible for execution.
+This is neither performance rescue nor VOID. Any future attempt requires this committed
+clarification, reviewed implementation, a new immutable freeze, and new explicit authorization.
+
+For each conceptually held routed pair independently, a baseline financing valuation/accrual event
+exists only when that held instrument has a venue-evidenced H1 OPEN at the contractual 21:00 UTC
+rollover timestamp inside an active/evaluable holding interval. Held membership is derived only
+from the causal financing schedule, latent ranking, `k=4`, fixed routing, and holding interval;
+equity magnitude, prices and performance never determine membership. A Monday-Friday calendar
+label alone does not create an event. If the held instrument has no such OPEN, the disposition is
+`NO_STANDALONE_BASELINE_FINANCING_EVENT_AT_THAT_TIMESTAMP`: no price is synthesized, carried,
+backfilled, advanced, interpolated or moved to another date. This convention does not assert that
+TMS economically charged zero; exact historical holiday cashflow timing is source-insufficient.
+
+An eligible event requires only the inputs used by its non-zero held route. Its own same-time H1
+OPEN midpoint is mandatory. Direct `XXX_USD` needs no extra conversion leg; `USD_XXX` uses the
+same pair inversely; an EUR-cross also requires same-time `EUR_USD` for USD conversion. Inactive
+or unrelated members of the 13-leg execution universe are irrelevant. Once a held-pair event is
+venue-evidenced, a missing required conversion input is a fail-closed financing-readiness failure;
+the event may not be skipped.
+
+The standard rollover/day-multiplier rules are unchanged. Historical holiday-specific deviations
+are not reconstructed, and missing holiday charges are not shifted. `D360` and `D365` use the
+same venue-evidenced event set and differ only by denominator. The existing adverse cell remains
+the sole uncertainty sensitivity: it worsens observed debits (`x1.25`, with `days_charged x1.10`)
+and reduces credits (`x0.80`), so its direction is adverse under either possible debit/credit
+holiday uncertainty. It is a sensitivity, not a claim to bound or reconstruct omitted cashflows.
+
+The mechanically emitted pre-performance evidence is
+`prereg/2026-08-14-tms-carry-financing-readiness.json`. Transaction execution readiness remains
+separate and unchanged: no-TRY `N=14`, `k=4`, direct `GBP_USD`, 13 execution legs, the existing
+cache hashes, and all 168 nominal/resolved mappings remain binding and certified.
+
+Scientific disclosure: historical financing is not exact `.pro` client-cash replication. The
+source-insufficient denominator is covered by mandatory `D360`/`D365`; holiday multipliers and
+closed-market cashflow timing are unavailable; baseline accounting therefore uses only
+venue-evidenced events, with the preregistered adverse financing/holiday sensitivity reporting the
+remaining uncertainty. Stage B inherits this rule.
