@@ -9,6 +9,9 @@
   No return, P&L, IC, benchmark, drawdown, or acceptance gate was computed.
 - **Scientific status:** this is not performance rescue. All historical information remains
   DEVELOPMENT; Stage A remains a historical kill-test with no historical OOS claim.
+- **Pre-execution clarification:** the portfolio exact-tie rule in Section 5 was frozen by human
+  decision before implementation or any Stage-A execution. No price or performance information
+  informed it; Stage A has never executed and no Stage-A performance result exists.
 - **Governance:** `CLAUDE.md` prevails. Research-only; no paper/live/deployment permission.
 
 ## 1. Inheritance and artifacts
@@ -87,6 +90,16 @@ Rank all 14 active currencies by lagged latent carry. Long top 4 at `+0.25` each
 at `-0.25` each; middle 6 zero. Therefore `sum(w)=0` and `sum(abs(w))=2`. USD remains rankable.
 Targets reset at every evaluable rebalance. No leverage, volatility-target, or routing optimizer.
 
+**Deterministic exact-tie rule.** At every rebalance form one total ordering of all currently
+rankable currencies by `(latent carry descending, ISO currency code ascending)`. Longs are the
+first `k` members and shorts are the last `k` members of that same ordering; separate long and
+short sorts are prohibited. The ISO key applies only when the frozen deterministic latent-score
+calculation produces exactly equal values. No rounding, epsilon, or near-tie tolerance is added.
+It is solely a reproducibility convention for economically indistinguishable exact-score ties,
+not an additional signal or optimization. Active Stage A uses `N=14`, `k=4`; every LOCO case uses
+the identical rule with `N=13`, `k=4`; Stage B inherits the rule unchanged. This portfolio rule is
+separate from the predictive Spearman-IC rule, which continues to use average ranks on ties.
+
 Financing-only persistence diagnostics are declared non-gating: mean consecutive Kendall tau
 0.968 (minimum 0.802), selected-set overlap 7.76/8, 13 distinct selected-set states, always-long
 HUF/ZAR, always-short CHF/JPY. Heterogeneous USD/global-risk betas remain an explicit limitation.
@@ -128,6 +141,11 @@ without inspecting or fetching prices during this revision. The emitted 13 requi
 Required frozen window: `2023-04-03T00:00:00Z` through `2026-08-05T00:00:00Z`; H1; bid+ask;
 UTC alignment 0; OPEN field; common-timestamp coverage at every transaction. Existing caches may
 be assessed only in a separately approved readiness gate. No leg may be dropped/substituted.
+
+The Section 5 exact-tie clarification changes no universe, route, transaction instant, price
+requirement, or cache identity: TRY remains excluded, GBP routes through `GBP_USD`, and the same
+13 legs and 168 transaction instants remain certified by the committed readiness artifact.
+`PRICE_READINESS_COMMITTED` therefore remains valid and no readiness rerun or refetch is required.
 
 ## 10. Acceptance and dispositions
 
