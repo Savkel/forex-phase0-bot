@@ -5,8 +5,8 @@
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
 - Last state verification: 2026-08-14, before this handoff update.
-- Project-state commit observed before the handoff update: `9c6798fc2a37371a9454bbf8b0971148cf95419d`.
-- Push status observed then: local `main` was 12 ahead / 0 behind `origin/main`; commits were unpushed.
+- Project-state commit observed before the handoff update: `56bacb1538f69fd93fa467d05cd781b7732395ae`.
+- Push status observed then: local `main` was 15 ahead / 0 behind `origin/main`; commits were unpushed.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -47,13 +47,15 @@ TMS ingestion is fail-closed and certified through flattened-text/layout-geometr
 
 The certified corpus and reproducibility aids now have a stable project-local, gitignored home at `data/tms_swap_archive/`. Relocation was verified network-free and byte-preserving: all 226 source files were classified; 222 retained source records mapped exactly by size and SHA-256 to 218 unique destination files; all 171 manifest-backed documents matched committed provenance; and `parsed_all.json` was copied byte-for-byte. The old Claude session-temporary corpus remains intact at `C:\Users\Savvas\AppData\Local\Temp\claude\E--Claude-forex-bot\6f68a067-3cdf-4b0c-8ea3-b6a846c47d3c\scratchpad\`, but it is no longer the required working dependency. Raw and derived data remain local and gitignored.
 
+Price readiness is certified in the active committed artifact: all 13 routed OANDA v20 practice H1 bid/ask caches cover the frozen range with deterministic SHA-256 evidence (5 reused, 8 newly fetched). All 168 frozen transaction targets resolve to the first eligible synchronous all-leg H1 OPEN timestamp; maximum mechanical closure delay was 22 hours. Raw price caches remain local and gitignored.
+
 ## CURRENT BLOCKER
 
-Revised price readiness is reset and BLOCKED at 0/13 legs. No cache was inspected and no OANDA request was made during preregistration revision. Stage A remains unexecuted and has no verdict.
+Price readiness is complete (`PRICE_READINESS_COMMITTED`) at 13/13 legs and 168/168 frozen transaction targets. Stage A remains unexecuted and has no verdict. The current blocker is explicit human approval for Stage-A implementation and pre-run validation; performance execution is a later, separate approval gate.
 
 ## NEXT GATE
 
-No-TRY direct-GBP Stage-A price readiness under the corrected 13-leg routing set. This is a separate approval gate; no strategy performance may run.
+Stage-A implementation and pre-run validation under the frozen no-TRY/direct-GBP preregistration — NO performance execution. Performance execution requires a separate later approval.
 
 ## MEMORY SYNCHRONIZATION
 
