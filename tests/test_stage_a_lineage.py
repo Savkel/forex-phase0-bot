@@ -220,7 +220,7 @@ def test_new_freeze_manifest_binds_current_lineage_and_financing_readiness():
     assert meta["financing_readiness"]["records_sha256"]=="7e93e702816833ba5ed2de7432c1476af576186fb52da462de2e4c48a3f26dbf"
     assert meta["financing_readiness"]["actual_venue_evidenced_held_pair_events"]==5211
     assert meta["financing_readiness"]["closed_market_no_event_records"]==911
-    assert meta["lineage"]["next_operational_attempt"]==2
+    assert meta["lineage"]["next_operational_attempt"]==3
     assert meta["lineage"]["pre_statistics_infra_defect_count"]==2
-    assert meta["lineage"]["post_statistics_material_defect_count"]==0
-    assert meta["lineage"]["corrected_economic_execution_used"] is False
+    assert meta["lineage"]["post_statistics_material_defect_count"]==1
+    assert meta["lineage"]["attempt_2_void_retained"] is True

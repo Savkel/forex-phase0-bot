@@ -1,36 +1,46 @@
 {
   "schema_version": 1,
-  "implementation_sha256": "c0c455d1ba5ee6ebf28a32b017b77edb2491712d1b63101d5fae30ee6b1901b5",
+  "implementation_sha256": "58be7f21645a3a9df5dc5b49c2ee0ba8f9448980b31ec846e7a761a13a580d9a",
   "gate_definition_sha256": "0f80d27b3b497be775552fc819a7f7618466912ca003255b68bc23777f5d5538",
   "source_files": {
-    "bot/forex/stage_a_carry.py": "af4145754c9619ba3e5d7eb6cb04dae31a8627b6ccb1a2d48acf3f3300a64c64",
-    "bot/forex/stage_a_lineage.py": "e6f8b3c893fa22739aaa58f09952e5ea677cabbba165a70d25e93f799be65d96",
-    "bot/forex/stage_a_orchestration.py": "66cbbd804126baa9cc964577c13021cba55eabcecd19c5a4d31f85aecfba111c",
-    "bot/forex/stage_a_preflight.py": "d800a59efcae959cca3bbd044d7d3106072e81b637d00829536d9a1347ba3ac0",
+    "bot/forex/stage_a_carry.py": "d98e2fbbd33c2495fd1c75a90bf19d0e64dffc8df29784d6b7ae4ffbce2a4e65",
+    "bot/forex/stage_a_lineage.py": "2641e5077b41b9ac1f04a4450da18622e75e3ed93975dc63ca3d16d8bfcdeb75",
+    "bot/forex/stage_a_orchestration.py": "c7483b276466eb479af7c932a3fe839b7f8e902795df43faf7ace7be178411ec",
+    "bot/forex/stage_a_preflight.py": "33966050e1ad5ffed1b860161f41b286be65816be9816a5551eb1dcea505cb65",
     "run_stage_a_carry.py": "89ff1c732d8592384f11f6cab8ae4e803b402c036364fce4f5151ee3ec4525d8"
   },
   "runtime": {
-    "arch": "7.2.0",
+    "python": "3.11.9",
     "implementation": "CPython",
+    "platform": "Windows-10-10.0.19045-SP0",
     "numpy": "1.26.3",
     "pandas": "2.3.0",
-    "platform": "Windows-10-10.0.19045-SP0",
-    "python": "3.11.9",
-    "scipy": "1.11.4"
+    "scipy": "1.11.4",
+    "arch": "7.2.0"
   },
   "final_freeze": {
     "accounting_scenarios": {
-      "D360": {"denominator": 360},
-      "D365": {"denominator": 365}
+      "D360": {
+        "denominator": 360
+      },
+      "D365": {
+        "denominator": 365
+      }
     },
     "active_artifact_sha256": {
       "mask": "5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
       "readiness": "786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
       "universe": "461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0"
     },
-    "active_prereg_sha256": "168268dc9297e11a2095bb779ca75cec23b5cb1a1f07ce2eb0ec724caa4b217c",
-    "benchmark": {"count": 1000, "seed": 20260809},
-    "bootstrap": {"replicates": 10000, "seed": 20260808},
+    "active_prereg_sha256": "09005d9170d945a6c599f88e4247a39ea87336d20f2757416e4e7e639c55047b",
+    "benchmark": {
+      "count": 1000,
+      "seed": 20260809
+    },
+    "bootstrap": {
+      "replicates": 10000,
+      "seed": 20260808
+    },
     "cache_sha256": {
       "AUD_USD": "1935c5b9b2bfba36db871127507aa8783218f83c391d227b2935cd51909c667c",
       "EUR_HUF": "fa0b094b2a51090983936e2188189577f4175533d657f0a849e0d53a7c35a099",
@@ -61,9 +71,9 @@
     "transaction_map_sha256": "3e088bec0996850abb030e68ec73912cca5b04100b1293b274efdc61099f8404"
   },
   "freeze_metadata": {
-    "implementation_commit": "c659b4dd193b1f76665b7148125f8ab5d63ad5ba",
-    "corrected_source_set_sha256": "b0790fd939d97bf006145812a90d04f555282d784fa1a6a36d01e9c71aa2b881",
-    "old_freeze_sha256": "e1424d47245a933bdd775073c53be0c8c5061e735491611f39880af34f5991c0",
+    "implementation_commit": "b84996e971283eaca61423e1b5ab4b1fcbd8e7fd",
+    "corrected_source_set_sha256": "dd32b0463aaf58c2042b670cbad7ca12fe6ca687b55cc3b44d30e4a4cbf6df2b",
+    "old_freeze_sha256": "53d6c807df2c1682950ad7bf18f7c9c09d64520e6a2d4b0c331713fa2e8ec991",
     "old_freeze_execution_eligible": false,
     "financing_readiness": {
       "file_sha256": "978a01f1c2de89754ee8d622177190839b94aa42190152f82b686f2e5425b07b",
@@ -78,27 +88,26 @@
     "lineage": {
       "stage_lineage_id": "stage-a-tms-pro-carry-development-v1",
       "registry_sha256": "32abfa50f82d4f166b0169d2d417609c64e604966cb2e6cf63ad098e4f2f9e9a",
-      "attempt_1_authorization_consumed": true,
-      "attempt_1_economics_started": false,
-      "attempt_1_disposition": "UNDETERMINED_SUSPENDED",
-      "next_operational_attempt": 2,
-      "pre_statistics_infra_defect_count": 2,
-      "post_statistics_material_defect_count": 0,
-      "corrected_economic_execution_used": false,
-      "economics_boundary": "PRE_STATISTICS",
+      "attempt_2_void_retained": true,
+      "next_operational_attempt": 3,
+      "post_statistics_material_defect_count": 1,
       "performance_verdict": null,
-      "attempt_1_evidence_sha256": {
-        "authorization": "842aa7138bd19cab7e95922d783dac11e3c17a0d520fcf8bf1ebda00170df67f",
-        "integrity": "dd152ea20aaa3ecce230aa8c8dfd27a7b3fad0bc5a2a56d10cfbad63d8fabb4d",
-        "integrity_failure": "4f08601912421072c69cf1292cf4921fb638bced1d9c3b0fba8b4a27829ba966"
-      }
+      "evidence_sha256": {
+        "attempt_2_result": "3b4af7e0a116f5cdbf9a1b35bc575e1df6f9e0865fcf33c40bd84c4a54b925f1",
+        "attempt_2_void": "2ed9648eef0655e21a0bf889414eccc23be821d3d450c89ba30a89f864f35d57",
+        "attempt_2_authorization_consumed": "012941bd3236ba04edca7a0e39201492815de3b29377a0f9a090c3cd5a11ce8a",
+        "attempt_2_economics_started": "f76eaeef0b2201b61c1a626c79bc88cbefc1620839522f2f0d020b0911a0a34d",
+        "attempt_2_post_statistics_defect": "a51351deb2a3e2eb923e28e354ce4662d4ee406d7f74b0ca15953fe3891900b2"
+      },
+      "pre_statistics_infra_defect_count": 2
     },
     "governance": {
       "authorization_single_use": true,
       "no_overwrite": true,
       "no_rescue": true,
-      "economics_started_irreversible": true,
-      "pre_statistics_defects_do_not_consume_corrected_economic_allowance": true
-    }
+      "infrastructure_invalid_run_not_scientific_evidence": true,
+      "valid_auditable_verdict_closes_stage": true
+    },
+    "result_schema_sha256": "02c569229084515af016f28bc1615f633c0a4fb8a07715107b8ffe601d156d62"
   }
 }
