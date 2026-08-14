@@ -22,6 +22,7 @@ def _config(**updates):
         "accounting_scenarios":("D360","D365"),"gate_definition_version":1,
         "gate_definition_sha256":"3"*64,
         "execution_manifest_sha256":"4"*64,
+        "stage_lineage_id":"stage-a-test","lineage_registry_sha256":"5"*64,
     }
     data.update(updates); return FrozenRunConfig(**data)
 
@@ -37,6 +38,7 @@ def _snapshot(config=None):
             "accounting_scenarios":["D360","D365"],"gate_definition_version":1,
             "gate_definition_sha256":c.gate_definition_sha256,
             "execution_manifest_sha256":c.execution_manifest_sha256,
+            "stage_lineage_id":c.stage_lineage_id,"lineage_registry_sha256":c.lineage_registry_sha256,
             "active":True,"try_absent":True,"gbp_direct":True,"output_ignored":True,
             "prior_conflicting_run":False}
 
@@ -189,6 +191,8 @@ def test_real_boundary_writes_both_integrity_artifacts_before_economics(monkeypa
     payload=json.loads(result.read_text())
     assert seen==[True,True]
     assert set(payload["result"]["integrity_artifacts"])=={"metadata","deep"}
+    start=json.loads(next((tmp_path/"out").glob("*.execution-start.json")).read_text())
+    assert start["economics_boundary"]=="ECONOMICS_STARTED"
 
 
 def test_consumed_authorization_cannot_execute_same_attempt_twice(monkeypatch,tmp_path):

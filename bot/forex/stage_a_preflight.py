@@ -16,13 +16,14 @@ FROZEN_WINDOW=["2023-04-03T00:00:00Z","2026-08-05T00:00:00Z"]
 FROZEN_LEGS=("AUD_USD","EUR_HUF","EUR_NOK","EUR_PLN","EUR_SEK","EUR_USD","EUR_ZAR",
              "GBP_USD","NZD_USD","USD_CAD","USD_CHF","USD_CZK","USD_JPY")
 FROZEN_SHA256={
-    "spec":"8e5cd59ee61335a56d44f508373a8cd6a7970e049e82b5fc91aaf3e2cc5e6c45",
+    "spec":"168268dc9297e11a2095bb779ca75cec23b5cb1a1f07ce2eb0ec724caa4b217c",
     "universe":"461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0",
     "mask":"5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
     "readiness":"786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
     "manifest":"163dd0d639bd0b1e33c4717480e5d7ee997b4dcca2c7811b7b9a70e0b64b38e9",
     "financing":"b6cdd250c208b2ec614356d78999e36bd30881a407fed56a1b2a219894569c94",
     "financing_readiness":"978a01f1c2de89754ee8d622177190839b94aa42190152f82b686f2e5425b07b",
+    "lineage":"32abfa50f82d4f166b0169d2d417609c64e604966cb2e6cf63ad098e4f2f9e9a",
 }
 
 
@@ -35,6 +36,11 @@ def _sha(path: Path) -> str:
     with Path(path).open("rb") as f:
         for chunk in iter(lambda:f.read(1024*1024),b""): h.update(chunk)
     return h.hexdigest()
+
+
+def _canonical_json_sha(path: Path) -> str:
+    payload=(json.dumps(_read(path),sort_keys=True,separators=(",",":"),ensure_ascii=True)+"\n").encode("ascii")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def future_output_schema(fingerprints: Mapping[str,str]) -> dict:
@@ -114,9 +120,13 @@ def project_preflight(root: Path) -> dict:
     protected={"spec":root/spec,**{k:root/v for k,v in artifacts.items()},
                "manifest":root/"provenance/tms_swap_manifest.json",
                "financing":root/"data/tms_swap_archive/derived/parsed_all.json",
-               "financing_readiness":root/"prereg/2026-08-14-tms-carry-financing-readiness.json"}
+               "financing_readiness":root/"prereg/2026-08-14-tms-carry-financing-readiness.json",
+               "lineage":root/"prereg/2026-08-14-tms-carry-stage-a-lineage.json"}
     for name,path in protected.items():
-        if not path.is_file() or _sha(path)!=FROZEN_SHA256[name]:
+        if not path.is_file():
+            raise ValueError(f"frozen {name} identity mismatch")
+        actual=_canonical_json_sha(path) if name=="lineage" else _sha(path)
+        if actual!=FROZEN_SHA256[name]:
             raise ValueError(f"frozen {name} identity mismatch")
     start=pd.Timestamp(readiness["required_window_utc"][0]).value//10**6
     end=pd.Timestamp(readiness["required_window_utc"][1]).value//10**6
@@ -179,5 +189,13 @@ def project_preflight(root: Path) -> dict:
                 for k,v in source_paths.items()) or summary["genuinely_required_missing_input_events"]!=0):
         raise ValueError("venue-evidenced financing-readiness identity mismatch")
     report["financing_readiness"]={**summary,"records_sha256":financing_readiness["records_sha256"]}
+    from bot.forex.stage_a_lineage import load_lineage_registry
+    lineage=load_lineage_registry(protected["lineage"],root)
+    report["lineage"]={"stage_lineage_id":lineage.stage_lineage_id,
+        "next_attempt_id":lineage.next_attempt_id,
+        "pre_statistics_defect_count":len(lineage.pre_statistics_defects),
+        "post_statistics_material_defect_count":lineage.post_statistics_material_defect_count,
+        "corrected_economic_execution_used":lineage.corrected_economic_execution_used,
+        "economics_boundary":"PRE_STATISTICS"}
     report["execution_eligible"]=False
     return report

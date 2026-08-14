@@ -12,6 +12,12 @@ import json
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
+from bot.forex.stage_a_lineage import (
+    EconomicsBoundary, LineageEventStore, StageLineageState, load_lineage_registry,
+    resolve_lineage_state,
+    validate_authorization_lineage,
+)
+
 
 class IntegrityError(RuntimeError):
     pass
@@ -31,6 +37,8 @@ class FrozenRunConfig:
     transaction_map_sha256: str
     financing_sha256: str
     manifest_sha256: str
+    stage_lineage_id: str = ""
+    lineage_registry_sha256: str = ""
     benchmark_seed: int = 20260809
     benchmark_count: int = 1000
     bootstrap_seed: int = 20260808
@@ -57,6 +65,7 @@ def validate_integrity_snapshot(config: FrozenRunConfig, snapshot: Mapping[str,o
     expected=config.canonical()
     for key in ("spec_sha256","artifact_sha256","implementation_sha256","runtime",
                 "cache_sha256","transaction_map_sha256","financing_sha256","manifest_sha256",
+                "stage_lineage_id","lineage_registry_sha256",
                 "benchmark_seed","benchmark_count","bootstrap_seed","bootstrap_reps",
                 "accounting_scenarios","gate_definition_version","gate_definition_sha256"):
         actual=snapshot.get(key)
@@ -176,11 +185,15 @@ class ArtifactStore:
         return self._write_once(self.root/f"{run_id}.attempt-{attempt:02d}.execution-failure.json",value)
 
     def write_result(self,run_id: str,attempt: int,value: Mapping[str,object]) -> Path:
-        if (attempt not in (1,2) or (attempt==2 and value.get("corrects_attempt")!=1) or
-                (attempt==2 and value.get("retry_reason") not in ("UNDETERMINED","VOID_CORRECTION"))):
-            raise ValueError("only original attempt 1 and linked corrected attempt 2 are permitted")
-        lineage={"corrects_attempt":value.get("corrects_attempt") if attempt>1 else None,
-                 "original_attempt":1}
+        reason=value.get("retry_reason")
+        if attempt<1 or (attempt>1 and reason not in
+                ("PRE_STATISTICS_CORRECTION","UNDETERMINED","VOID_CORRECTION")):
+            raise ValueError("result lacks frozen operational-attempt lineage")
+        if reason=="VOID_CORRECTION" and not isinstance(value.get("corrects_attempt"),int):
+            raise ValueError("corrected economic execution must identify retained original")
+        lineage={"corrects_attempt":value.get("corrects_attempt"),
+                 "prior_operational_attempt":value.get("prior_operational_attempt") if attempt>1 else None,
+                 "retry_reason":reason}
         payload={"schema_version":1,"run_id":run_id,"attempt_id":f"{run_id}-a{attempt:02d}",
                  "lineage":lineage,"result":dict(value)}
         return self._write_once(self.root/f"{run_id}.attempt-{attempt:02d}.result.json",payload)
@@ -206,15 +219,15 @@ def record_material_defect(store: ArtifactStore,run_id: str,attempt: int,evidenc
                            spec_unchanged: bool,performance_independent: bool,
                            why_preflight_missed: str) -> Path:
     """Bind VOID policy checks to immutable original-result retention."""
-    if attempt not in (1,2) or not reviewer_id:
+    if attempt<1 or not reviewer_id:
         raise ValueError("material defect must identify attempt and independent reviewer")
     original=store.root/f"{run_id}.attempt-{attempt:02d}.result.json"
     if not original.is_file(): raise ValueError("original result must be retained before defect disposition")
     prior_defects=0
-    if attempt==2:
+    if attempt>1:
         retained=json.loads(original.read_text(encoding="utf-8"))
         reason=retained.get("result",{}).get("retry_reason")
-        if reason not in ("UNDETERMINED","VOID_CORRECTION"):
+        if reason not in ("PRE_STATISTICS_CORRECTION","UNDETERMINED","VOID_CORRECTION"):
             raise ValueError("attempt-2 result lacks frozen retry lineage")
         prior_defects=1 if reason=="VOID_CORRECTION" else 0
     machine=RunStateMachine(run_id,state=RunState.RESULT_COMPLETE,material_defects=prior_defects)
@@ -241,6 +254,11 @@ class Authorization:
     execution_manifest_sha256: str = ""
     spec_sha256: str = ""
     implementation_sha256: str = ""
+    stage_lineage_id: str = ""
+    pre_statistics_defect_count: int = 0
+    post_statistics_material_defect_count: int = 0
+    corrected_economic_execution_used: bool = False
+    lineage_registry_sha256: str = ""
 
 
 def execute_synthetic_fixture(config: FrozenRunConfig, snapshot: Mapping[str,object],
@@ -272,6 +290,7 @@ class RealInputPlan:
     attempt: int = 1
     corrects_attempt: int | None = None
     retry_reason: str | None = None
+    lineage_state: StageLineageState | None = None
 
     def output_template(self) -> dict:
         return {"schema_version":1,"run_id":self.run_id,
@@ -279,8 +298,13 @@ class RealInputPlan:
                 "fingerprints":self.config.canonical(),"integrity_status":"PREFLIGHT_PASSED",
                 "scenarios":{"D360":None,"D365":None},"results":None,
                 "terminal_disposition":None,
-                "lineage":{"original_attempt":1,"corrects_attempt":self.corrects_attempt,
-                           "retry_reason":self.retry_reason}}
+                "lineage":{"stage_lineage_id":self.lineage_state.stage_lineage_id if self.lineage_state else None,
+                           "operational_attempt":self.attempt,"prior_operational_attempt":self.attempt-1 if self.attempt>1 else None,
+                           "corrects_economic_attempt":self.corrects_attempt,
+                           "retry_reason":self.retry_reason,
+                           "pre_statistics_defect_count":len(self.lineage_state.pre_statistics_defects) if self.lineage_state else 0,
+                           "post_statistics_material_defect_count":self.lineage_state.post_statistics_material_defect_count if self.lineage_state else 0,
+                           "corrected_economic_execution_used":self.lineage_state.corrected_economic_execution_used if self.lineage_state else False}}
 
 
 FROZEN_RUNTIME={"python":"3.11.9","numpy":"1.26.3","pandas":"2.3.0",
@@ -307,33 +331,6 @@ def _load_and_verify_execution_manifest(root: Path) -> tuple[dict,str]:
     if manifest.get("gate_definition_sha256")!=gate_hash:
         raise IntegrityError("gate definitions differ from committed manifest")
     return manifest,hashlib.sha256(canonical_bytes(manifest)).hexdigest()
-
-
-def _validated_correction_lineage(output: Path,run_id: str) -> tuple[int,int|None,str|None,bool]:
-    first=output/f"{run_id}.attempt-01.result.json"; void=output/f"{run_id}.attempt-01.void.json"
-    second=output/f"{run_id}.attempt-02.result.json"
-    starts=list(output.glob(f"{run_id}.attempt-*.execution-start.json")) if output.exists() else []
-    failures=list(output.glob(f"{run_id}.attempt-*.execution-failure.json")) if output.exists() else []
-    if failures or (starts and not first.exists()): return 1,None,None,True
-    if second.exists(): return 1,None,None,True
-    if not first.exists(): return 1,None,None,False
-    first_payload=json.loads(first.read_text(encoding="utf-8"))
-    first_verdict=first_payload.get("result",{}).get("terminal_disposition")
-    if not void.exists():
-        if first_verdict=="UNDETERMINED": return 2,1,"UNDETERMINED",False
-        return 1,None,None,True
-    try: evidence=json.loads(void.read_text(encoding="utf-8"))
-    except Exception as exc: raise IntegrityError("VOID evidence is unreadable") from exc
-    q=evidence.get("qualification",{})
-    required=(q.get("reviewer_confirmed") is True,q.get("spec_unchanged") is True,
-              q.get("performance_independent") is True,bool(q.get("reviewer_id")),
-              bool(q.get("why_preflight_missed")),q.get("defect_number")==1)
-    if (evidence.get("run_id")!=run_id or evidence.get("attempt_id")!=f"{run_id}-a01" or
-            evidence.get("status")!="VOID_RETAINED" or evidence.get("original_result")!=first.name or
-            evidence.get("original_result_sha256")!=_file_sha256(first) or not all(required) or
-            evidence.get("qualification_sha256")!=hashlib.sha256(canonical_bytes(q)).hexdigest()):
-        raise IntegrityError("qualifying VOID evidence failed immutable lineage validation")
-    return 2,1,"VOID_CORRECTION",False
 
 
 def _file_sha256(path: Path) -> str:
@@ -410,11 +407,13 @@ def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
         "readiness":"prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json",
         "financing":"data/tms_swap_archive/derived/parsed_all.json",
         "manifest":"provenance/tms_swap_manifest.json",
+        "lineage":"prereg/2026-08-14-tms-carry-stage-a-lineage.json",
         "output":"reports/forex/stage_a",
     }
     load=lambda key:json.loads((root/paths[key]).read_text(encoding="utf-8"))
     universe,mask,readiness,manifest=(load(k) for k in ("universe","mask","readiness","manifest"))
     financing_schema=load("financing")
+    lineage_base=load_lineage_registry(root/paths["lineage"],root)
     ok_names={x["filename"] for x in manifest["entries"] if x["status"]=="ok"}
     if set(financing_schema)!=ok_names or len(financing_schema)!=manifest["parsed_ok"]:
         raise IntegrityError("parsed financing corpus does not match all certified paired documents")
@@ -441,6 +440,8 @@ def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
         cache_sha256={leg["v20_instrument"]:leg["sha256"] for leg in readiness["routed_legs"]},
         transaction_map_sha256=hashlib.sha256(canonical_bytes(mapping)).hexdigest(),
         financing_sha256=FROZEN_SHA256["financing"],manifest_sha256=FROZEN_SHA256["manifest"],
+        stage_lineage_id=lineage_base.stage_lineage_id,
+        lineage_registry_sha256=FROZEN_SHA256["lineage"],
         gate_definition_sha256=hashlib.sha256(canonical_bytes(GATE_DEFINITIONS)).hexdigest(),
         execution_manifest_sha256=execution_manifest_sha)
     expected_freeze={
@@ -453,13 +454,21 @@ def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
         "certified_financing":{"corpus_sha256":config.financing_sha256,
                                "manifest_sha256":config.manifest_sha256},
         "dependency_spec_sha256":_file_sha256(root/"requirements.txt"),
+        "stage_lineage":{"stage_lineage_id":config.stage_lineage_id,
+                         "registry_sha256":config.lineage_registry_sha256},
         "output_schema_version":1,"price_leg_count":13,"transaction_count":168,
         "transaction_map_sha256":config.transaction_map_sha256,
     }
     if execution_manifest.get("final_freeze")!=expected_freeze:
         raise IntegrityError("final freeze manifest differs from verified active identities")
     output=root/paths["output"]
-    run_id=build_run_id(config); attempt,corrects,retry_reason,conflicting=_validated_correction_lineage(output,run_id)
+    lineage=resolve_lineage_state(lineage_base,
+        LineageEventStore(output,lineage_base.stage_lineage_id,len(lineage_base.attempts)))
+    if lineage.economics_boundary!="PRE_STATISTICS":
+        raise IntegrityError("Stage-A economics has started; pre-statistics planning is permanently closed")
+    run_id=build_run_id(config); attempt=lineage.next_attempt_id
+    corrects=None; retry_reason="PRE_STATISTICS_CORRECTION"
+    conflicting=any(output.glob(f"{run_id}.attempt-{attempt:02d}.*")) if output.exists() else False
     snapshot={**config.canonical(),"active":all(x.get("preregistration")==paths["spec"]
                  for x in (universe,mask,readiness)),"try_absent":"TRY" not in universe["currencies"],
               "gbp_direct":universe["routes"]["GBP"]["legs"]==[["GBPUSD.pro",1]] and
@@ -473,9 +482,15 @@ def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
                          "rebalances_defined":mask["n_rebalances_defined"],
                          "evaluable":mask["n_evaluable"],"excluded":mask["n_excluded"]},
                       "performance_computed":False})
+    integrity["lineage"]={"stage_lineage_id":lineage.stage_lineage_id,
+        "next_attempt_id":lineage.next_attempt_id,
+        "pre_statistics_defect_count":len(lineage.pre_statistics_defects),
+        "post_statistics_material_defect_count":lineage.post_statistics_material_defect_count,
+        "corrected_economic_execution_used":lineage.corrected_economic_execution_used,
+        "economics_boundary":"PRE_STATISTICS"}
     plan=RealInputPlan(run_id,config,snapshot,
                        {**paths,**{f"cache:{k}":str(v.relative_to(root)) for k,v in caches.items()}},
-                       mapping,attempt,corrects,retry_reason)
+                       mapping,attempt,corrects,retry_reason,lineage)
     return plan,integrity
 
 
@@ -608,6 +623,11 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
                             authorization: Authorization | None) -> Path:
     """One-shot real execution boundary; no authorization means no real values are assembled."""
     validate_integrity_snapshot(plan.config,plan.snapshot)
+    if plan.lineage_state is not None:
+        validate_authorization_lineage(authorization,plan.lineage_state,plan.run_id,
+                                       plan.config.lineage_registry_sha256)
+        if authorization.lineage_registry_sha256!=plan.config.lineage_registry_sha256:
+            raise PermissionError("authorization lineage registry identity mismatch")
     if (authorization is None or not authorization.approved or authorization.run_id!=plan.run_id or
             authorization.attempt!=plan.attempt or
             authorization.execution_manifest_sha256!=plan.config.execution_manifest_sha256 or
@@ -615,8 +635,24 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
             authorization.implementation_sha256!=plan.config.implementation_sha256):
         raise PermissionError("separate human authorization for this exact frozen run is required")
     store=ArtifactStore(Path(root)/plan.paths["output"])
+    lineage_events=None
+    if plan.lineage_state is not None:
+        lineage_base=load_lineage_registry(Path(root)/plan.paths["lineage"],Path(root))
+        lineage_events=LineageEventStore(store.root,plan.lineage_state.stage_lineage_id,
+                                         len(lineage_base.attempts))
+    if lineage_events is not None:
+        lineage_events.consume_authorization(plan.attempt,plan.run_id,
+            plan.config.execution_manifest_sha256,authorization.authorization_id,{
+                "spec_sha256":authorization.spec_sha256,
+                "implementation_sha256":authorization.implementation_sha256,
+                "lineage_registry_sha256":authorization.lineage_registry_sha256,
+                "pre_statistics_defect_count":authorization.pre_statistics_defect_count,
+                "post_statistics_material_defect_count":authorization.post_statistics_material_defect_count,
+                "corrected_economic_execution_used":authorization.corrected_economic_execution_used})
     state=RunStateMachine(plan.run_id); state.transition("preflight_pass")
-    if plan.attempt==1:
+    if plan.retry_reason=="PRE_STATISTICS_CORRECTION":
+        state.transition("authorize")
+    elif plan.attempt==1:
         state.transition("authorize")
     elif plan.retry_reason=="UNDETERMINED":
         state.state=RunState.UNDETERMINED_SUSPENDED
@@ -628,7 +664,8 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
     try:
         assembled=assemble_real_inputs(root,plan)
     except (IntegrityError,ValueError,KeyError) as exc:
-        if plan.attempt==1: state.transition("deep_integrity_fail",reason=str(exc))
+        if plan.attempt==1 or plan.retry_reason=="PRE_STATISTICS_CORRECTION":
+            state.transition("deep_integrity_fail",reason=str(exc))
         elif plan.retry_reason=="UNDETERMINED": state.state=RunState.UNDETERMINED_SUSPENDED
         else: state.state=RunState.SUSPENDED_INFRA
         store.write_integrity_failure(plan.run_id,{"status":state.state.value,
@@ -636,10 +673,17 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
                                       "state_history":state.history},plan.attempt)
         raise IntegrityError(str(exc)) from exc
     deep_path=store.write_deep_integrity(plan.run_id,assembled.deep_integrity,plan.attempt)
-    state.transition("start" if plan.attempt==1 else
+    state.transition("start" if plan.attempt==1 or plan.retry_reason=="PRE_STATISTICS_CORRECTION" else
                      "start_retry" if plan.retry_reason=="UNDETERMINED" else "start_correction")
+    boundary=EconomicsBoundary()
+    boundary.start_economics()
+    if lineage_events is not None:
+        lineage_events.start_economics(plan.attempt,plan.run_id,
+                                       plan.config.execution_manifest_sha256)
     store.write_execution_start(plan.run_id,plan.attempt,{"status":"EXECUTION_STARTED",
+        "economics_boundary":boundary.state,
         "run_id":plan.run_id,"attempt":plan.attempt,"authorization_id":authorization.authorization_id,
+        "stage_lineage_id":authorization.stage_lineage_id,
         "metadata_integrity_sha256":_file_sha256(metadata_path),
         "deep_integrity_sha256":_file_sha256(deep_path)})
     try:
@@ -659,7 +703,10 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
              "integrity_artifacts":{
                  "metadata":{"file":metadata_path.name,"sha256":_file_sha256(metadata_path)},
                  "deep":{"file":deep_path.name,"sha256":_file_sha256(deep_path)}}}
-    if plan.attempt==2:
-        payload["corrects_attempt"]=1
+    if plan.attempt>1:
+        payload["prior_operational_attempt"]=plan.attempt-1
+    if plan.corrects_attempt is not None:
+        payload["corrects_attempt"]=plan.corrects_attempt
+    if plan.retry_reason:
         payload["retry_reason"]=plan.retry_reason
     return store.write_result(plan.run_id,plan.attempt,payload)

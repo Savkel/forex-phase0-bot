@@ -28,7 +28,12 @@ def main(argv=None) -> int:
         authorization=Authorization(raw["authorization_id"],raw["run_id"],
                                     raw.get("approved") is True,int(raw.get("attempt",1)),
                                     raw.get("execution_manifest_sha256",""),
-                                    raw.get("spec_sha256",""),raw.get("implementation_sha256",""))
+                                    raw.get("spec_sha256",""),raw.get("implementation_sha256",""),
+                                    raw.get("stage_lineage_id",""),
+                                    int(raw.get("pre_statistics_defect_count",-1)),
+                                    int(raw.get("post_statistics_material_defect_count",-1)),
+                                    raw.get("corrected_economic_execution_used") is True,
+                                    raw.get("lineage_registry_sha256",""))
         output=execute_real_authorized(root,plan,report,authorization)
         print(json.dumps({"mode":"EXECUTION_COMPLETE","output":str(output)},sort_keys=True))
         return 0

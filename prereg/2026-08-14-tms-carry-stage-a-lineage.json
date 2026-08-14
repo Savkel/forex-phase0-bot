@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "stage_lineage_id": "stage-a-tms-pro-carry-development-v1",
+  "economics_boundary": "PRE_STATISTICS",
+  "next_attempt_id": 2,
+  "attempts": [
+    {
+      "attempt_id": 1,
+      "run_id": "stage-a-acb2358000786ae233526a4d14b2ba3d217366cd6dce1f38aa7d84372d12f615",
+      "authorization_consumed": true,
+      "economics_started": false,
+      "disposition": "UNDETERMINED_SUSPENDED",
+      "performance_computed": false,
+      "evidence": [
+        {
+          "path": "reports/forex/stage_a/authorization-stage-a-acb2358.json",
+          "sha256": "842aa7138bd19cab7e95922d783dac11e3c17a0d520fcf8bf1ebda00170df67f"
+        },
+        {
+          "path": "reports/forex/stage_a/stage-a-acb2358000786ae233526a4d14b2ba3d217366cd6dce1f38aa7d84372d12f615.attempt-01.integrity.json",
+          "sha256": "dd152ea20aaa3ecce230aa8c8dfd27a7b3fad0bc5a2a56d10cfbad63d8fabb4d"
+        },
+        {
+          "path": "reports/forex/stage_a/stage-a-acb2358000786ae233526a4d14b2ba3d217366cd6dce1f38aa7d84372d12f615.attempt-01.integrity-failure-4f08601912421072.json",
+          "sha256": "4f08601912421072c69cf1292cf4921fb638bced1d9c3b0fba8b4a27829ba966"
+        }
+      ]
+    }
+  ],
+  "pre_statistics_defects": [
+    {
+      "defect_id": 1,
+      "classification": "PRE_STATISTICS_INFRA_DEFECT",
+      "root_cause": "ORCHESTRATOR_INTEGRITY_DEFECT",
+      "reviewer_confirmed": true,
+      "outcome_independent": true,
+      "performance_computed": false
+    },
+    {
+      "defect_id": 2,
+      "classification": "PRE_STATISTICS_INFRA_DEFECT",
+      "root_cause": "CROSS_FREEZE_LINEAGE_DEFECT",
+      "reviewer_confirmed": true,
+      "outcome_independent": true,
+      "performance_computed": false
+    }
+  ],
+  "post_statistics_material_defect_count": 0,
+  "corrected_economic_execution_used": false,
+  "performance_verdict": null
+}
