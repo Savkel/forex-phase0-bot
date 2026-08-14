@@ -114,7 +114,7 @@ def test_pre_statistics_attempt_does_not_add_post_statistics_allowance(tmp_path)
     second=record_material_defect(store,"new-run",3,"post-stat defect two",reviewer_id="r2",
         reviewer_confirmed=True,spec_unchanged=True,performance_independent=True,
         why_preflight_missed="arose only after corrected economics began")
-    assert json.loads(second.read_text())["status"]=="SUSPENDED_INFRA"
+    assert json.loads(second.read_text())["status"]=="VOID_RETAINED"
 
 
 def test_stable_lineage_overlay_advances_attempt_across_new_run_ids(tmp_path):
@@ -150,7 +150,7 @@ def test_post_statistics_void_persists_across_freeze_and_enables_one_correction(
     assert state.performance_verdict is None
 
 
-def test_second_post_statistics_defect_suspends_and_blocks_more_corrections(tmp_path):
+def test_multiple_infrastructure_voids_do_not_manufacture_strategy_disposition(tmp_path):
     base=load_lineage_registry(_registry_path(),Path(__file__).resolve().parents[1])
     store=LineageEventStore(tmp_path,base.stage_lineage_id)
     for attempt in (2,3):
@@ -159,7 +159,7 @@ def test_second_post_statistics_defect_suspends_and_blocks_more_corrections(tmp_
                               corrected_economic_execution=(attempt==3))
         result=tmp_path/f"run-{attempt}.attempt-{attempt:02d}.result.json"
         result.write_text('{"retained":true}\n',encoding="utf-8")
-        status="VOID_RETAINED" if attempt==2 else "SUSPENDED_INFRA"
+        status="VOID_RETAINED"
         void=tmp_path/f"run-{attempt}.attempt-{attempt:02d}.disposition.json"
         void.write_text(json.dumps({"status":status})+'\n',encoding="utf-8")
         store.record_post_statistics_defect(attempt,f"run-{attempt}",f"freeze-{attempt}",
@@ -167,10 +167,11 @@ def test_second_post_statistics_defect_suspends_and_blocks_more_corrections(tmp_
     state=resolve_lineage_state(base,store)
     assert state.post_statistics_material_defect_count==2
     assert state.corrected_economic_execution_used is True
-    assert state.performance_verdict=="SUSPENDED_INFRA"
+    assert state.performance_verdict is None
+    assert _execution_lineage_disposition(state)[1]=="VOID_CORRECTION"
 
 
-def test_consumed_correction_deep_integrity_failure_persists_suspension(tmp_path):
+def test_consumed_correction_deep_integrity_failure_persists_without_strategy_verdict(tmp_path):
     base=load_lineage_registry(_registry_path(),Path(__file__).resolve().parents[1])
     store=LineageEventStore(tmp_path,base.stage_lineage_id)
     store.consume_authorization(2,"original","freeze-original","auth-original")
@@ -180,13 +181,25 @@ def test_consumed_correction_deep_integrity_failure_persists_suspension(tmp_path
     store.record_post_statistics_defect(2,"original","freeze-original",result,void,"DEFECT_ONE")
     store.consume_authorization(3,"correction","freeze-new","auth-correction")
     failure=tmp_path/"correction.deep-integrity-failure.json"
-    failure.write_text('{"status":"SUSPENDED_INFRA"}\n')
+    failure.write_text('{"status":"INFRA_FAILURE_RETAINED"}\n')
     store.record_infrastructure_suspension(3,"correction","freeze-new",failure)
     state=resolve_lineage_state(base,store)
-    assert state.corrected_economic_execution_used is True
-    assert state.performance_verdict=="SUSPENDED_INFRA"
-    with pytest.raises(IntegrityError,match="no further"):
-        _execution_lineage_disposition(state)
+    assert state.performance_verdict is None
+    assert _execution_lineage_disposition(state)[1]=="VOID_CORRECTION"
+
+
+def test_post_start_exception_is_immutable_and_does_not_create_strategy_verdict(tmp_path):
+    base=load_lineage_registry(_registry_path(),Path(__file__).resolve().parents[1])
+    store=LineageEventStore(tmp_path,base.stage_lineage_id)
+    store.consume_authorization(2,"run","freeze","auth")
+    store.start_economics(2,"run","freeze",corrected_economic_execution=True)
+    failure=tmp_path/"run.execution-failure.json"
+    failure.write_text('{"status":"EXECUTION_FAILED_RETAINED"}\n')
+    marker=store.record_execution_failure(2,"run","freeze",failure,"SYNTHETIC_EXCEPTION")
+    state=resolve_lineage_state(base,store)
+    assert marker.is_file() and state.performance_verdict is None
+    with pytest.raises(FileExistsError):
+        store.record_execution_failure(2,"run","freeze",failure,"REWRITE")
 
 
 def test_stable_lineage_overlay_rejects_gap_and_tamper(tmp_path):

@@ -98,7 +98,7 @@ def test_state_machine_happy_path_has_no_rerun():
     with pytest.raises(ValueError): sm.transition("authorize")
 
 
-def test_void_retention_corrected_lineage_and_second_defect_suspends(tmp_path):
+def test_void_retention_keeps_stage_open_for_exact_infrastructure_correction(tmp_path):
     store=ArtifactStore(tmp_path); sm=RunStateMachine("run")
     sm.transition("preflight_pass"); sm.transition("authorize"); sm.transition("start")
     original=store.write_result("run",1,{"terminal_disposition":"SURVIVES_KILL_TEST"})
@@ -112,7 +112,7 @@ def test_void_retention_corrected_lineage_and_second_defect_suspends(tmp_path):
     assert json.loads(corrected.read_text())["lineage"]["corrects_attempt"]==1
     sm.transition("complete",disposition="CLOSED_FAIL")
     sm.qualify_material_defect("second",reviewer_confirmed=True,spec_unchanged=True)
-    assert sm.state is RunState.SUSPENDED_INFRA
+    assert sm.state is RunState.VOID_RETAINED
 
 
 def test_nonqualifying_issue_cannot_soften_existing_verdict():
@@ -179,14 +179,19 @@ def _auditable_gate_results():
     return {"gates":{f"G{i}":True for i in range(1,6)},
             "scenarios":{360:scenario,365:scenario},
             "scenario_metrics":{360:metrics,365:metrics},
-            "G2_metrics":{"mean_ic":.02,"lower_bound":.01,"one_sided_confidence":.95,
-                          "lower_bound_quantile":.05,"threshold":0.0},
+        "G2_metrics":{"mean_ic":.02,"lower_bound":.01,"one_sided_confidence":.95,
+                          "lower_bound_quantile":.05,"threshold":0.0,
+                          "bootstrap_block_length":1,"bootstrap_replicates":10000,
+                          "bootstrap_seed":20260808},
             "terminal_verdict":"SURVIVES_KILL_TEST"}
 
 
 @pytest.mark.parametrize("missing",[
     ("G2_metrics",None,None),
     ("G2_metrics","lower_bound",None),
+    ("G2_metrics","bootstrap_block_length",None),
+    ("G2_metrics","bootstrap_replicates",None),
+    ("G2_metrics","bootstrap_seed",None),
     ("scenario_metrics",360,"G1"),
     ("scenario_metrics",360,"G3"),
     ("scenario_metrics",360,"G4"),
@@ -210,19 +215,23 @@ def test_complete_auditable_result_round_trips_deterministically(tmp_path):
     assert json.loads(a)==json.loads(b)
 
 
-@pytest.mark.parametrize("mutation",["g1_arithmetic","nonfinite","g2_constants","outer_terminal"])
+@pytest.mark.parametrize("mutation",["g1_arithmetic","nonfinite","g2_constants","g2_seed",
+                                      "g2_fractional_seed","g2_fractional_reps","outer_terminal"])
 def test_result_serialization_rejects_inconsistent_audit_operands(tmp_path,mutation):
     results=_auditable_gate_results(); outer="SURVIVES_KILL_TEST"
     if mutation=="g1_arithmetic": results["scenario_metrics"][360]["G1"]["excess"]+=.01
     elif mutation=="nonfinite": results["scenario_metrics"][360]["G3"]["strategy_mdd"]=float("nan")
     elif mutation=="g2_constants": results["G2_metrics"]["one_sided_confidence"]=.90
+    elif mutation=="g2_seed": results["G2_metrics"]["bootstrap_seed"]=1
+    elif mutation=="g2_fractional_seed": results["G2_metrics"]["bootstrap_seed"]=20260808.5
+    elif mutation=="g2_fractional_reps": results["G2_metrics"]["bootstrap_replicates"]=10000.5
     else: outer="CLOSED_FAIL"
     with pytest.raises(ValueError,match="auditable"):
         ArtifactStore(tmp_path).write_result("run",1,{"results":results,
             "terminal_disposition":outer})
 
 
-def test_integrated_void_requires_policy_evidence_and_second_defect_suspends(tmp_path):
+def test_integrated_void_requires_policy_evidence_and_retains_each_invalid_run(tmp_path):
     store=ArtifactStore(tmp_path); store.write_result("run",1,{"terminal_disposition":"CLOSED_FAIL"})
     with pytest.raises(ValueError):
         record_material_defect(store,"run",1,"bug",reviewer_id="r",reviewer_confirmed=False,
@@ -234,7 +243,7 @@ def test_integrated_void_requires_policy_evidence_and_second_defect_suspends(tmp
     store.write_result("run",2,{"corrects_attempt":1,"retry_reason":"VOID_CORRECTION","terminal_disposition":"CLOSED_FAIL"})
     suspension=record_material_defect(store,"run",2,"bug2",reviewer_id="r2",reviewer_confirmed=True,
                                       spec_unchanged=True,performance_independent=True,why_preflight_missed="fixture defect")
-    assert json.loads(suspension.read_text())["status"]=="SUSPENDED_INFRA"
+    assert json.loads(suspension.read_text())["status"]=="VOID_RETAINED"
 
 
 def test_real_boundary_writes_both_integrity_artifacts_before_economics(monkeypatch,tmp_path):

@@ -137,7 +137,7 @@ class LineageEventStore:
             raise LineageError("post-statistics defect requires retained result and VOID evidence")
         existing=list(self.root.glob(f"{self.stage_lineage_id}.attempt-*.post-statistics-defect.json"))
         defect_number=self.initial_post_statistics_defect_count+len(existing)+1
-        status="VOID_RETAINED" if defect_number==1 else "SUSPENDED_INFRA"
+        status="VOID_RETAINED"
         return self._write_once(self._path(attempt,"post-statistics-defect"),{
             "schema_version":1,"stage_lineage_id":self.stage_lineage_id,
             "event":"POST_STATISTICS_MATERIAL_DEFECT","attempt_id":attempt,
@@ -155,9 +155,33 @@ class LineageEventStore:
             raise LineageError("infrastructure suspension evidence is missing")
         return self._write_once(self._path(attempt,"infrastructure-suspended"),{
             "schema_version":1,"stage_lineage_id":self.stage_lineage_id,
-            "event":"SUSPENDED_INFRA","attempt_id":attempt,"run_id":run_id,
+            "event":"INFRA_FAILURE_RETAINED","attempt_id":attempt,"run_id":run_id,
             "freeze_manifest_sha256":freeze_manifest_sha256,
             "evidence_file":Path(evidence_path).name,"evidence_sha256":_sha(evidence_path)})
+
+    def record_execution_failure(self,attempt: int,run_id: str,freeze_manifest_sha256: str,
+                                 evidence_path: Path,root_cause: str) -> Path:
+        started=_read_sealed(self._path(attempt,"economics-started"),self.stage_lineage_id)
+        if started.get("run_id")!=run_id or started.get("freeze_manifest_sha256")!=freeze_manifest_sha256:
+            raise LineageError("execution failure lacks matching economics lineage")
+        if not Path(evidence_path).is_file(): raise LineageError("execution failure evidence missing")
+        return self._write_once(self._path(attempt,"execution-failed-retained"),{
+            "schema_version":1,"stage_lineage_id":self.stage_lineage_id,"event":"EXECUTION_FAILED_RETAINED",
+            "attempt_id":attempt,"run_id":run_id,"freeze_manifest_sha256":freeze_manifest_sha256,
+            "root_cause":root_cause,"evidence_file":Path(evidence_path).name,
+            "evidence_sha256":_sha(evidence_path)})
+
+    def record_result_complete(self,attempt: int,run_id: str,freeze_manifest_sha256: str,
+                               result_path: Path,disposition: str) -> Path:
+        if disposition not in ("SURVIVES_KILL_TEST","CLOSED_FAIL","UNDETERMINED"):
+            raise LineageError("invalid completed disposition")
+        started=_read_sealed(self._path(attempt,"economics-started"),self.stage_lineage_id)
+        if started.get("run_id")!=run_id or started.get("freeze_manifest_sha256")!=freeze_manifest_sha256:
+            raise LineageError("completed result lacks matching economics lineage")
+        return self._write_once(self._path(attempt,"result-complete"),{
+            "schema_version":1,"stage_lineage_id":self.stage_lineage_id,"event":"RESULT_COMPLETE",
+            "attempt_id":attempt,"run_id":run_id,"freeze_manifest_sha256":freeze_manifest_sha256,
+            "disposition":disposition,"result_file":Path(result_path).name,"result_sha256":_sha(result_path)})
 
 
 def _read_sealed(path: Path,stage_lineage_id: str) -> dict:
@@ -221,9 +245,22 @@ def resolve_lineage_state(base: StageLineageState,store: LineageEventStore) -> S
         evidence=store.root/str(suspension.get("evidence_file",""))
         if not evidence.is_file() or _sha(evidence)!=suspension.get("evidence_sha256"):
             raise LineageError("infrastructure suspension evidence missing or tampered")
+    completions=[]; failures=[]
+    for pattern,target in (("result-complete",completions),("execution-failed-retained",failures)):
+        paths=store.root.glob(f"{base.stage_lineage_id}.attempt-*.{pattern}.json") if store.root.exists() else ()
+        for path in paths:
+            event=_read_sealed(path,base.stage_lineage_id); target.append(event)
+            parent=starts_by_attempt.get(int(event.get("attempt_id",-1)))
+            if parent is None or any(event.get(k)!=parent.get(k) for k in ("run_id","freeze_manifest_sha256")):
+                raise LineageError("terminal execution event lacks matching economics lineage")
+            evidence=store.root/str(event.get("result_file",event.get("evidence_file","")))
+            expected=event.get("result_sha256",event.get("evidence_sha256"))
+            if not evidence.is_file() or _sha(evidence)!=expected:
+                raise LineageError("terminal execution evidence missing or tampered")
     corrected_used=(base.corrected_economic_execution_used or
-                    any(x.get("corrected_economic_execution") is True for x in starts) or bool(suspensions))
-    verdict="SUSPENDED_INFRA" if post_count>=2 or suspensions else base.performance_verdict
+                    any(x.get("corrected_economic_execution") is True for x in starts))
+    completed_valid=[x for x in completions if not any(int(d.get("attempt_id",-1))==int(x["attempt_id"]) for d in defects)]
+    verdict=completed_valid[-1]["disposition"] if completed_valid else base.performance_verdict
     return StageLineageState(base.stage_lineage_id,base.next_attempt_id+len(consumed),
         (*base.attempts,*consumed),base.pre_statistics_defects,
         post_count,corrected_used,verdict,boundary)

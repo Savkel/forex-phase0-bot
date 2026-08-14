@@ -148,7 +148,7 @@ class RunStateMachine:
             raise ValueError("issue does not satisfy the frozen VOID policy")
         self.material_defects+=1
         old=self.state
-        self.state=RunState.VOID_RETAINED if self.material_defects==1 else RunState.SUSPENDED_INFRA
+        self.state=RunState.VOID_RETAINED
         self.history.append({"from":old.value,"event":"material_defect","to":self.state.value,
                              "details":{"evidence":evidence,"defect_number":self.material_defects}})
 
@@ -167,12 +167,15 @@ def _validate_auditable_gate_results(results: object) -> None:
         raise ValueError("auditable Stage-A result lacks mandatory numeric gate operands")
     if set(gates)!={"G1","G2","G3","G4","G5"} or set(scenarios)!={360,365} or set(metrics)!={360,365}:
         raise ValueError("auditable Stage-A result has incomplete gate/scenario identity")
-    required_g2={"mean_ic","lower_bound","one_sided_confidence","lower_bound_quantile","threshold"}
+    required_g2={"mean_ic","lower_bound","one_sided_confidence","lower_bound_quantile","threshold",
+                 "bootstrap_block_length","bootstrap_replicates","bootstrap_seed"}
     numeric=lambda value:isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(float(value))
     if not required_g2.issubset(g2) or not all(numeric(g2[k]) for k in required_g2):
         raise ValueError("auditable Stage-A result lacks mandatory G2 operands")
     if (float(g2["one_sided_confidence"])!=.95 or float(g2["lower_bound_quantile"])!=.05 or
-            float(g2["threshold"])!=0.0):
+            float(g2["threshold"])!=0.0 or float(g2["bootstrap_replicates"])!=10_000 or
+            float(g2["bootstrap_seed"])!=20260808 or int(g2["bootstrap_block_length"])<1 or
+            float(g2["bootstrap_block_length"])!=int(g2["bootstrap_block_length"])):
         raise ValueError("auditable Stage-A G2 metadata differs from frozen inference")
     if bool(gates["G2"])!=(float(g2["lower_bound"])>float(g2["threshold"])):
         raise ValueError("auditable Stage-A G2 verdict disagrees with retained operands")
@@ -321,9 +324,7 @@ def record_material_defect(store: ArtifactStore,run_id: str,attempt: int,evidenc
                    "why_preflight_missed":why_preflight_missed,
                    "defect_number":machine.material_defects}
     linked=f"reviewer={reviewer_id}; {evidence}"
-    if machine.state is RunState.VOID_RETAINED:
-        return store.write_void(run_id,attempt,original,linked,qualification)
-    return store.write_suspension(run_id,attempt,original,linked)
+    return store.write_void(run_id,attempt,original,linked,qualification)
 
 
 @dataclass(frozen=True)
@@ -480,8 +481,7 @@ def _verify_certified_financing_identity(root: Path,manifest: Mapping[str,object
 def _execution_lineage_disposition(lineage: StageLineageState) -> tuple[int | None,str]:
     if lineage.economics_boundary=="PRE_STATISTICS":
         return None,"PRE_STATISTICS_CORRECTION"
-    if (lineage.post_statistics_material_defect_count==1 and
-            not lineage.corrected_economic_execution_used and lineage.performance_verdict is None):
+    if lineage.post_statistics_material_defect_count>=1 and lineage.performance_verdict is None:
         return lineage.next_attempt_id-1,"VOID_CORRECTION"
     raise IntegrityError("Stage-A lineage permits no further economic execution")
 
@@ -757,7 +757,7 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
         if plan.attempt==1 or plan.retry_reason=="PRE_STATISTICS_CORRECTION":
             state.transition("deep_integrity_fail",reason=str(exc))
         elif plan.retry_reason=="UNDETERMINED": state.state=RunState.UNDETERMINED_SUSPENDED
-        else: state.state=RunState.SUSPENDED_INFRA
+        else: state.state=RunState.READINESS_BLOCKED
         failure_path=store.write_integrity_failure(plan.run_id,{"status":state.state.value,
                                       "reason":str(exc),"performance_computed":False,
                                       "state_history":state.history},plan.attempt)
@@ -783,9 +783,12 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
     try:
         result=_compute_real_stage_a(assembled)
     except Exception as exc:
-        store.write_execution_failure(plan.run_id,plan.attempt,{"status":"EXECUTION_FAILED_RETAINED",
+        failure_path=store.write_execution_failure(plan.run_id,plan.attempt,{"status":"EXECUTION_FAILED_RETAINED",
             "run_id":plan.run_id,"attempt":plan.attempt,"exception_type":type(exc).__name__,
             "message":str(exc),"requires_governed_material_defect_review":True})
+        if lineage_events is not None:
+            lineage_events.record_execution_failure(plan.attempt,plan.run_id,
+                plan.config.execution_manifest_sha256,failure_path,"POST_ECONOMICS_EXCEPTION")
         raise
     if result["terminal_verdict"]=="UNDETERMINED":
         state.transition("undetermined",reason="frozen inference could not determine G2")
@@ -803,4 +806,8 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
         payload["corrects_attempt"]=plan.corrects_attempt
     if plan.retry_reason:
         payload["retry_reason"]=plan.retry_reason
-    return store.write_result(plan.run_id,plan.attempt,payload)
+    result_path=store.write_result(plan.run_id,plan.attempt,payload)
+    if lineage_events is not None:
+        lineage_events.record_result_complete(plan.attempt,plan.run_id,
+            plan.config.execution_manifest_sha256,result_path,result["terminal_verdict"])
+    return result_path

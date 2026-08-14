@@ -16,7 +16,7 @@ FROZEN_WINDOW=["2023-04-03T00:00:00Z","2026-08-05T00:00:00Z"]
 FROZEN_LEGS=("AUD_USD","EUR_HUF","EUR_NOK","EUR_PLN","EUR_SEK","EUR_USD","EUR_ZAR",
              "GBP_USD","NZD_USD","USD_CAD","USD_CHF","USD_CZK","USD_JPY")
 FROZEN_SHA256={
-    "spec":"168268dc9297e11a2095bb779ca75cec23b5cb1a1f07ce2eb0ec724caa4b217c",
+    "spec":"09005d9170d945a6c599f88e4247a39ea87336d20f2757416e4e7e639c55047b",
     "universe":"461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0",
     "mask":"5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
     "readiness":"786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
@@ -59,7 +59,8 @@ def future_output_schema(fingerprints: Mapping[str,str]) -> dict:
                 "G1":{"D360":{"strategy_rap":None,"benchmark_median_rap":None,"excess":None},
                       "D365":{"strategy_rap":None,"benchmark_median_rap":None,"excess":None}},
                 "G2":{"mean_ic":None,"lower_bound":None,"one_sided_confidence":.95,
-                      "lower_bound_quantile":.05,"threshold":0.0},
+                      "lower_bound_quantile":.05,"threshold":0.0,"bootstrap_block_length":None,
+                      "bootstrap_replicates":10000,"bootstrap_seed":20260808},
                 "G3":{"D360":{"strategy_mdd":None,"benchmark_median_mdd":None},
                       "D365":{"strategy_mdd":None,"benchmark_median_mdd":None}},
                 "G4":{"D360":{"stressed_total_return":None},
