@@ -149,8 +149,77 @@ requirement, or cache identity: TRY remains excluded, GBP routes through `GBP_US
 
 ## 10. Acceptance and dispositions
 
-The five gates and thresholds are inherited unchanged in meaning: benchmark-relative RAP,
-spot-only predictive evidence, drawdown versus ensemble median, adverse-stress positive total
-return, and all-case LOCO robustness. All PASS yields `SURVIVES_KILL_TEST` only; any valid FAIL
-yields permanent `CLOSED_FAIL`; readiness/integrity triggers remain fail-closed. Stage A has not
-executed. No result or permission follows from this revision.
+### 10.1 Currency targets, routed notionals, and executable units
+
+This accounting clarification was frozen by human decision before implementation and before any
+Stage-A performance execution. No price or performance information informed it. At rebalance `t`,
+let `E_t` be the accounting-scenario-specific USD equity immediately before the rebalance and let
+`w` be the frozen currency target. Define `x = E_t * w`. For the frozen 14-currency, 13-edge
+routing incidence matrix `R` (base `+1`, quote `-1`), solve `R n = x`. The target is zero-sum and
+the routing graph is a spanning tree, so the signed USD-equivalent edge-notional vector `n` must be
+unique; otherwise evaluation fails closed.
+
+For routed pair `p`, target signed base units are
+`Q_p = n_p / V_base,USD_mid(t)`. Valuation uses the midpoint of the same common H1 OPEN used for
+execution: USD base has value 1; an `XXX_USD` base uses that pair's midpoint; an EUR-cross base
+uses the simultaneous `EUR_USD` midpoint. Paths are fixed by routing, never selected from costs or
+performance. The midpoint sizes the target only. Actual change `delta_Q = Q_target - Q_current`
+buys at ASK OPEN when positive and sells at BID OPEN when negative, so actual fills—not target
+selection—introduce spread P&L. Strategy, every benchmark book, and every LOCO case use identical
+mechanics. Direct-USD, USD-base, and EUR-cross routes must reconstruct `x` exactly.
+
+### 10.2 Gross convention
+
+The binding normalization is currency gross `sum(abs(w)) = 2`: long sleeve gross 1 and short
+sleeve gross 1. It is never rescaled to gross 1. Routed edge notionals are not separately
+normalized; their gross can exceed 2 because synthetic EUR routes use multiple legs, which is a
+routing/cost diagnostic rather than a risk target. This paragraph and Section 5 override every
+inherited reference to `gross notional 1`, `sum(abs(w)) = 1`, or equivalent. Gate thresholds are
+unchanged. Strategy, benchmark, and LOCO all use currency gross 2.
+
+### 10.3 Client-financing day-count uncertainty
+
+The certified TMS corpus does not uniquely specify the denominator converting a published
+annualized client FX Long/Short rate into daily cash accrual. Therefore two complete accounting
+scenarios are mandatory: `D360` uses denominator 360 and `D365` uses denominator 365. This is a
+human-defined uncertainty envelope, not a claim that either scenario is historically correct,
+preferred, primary, or exhaustive of every conceivable contractual convention. Neither scenario
+may be selected or discarded after results, and the study is not exact historical TMS cash
+replication.
+
+For each scenario independently, start from identical initial USD equity; use only its denominator
+in the inherited financing formula; evolve its own equity; and use that equity in every later
+`x = E_t * w`, unit target, turnover, transaction cost, financing cashflow, and P&L calculation.
+Strategy, all 1,000 benchmark books, every stress cell, and every LOCO case are separate complete
+paths under each denominator. A shared trade path with financing substituted afterward is
+prohibited. Signals, timestamps, memberships, seeds, routing, and all non-day-count rules remain
+identical across scenarios.
+
+All other inherited financing mechanics remain binding: position sign selects printed Long versus
+Short rate from contemporaneous `F(d)`; the selected signed percentage rate alone preserves the
+debit/credit sign; and the financing notional is the unsigned magnitude
+`abs(Q_p) * pair_mid` in quote currency. Thus a short position does not apply its sign a second
+time to an already signed Short rate. Apply the charged-day multiplier once, divide by scenario
+denominator `D`, and convert the resulting signed quote-currency cash amount contemporaneously to
+USD. Adverse stress worsens debits and reduces credits. The holiday-deviation multiplier remains
+a distinct stress dimension and is not day-count uncertainty. This replaces the inherited signed
+`Q` use and `basis_YYY` term only; all remaining financing mechanics are unchanged.
+
+### 10.4 Dual-scenario gate disposition
+
+The five thresholds remain unchanged, but their required scope is explicit. Gate 2 is spot-only
+and denominator-independent, so it is evaluated once. Gates 1 and 3 must each PASS independently
+under both `D360` and `D365`. Gate 4's existing adverse spread/financing corner must PASS under
+both. Gate 5 requires every one of the 14 active-currency LOCO cases to PASS under both, with each
+case retaining mechanical `N=13`, `k=4` and its scenario-specific benchmark paths. Results are
+never averaged and no better or primary scenario is selected.
+
+Any required failure in either scenario yields Stage-A `CLOSED_FAIL`. Only Gate 2 PASS together
+with Gates 1/3/4/5 PASS under both scenarios yields `SURVIVES_KILL_TEST`. Readiness/integrity
+triggers remain fail-closed. Stage B inherits the identical dual-accounting requirement.
+
+This clarification changes no universe, tie rule, route, mask, execution timestamp, price leg, or
+cache identity: 14 active no-TRY currencies, `k=4`, direct `GBP_USD`, 13 price legs, and all 168
+certified transaction instants remain binding. `PRICE_READINESS_COMMITTED` remains valid; no
+refetch or readiness rerun is required. Stage A has not executed and no result or permission
+follows from this clarification.
