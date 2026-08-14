@@ -22,7 +22,8 @@ def main(argv=None) -> int:
         raw=json.loads(args.authorization_file.read_text(encoding="utf-8"))
         authorization=Authorization(raw["authorization_id"],raw["run_id"],
                                     raw.get("approved") is True,int(raw.get("attempt",1)),
-                                    raw.get("execution_manifest_sha256",""))
+                                    raw.get("execution_manifest_sha256",""),
+                                    raw.get("spec_sha256",""),raw.get("implementation_sha256",""))
         output=execute_real_authorized(root,plan,report,authorization)
         print(json.dumps({"mode":"EXECUTION_COMPLETE","output":str(output)},sort_keys=True))
         return 0

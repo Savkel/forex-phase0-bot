@@ -1,6 +1,44 @@
 {
   "gate_definition_sha256": "0f80d27b3b497be775552fc819a7f7618466912ca003255b68bc23777f5d5538",
-  "implementation_sha256": "0714e87a3bb651ebf4a48675946df3e830f6fd742bf0b5468413d33d78d40427",
+  "implementation_sha256": "7dfabce8f6578b7b2ac69e228656799b3cb61533962d2aac304c05fc26f1e202",
+  "final_freeze": {
+    "accounting_scenarios": {
+      "D360": {"denominator": 360},
+      "D365": {"denominator": 365}
+    },
+    "active_artifact_sha256": {
+      "mask": "5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
+      "readiness": "786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
+      "universe": "461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0"
+    },
+    "active_prereg_sha256": "38e72c864f4ad50037bd56b8f80065d1839bd666691141eee5ee7ddf2d4e89b6",
+    "benchmark": {"count": 1000, "seed": 20260809},
+    "bootstrap": {"replicates": 10000, "seed": 20260808},
+    "cache_sha256": {
+      "AUD_USD": "1935c5b9b2bfba36db871127507aa8783218f83c391d227b2935cd51909c667c",
+      "EUR_HUF": "fa0b094b2a51090983936e2188189577f4175533d657f0a849e0d53a7c35a099",
+      "EUR_NOK": "e0a0538837308bf155ced5c43bd6ef9ae497cd81ee7659858859c3ab17fe2998",
+      "EUR_PLN": "9574ab9b949d8b30262909306e869e9c6b03ce3d448b2a74879829090ea06caa",
+      "EUR_SEK": "78a732c412fe8288f3bf7a6217a1a79b4a52330c44ad1499b6368bfc9fa69ac1",
+      "EUR_USD": "69eb5ae48b2b2bf91a8f23608fdac24fe3f303699eee1403c511c52d25c263bc",
+      "EUR_ZAR": "4e5b1479ab19a4483881446977467c56c8215e95adab7aa1dae2e27766f94dd1",
+      "GBP_USD": "5a745800892dc3df1b43f9722652c9ebf65a82ea25fa63bd6fab907104da607e",
+      "NZD_USD": "9d71e931e8c71ed8c5a7129f7e57688cc966fd3c8a31c22d1a18a8aaed46f38e",
+      "USD_CAD": "515c131f1ef6a8193b6e4877edbbf5d8a1349c585d450786c48e7861f2786e22",
+      "USD_CHF": "3c8249eb8a2db2ab544d1b7b7cb11c7c996c3f3d2a48022ee695c9aa42e0b2c4",
+      "USD_CZK": "f673cb336b5d3b6f5d48e56668bc85134fbf63a0f901980c24ae2b08ea186bc0",
+      "USD_JPY": "5c86bf3f6fce167303d83ebe5dceeccfb127c6d4862ab45ee2832e32d81875d8"
+    },
+    "certified_financing": {
+      "corpus_sha256": "b6cdd250c208b2ec614356d78999e36bd30881a407fed56a1b2a219894569c94",
+      "manifest_sha256": "163dd0d639bd0b1e33c4717480e5d7ee997b4dcca2c7811b7b9a70e0b64b38e9"
+    },
+    "dependency_spec_sha256": "80590e0555abae9ec2ade90ce5c84f81e28569b36c1c4fddf62309f2acf61949",
+    "output_schema_version": 1,
+    "price_leg_count": 13,
+    "transaction_count": 168,
+    "transaction_map_sha256": "3e088bec0996850abb030e68ec73912cca5b04100b1293b274efdc61099f8404"
+  },
   "runtime": {
     "arch": "7.2.0",
     "implementation": "CPython",
@@ -13,8 +51,8 @@
   "schema_version": 1,
   "source_files": {
     "bot/forex/stage_a_carry.py": "34b68cec9e384ee9acee9226ea96c15e4abeafc4e54b07a5663d547a7cb1635c",
-    "bot/forex/stage_a_orchestration.py": "9a32e62e5c1071a1e63e1f1f890e5c717398c0e707324a7ab5e6ebc3b0e975f8",
+    "bot/forex/stage_a_orchestration.py": "054141746c03d5bf83b7f77ce5183e24078e89d4e48bc3d4070709cf4c87a361",
     "bot/forex/stage_a_preflight.py": "f96cd456187fab627fdf772f1d032a72857e82460e4b26c96d6f3b05bc1085bb",
-    "run_stage_a_carry.py": "b1bc66352b054515762d60bc76899243f80770863faf39192a847ba92a0d1e8d"
+    "run_stage_a_carry.py": "8b149e342e5357d6bca25eb5e9defc56923789d629c7e576c4fd50167c212bcf"
   }
 }

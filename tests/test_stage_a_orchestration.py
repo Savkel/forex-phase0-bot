@@ -40,6 +40,12 @@ def _snapshot(config=None):
             "prior_conflicting_run":False}
 
 
+def _authorization(config,run_id=None):
+    return Authorization("human",run_id or build_run_id(config),True,1,
+                         config.execution_manifest_sha256,config.spec_sha256,
+                         config.implementation_sha256)
+
+
 @pytest.mark.parametrize("field",["spec_sha256","transaction_map_sha256","financing_sha256","manifest_sha256"])
 def test_integrity_rejects_wrong_identity(field):
     c=_config(); s=_snapshot(c); s[field]="0"*64
@@ -117,14 +123,21 @@ def test_execute_denied_before_evaluator_and_authorization_is_run_bound(tmp_path
     c=_config(); called=[]
     with pytest.raises(PermissionError): execute_synthetic_fixture(c,_snapshot(c),None,lambda:called.append(True),ArtifactStore(tmp_path))
     assert called==[]
-    wrong=Authorization("approval",build_run_id(c)+"x",True,1,c.execution_manifest_sha256)
+    wrong=_authorization(c,build_run_id(c)+"x")
     with pytest.raises(PermissionError): execute_synthetic_fixture(c,_snapshot(c),wrong,lambda:called.append(True),ArtifactStore(tmp_path))
     assert called==[]
 
 
+@pytest.mark.parametrize("field",["execution_manifest_sha256","spec_sha256","implementation_sha256"])
+def test_authorization_is_bound_to_every_frozen_identity(field,tmp_path):
+    c=_config(); values={**_authorization(c).__dict__,field:"0"*64}
+    with pytest.raises(PermissionError):
+        execute_synthetic_fixture(c,_snapshot(c),Authorization(**values),lambda:{"terminal_verdict":"CLOSED_FAIL"},ArtifactStore(tmp_path))
+
+
 def test_execute_integrity_failure_prevents_evaluator(tmp_path):
     c=_config(); s=_snapshot(c); s["spec_sha256"]="0"*64; called=[]
-    auth=Authorization("approval",build_run_id(c),True,1,c.execution_manifest_sha256)
+    auth=_authorization(c)
     with pytest.raises(IntegrityError): execute_synthetic_fixture(c,s,auth,lambda:called.append(True),ArtifactStore(tmp_path))
     assert called==[]
 
@@ -134,7 +147,7 @@ def test_integrity_is_immutable_before_synthetic_evaluator(tmp_path):
     def evaluator():
         seen.append((tmp_path/f"{build_run_id(c)}.attempt-01.integrity.json").is_file())
         return {"terminal_verdict":"CLOSED_FAIL"}
-    auth=Authorization("approval",build_run_id(c),True,1,c.execution_manifest_sha256)
+    auth=_authorization(c)
     output=execute_synthetic_fixture(c,_snapshot(c),auth,evaluator,store)
     assert seen==[True] and output.is_file()
 
@@ -170,11 +183,23 @@ def test_real_boundary_writes_both_integrity_artifacts_before_economics(monkeypa
         seen.extend([next(out.glob("*.integrity.json")).is_file(),next(out.glob("*.deep-integrity.json")).is_file()])
         return {"terminal_verdict":"CLOSED_FAIL"}
     monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",compute)
-    auth=Authorization("human",run_id,True,1,c.execution_manifest_sha256)
+    auth=_authorization(c)
     result=execute_real_authorized(tmp_path,plan,{"performance_computed":False},auth)
     payload=json.loads(result.read_text())
     assert seen==[True,True]
     assert set(payload["result"]["integrity_artifacts"])=={"metadata","deep"}
+
+
+def test_consumed_authorization_cannot_execute_same_attempt_twice(monkeypatch,tmp_path):
+    c=_config(); run_id=build_run_id(c); plan=RealInputPlan(run_id,c,_snapshot(c),{"output":"out"},(),1,None)
+    assembled=AssembledRealInputs((),(),{},(),{"status":"DEEP_INTEGRITY_PASSED"})
+    calls=[]
+    monkeypatch.setattr("bot.forex.stage_a_orchestration.assemble_real_inputs",lambda root,p:assembled)
+    monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",lambda value:(calls.append(1) or {"terminal_verdict":"CLOSED_FAIL"}))
+    auth=_authorization(c)
+    execute_real_authorized(tmp_path,plan,{},auth)
+    with pytest.raises(PermissionError): execute_real_authorized(tmp_path,plan,{},auth)
+    assert calls==[1]
 
 
 def test_real_boundary_preserves_undetermined_suspension(monkeypatch,tmp_path):
@@ -182,7 +207,7 @@ def test_real_boundary_preserves_undetermined_suspension(monkeypatch,tmp_path):
     assembled=AssembledRealInputs((),(),{},(),{"status":"DEEP_INTEGRITY_PASSED"})
     monkeypatch.setattr("bot.forex.stage_a_orchestration.assemble_real_inputs",lambda root,p:assembled)
     monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",lambda value:{"terminal_verdict":"UNDETERMINED"})
-    auth=Authorization("human",run_id,True,1,c.execution_manifest_sha256)
+    auth=_authorization(c)
     payload=json.loads(execute_real_authorized(tmp_path,plan,{},auth).read_text())["result"]
     assert payload["terminal_disposition"]=="UNDETERMINED"
     assert payload["state_history"][-1]["to"]=="UNDETERMINED_SUSPENDED"
@@ -244,7 +269,7 @@ def test_economic_exception_is_retained_and_cannot_silently_rerun(monkeypatch,tm
     assembled=AssembledRealInputs((),(),{},(),{"status":"DEEP_INTEGRITY_PASSED"})
     monkeypatch.setattr("bot.forex.stage_a_orchestration.assemble_real_inputs",lambda root,p:assembled)
     monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",lambda value:(_ for _ in ()).throw(RuntimeError("synthetic defect")))
-    auth=Authorization("human",run_id,True,1,c.execution_manifest_sha256)
+    auth=_authorization(c)
     with pytest.raises(RuntimeError): execute_real_authorized(tmp_path,plan,{},auth)
     assert (tmp_path/"out"/f"{run_id}.attempt-01.execution-start.json").is_file()
     assert (tmp_path/"out"/f"{run_id}.attempt-01.execution-failure.json").is_file()

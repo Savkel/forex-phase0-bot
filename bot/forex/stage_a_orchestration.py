@@ -167,7 +167,10 @@ class ArtifactStore:
         return self._write_once(self.root/f"{run_id}.attempt-{attempt:02d}.integrity-failure-{suffix}.json",value)
 
     def write_execution_start(self,run_id: str,attempt: int,value: object) -> Path:
-        return self._write_once(self.root/f"{run_id}.attempt-{attempt:02d}.execution-start.json",value)
+        path=self.root/f"{run_id}.attempt-{attempt:02d}.execution-start.json"
+        if path.exists():
+            raise PermissionError("authorization already consumed by this execution attempt")
+        return self._write_once(path,value)
 
     def write_execution_failure(self,run_id: str,attempt: int,value: object) -> Path:
         return self._write_once(self.root/f"{run_id}.attempt-{attempt:02d}.execution-failure.json",value)
@@ -236,6 +239,8 @@ class Authorization:
     approved: bool
     attempt: int = 1
     execution_manifest_sha256: str = ""
+    spec_sha256: str = ""
+    implementation_sha256: str = ""
 
 
 def execute_synthetic_fixture(config: FrozenRunConfig, snapshot: Mapping[str,object],
@@ -245,7 +250,9 @@ def execute_synthetic_fixture(config: FrozenRunConfig, snapshot: Mapping[str,obj
     integrity=validate_integrity_snapshot(config,snapshot)
     run_id=build_run_id(config)
     if (authorization is None or not authorization.approved or authorization.run_id!=run_id or
-            authorization.execution_manifest_sha256!=config.execution_manifest_sha256):
+            authorization.execution_manifest_sha256!=config.execution_manifest_sha256 or
+            authorization.spec_sha256!=config.spec_sha256 or
+            authorization.implementation_sha256!=config.implementation_sha256):
         raise PermissionError("separate human authorization for this exact frozen run is required")
     store.write_integrity(run_id,integrity,authorization.attempt)
     result=evaluator()
@@ -299,7 +306,7 @@ def _load_and_verify_execution_manifest(root: Path) -> tuple[dict,str]:
     gate_hash=hashlib.sha256(canonical_bytes(GATE_DEFINITIONS)).hexdigest()
     if manifest.get("gate_definition_sha256")!=gate_hash:
         raise IntegrityError("gate definitions differ from committed manifest")
-    return manifest,_file_sha256(path)
+    return manifest,hashlib.sha256(canonical_bytes(manifest)).hexdigest()
 
 
 def _validated_correction_lineage(output: Path,run_id: str) -> tuple[int,int|None,str|None,bool]:
@@ -436,6 +443,21 @@ def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
         financing_sha256=FROZEN_SHA256["financing"],manifest_sha256=FROZEN_SHA256["manifest"],
         gate_definition_sha256=hashlib.sha256(canonical_bytes(GATE_DEFINITIONS)).hexdigest(),
         execution_manifest_sha256=execution_manifest_sha)
+    expected_freeze={
+        "accounting_scenarios":{"D360":{"denominator":360},"D365":{"denominator":365}},
+        "active_artifact_sha256":dict(config.artifact_sha256),
+        "active_prereg_sha256":config.spec_sha256,
+        "benchmark":{"count":config.benchmark_count,"seed":config.benchmark_seed},
+        "bootstrap":{"replicates":config.bootstrap_reps,"seed":config.bootstrap_seed},
+        "cache_sha256":dict(config.cache_sha256),
+        "certified_financing":{"corpus_sha256":config.financing_sha256,
+                               "manifest_sha256":config.manifest_sha256},
+        "dependency_spec_sha256":_file_sha256(root/"requirements.txt"),
+        "output_schema_version":1,"price_leg_count":13,"transaction_count":168,
+        "transaction_map_sha256":config.transaction_map_sha256,
+    }
+    if execution_manifest.get("final_freeze")!=expected_freeze:
+        raise IntegrityError("final freeze manifest differs from verified active identities")
     output=root/paths["output"]
     run_id=build_run_id(config); attempt,corrects,retry_reason,conflicting=_validated_correction_lineage(output,run_id)
     snapshot={**config.canonical(),"active":all(x.get("preregistration")==paths["spec"]
@@ -566,7 +588,9 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
     validate_integrity_snapshot(plan.config,plan.snapshot)
     if (authorization is None or not authorization.approved or authorization.run_id!=plan.run_id or
             authorization.attempt!=plan.attempt or
-            authorization.execution_manifest_sha256!=plan.config.execution_manifest_sha256):
+            authorization.execution_manifest_sha256!=plan.config.execution_manifest_sha256 or
+            authorization.spec_sha256!=plan.config.spec_sha256 or
+            authorization.implementation_sha256!=plan.config.implementation_sha256):
         raise PermissionError("separate human authorization for this exact frozen run is required")
     store=ArtifactStore(Path(root)/plan.paths["output"])
     state=RunStateMachine(plan.run_id); state.transition("preflight_pass")
