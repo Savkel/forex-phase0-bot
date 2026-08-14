@@ -648,34 +648,51 @@ def evaluate_frozen_gates(strategy_returns: Sequence[float],
 
 
 def evaluate_dual_accounting_gates(
-        scenarios: Mapping[int,Mapping[str,object]], ic_lower_bound: float) -> dict[str,object]:
+        scenarios: Mapping[int,Mapping[str,object]], ic_lower_bound: float,
+        ic_statistic: float) -> dict[str,object]:
     """Apply G2 once and require G1/G3/G4/G5 independently under D360 and D365."""
     if set(scenarios)!={360,365}:
         raise ValueError("both and only D360/D365 accounting scenarios are required")
-    if not isfinite(ic_lower_bound):
+    if not isfinite(ic_lower_bound) or not isfinite(ic_statistic):
         return {"gates":None,"scenarios":None,"terminal_verdict":"UNDETERMINED",
                 "reason":"non-finite or degenerate G2 bootstrap evidence"}
-    g2=ic_lower_bound>0; per={}
+    g2=ic_lower_bound>0; per={}; metrics={}
     for denominator in (360,365):
         item=scenarios[denominator]
         bench=item["benchmark_returns"]; strategy=item["strategy_returns"]
         loco=item["loco_rap_excesses"]; stressed=float(item["stressed_total_return"])
-        if len(bench)!=1000 or len(loco)!=14:
+        if len(bench)!=1000 or not isinstance(loco,Mapping) or len(loco)!=14:
             raise ValueError("frozen benchmark/LOCO counts required in each scenario")
-        srap=rap(strategy); braps=[rap(x) for x in bench]
+        srap=rap(strategy); braps=[rap(x) for x in bench]; median_rap=float(np.median(braps))
         smdd=max_drawdown_from_returns(strategy)
         bmdd=float(np.median([max_drawdown_from_returns(x) for x in bench]))
+        loco_values={str(currency):float(value) for currency,value in loco.items()}
+        if not all(isfinite(value) for value in loco_values.values()):
+            raise ValueError("LOCO excesses must be finite")
+        worst_currency,worst_excess=min(loco_values.items(),key=lambda item:(item[1],item[0]))
         per[denominator]={
-            "G1":srap>float(np.median(braps)),
+            "G1":srap>median_rap,
             "G3":max_drawdown_gate(smdd,bmdd),
             "G4":isfinite(stressed) and stressed>0,
-            "G5":all(isfinite(float(x)) and float(x)>0 for x in loco),
+            "G5":all(value>0 for value in loco_values.values()),
+        }
+        metrics[denominator]={
+            "G1":{"strategy_rap":srap,"benchmark_median_rap":median_rap,
+                  "excess":srap-median_rap},
+            "G3":{"strategy_mdd":smdd,"benchmark_median_mdd":bmdd},
+            "G4":{"stressed_total_return":stressed},
+            "G5":{"loco_excesses":loco_values,
+                  "pass_count":sum(value>0 for value in loco_values.values()),
+                  "worst_currency":worst_currency,"worst_excess":worst_excess},
         }
     gates={"G1":all(per[d]["G1"] for d in per),"G2":g2,
            "G3":all(per[d]["G3"] for d in per),
            "G4":all(per[d]["G4"] for d in per),
            "G5":all(per[d]["G5"] for d in per)}
-    return {"gates":gates,"scenarios":per,
+    return {"gates":gates,"scenarios":per,"scenario_metrics":metrics,
+            "G2_metrics":{"mean_ic":float(ic_statistic),"lower_bound":float(ic_lower_bound),
+                          "one_sided_confidence":.95,"lower_bound_quantile":.05,
+                          "threshold":0.0},
             "terminal_verdict":"SURVIVES_KILL_TEST" if all(gates.values()) else "CLOSED_FAIL"}
 
 
@@ -697,11 +714,11 @@ def derive_dual_gate_inputs(initial_equity: float,
     for d in (360,365):
         bench=list(benchmarks[d])
         if len(bench)!=1000: raise ValueError("each denominator requires 1000 benchmark paths")
-        loco_excess=[]
-        for case in loco.values():
+        loco_excess={}
+        for currency,case in loco.items():
             s=case["strategy"][d]; b=case["benchmark"][d]
             if len(b)!=1000: raise ValueError("each LOCO denominator requires 1000 benchmarks")
-            loco_excess.append(rap(s.period_returns)-float(np.median([rap(x.period_returns) for x in b])))
+            loco_excess[str(currency)]=rap(s.period_returns)-float(np.median([rap(x.period_returns) for x in b]))
         out[d]={"strategy_returns":strategy[d].period_returns,
                 "benchmark_returns":[x.period_returns for x in bench],
                 "stressed_total_return":_path_total_return(adverse_strategy[d],initial_equity),
@@ -720,13 +737,17 @@ def evaluate_complete_stage_a(initial_equity: float,
     try:
         ic_lower,block=stationary_bootstrap_lower_bound(ic_series,10_000,20260808)
         inputs=derive_dual_gate_inputs(initial_equity,strategy,benchmarks,adverse_strategy,loco)
-        result=evaluate_dual_accounting_gates(inputs,ic_lower)
+        result=evaluate_dual_accounting_gates(inputs,ic_lower,float(np.mean(np.asarray(ic_series,dtype=float))))
         if set(spread3_strategy)!={360,365}:
             raise ValueError("spread x3 sensitivity requires both accounting scenarios")
         result["non_gating_sensitivities"]={
             "spread_x3_total_return":{d:_path_total_return(spread3_strategy[d],initial_equity)
                                       for d in (360,365)}}
         result["G2_block_length"]=block
+        if result.get("G2_metrics") is not None:
+            result["G2_metrics"]["bootstrap_block_length"]=block
+            result["G2_metrics"]["bootstrap_replicates"]=10_000
+            result["G2_metrics"]["bootstrap_seed"]=20260808
         return result
     except (ValueError,RuntimeError,KeyError) as exc:
         return {"gates":None,"scenarios":None,"terminal_verdict":"UNDETERMINED",

@@ -219,13 +219,20 @@ def test_gap_exit_reentry_and_terminal_are_actual_costed_turnover():
 
 
 def test_dual_gate_requires_both_denominators_and_g2_once():
+    currencies=("AUD","CAD","CHF","CZK","EUR","GBP","HUF","JPY","NOK","NZD","PLN","SEK","USD","ZAR")
     good={"strategy_returns":[.02,.01,.03],"benchmark_returns":[[.001,-.001,.001]]*1000,
-          "stressed_total_return":.01,"loco_rap_excesses":[.01]*14}
+          "stressed_total_return":.01,"loco_rap_excesses":{c:.01 for c in currencies}}
     bad={**good,"stressed_total_return":-.01}
-    out=evaluate_dual_accounting_gates({360:good,365:bad},ic_lower_bound=.01)
+    out=evaluate_dual_accounting_gates({360:good,365:bad},ic_lower_bound=.01,ic_statistic=.02)
     assert out["gates"]["G2"] is True and out["scenarios"][360]["G4"] is True
     assert out["scenarios"][365]["G4"] is False and out["terminal_verdict"]=="CLOSED_FAIL"
-    undetermined=evaluate_dual_accounting_gates({360:good,365:good},ic_lower_bound=float("nan"))
+    assert out["G2_metrics"]=={"mean_ic":.02,"lower_bound":.01,
+        "one_sided_confidence":.95,"lower_bound_quantile":.05,"threshold":0.0}
+    assert out["scenario_metrics"][360]["G1"]["excess"]>0
+    assert out["scenario_metrics"][360]["G5"]["pass_count"]==14
+    assert set(out["scenario_metrics"][360]["G5"]["loco_excesses"] )==set(currencies)
+    undetermined=evaluate_dual_accounting_gates({360:good,365:good},
+                                                ic_lower_bound=float("nan"),ic_statistic=.02)
     assert undetermined["terminal_verdict"]=="UNDETERMINED"
 
 

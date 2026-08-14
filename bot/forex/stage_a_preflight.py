@@ -55,7 +55,20 @@ def future_output_schema(fingerprints: Mapping[str,str]) -> dict:
                 "G3":"signed MDD comparison PASS under D360 and D365",
                 "G4":"adverse-corner stressed net total return > 0 under D360 and D365",
                 "G5":"all 14 LOCO Gate-1 excesses > 0 under D360 and D365",
-            },"gate_results":None,
+            },"gate_results":{
+                "G1":{"D360":{"strategy_rap":None,"benchmark_median_rap":None,"excess":None},
+                      "D365":{"strategy_rap":None,"benchmark_median_rap":None,"excess":None}},
+                "G2":{"mean_ic":None,"lower_bound":None,"one_sided_confidence":.95,
+                      "lower_bound_quantile":.05,"threshold":0.0},
+                "G3":{"D360":{"strategy_mdd":None,"benchmark_median_mdd":None},
+                      "D365":{"strategy_mdd":None,"benchmark_median_mdd":None}},
+                "G4":{"D360":{"stressed_total_return":None},
+                      "D365":{"stressed_total_return":None}},
+                "G5":{"D360":{"loco_excesses":"14-currency mapping","pass_count":None,
+                                "worst_currency":None,"worst_excess":None},
+                      "D365":{"loco_excesses":"14-currency mapping","pass_count":None,
+                                "worst_currency":None,"worst_excess":None}},
+            },
             "non_gating_sensitivities":{"spread_x3_total_return":{"D360":None,"D365":None}},
             "terminal_verdict":{"allowed":["SURVIVES_KILL_TEST","CLOSED_FAIL","UNDETERMINED"],"value":None}}
 
@@ -189,13 +202,16 @@ def project_preflight(root: Path) -> dict:
                 for k,v in source_paths.items()) or summary["genuinely_required_missing_input_events"]!=0):
         raise ValueError("venue-evidenced financing-readiness identity mismatch")
     report["financing_readiness"]={**summary,"records_sha256":financing_readiness["records_sha256"]}
-    from bot.forex.stage_a_lineage import load_lineage_registry
-    lineage=load_lineage_registry(protected["lineage"],root)
+    from bot.forex.stage_a_lineage import LineageEventStore,load_lineage_registry,resolve_lineage_state
+    lineage_base=load_lineage_registry(protected["lineage"],root)
+    lineage=resolve_lineage_state(lineage_base,LineageEventStore(
+        root/"reports/forex/stage_a",lineage_base.stage_lineage_id,len(lineage_base.attempts),
+        lineage_base.post_statistics_material_defect_count))
     report["lineage"]={"stage_lineage_id":lineage.stage_lineage_id,
         "next_attempt_id":lineage.next_attempt_id,
         "pre_statistics_defect_count":len(lineage.pre_statistics_defects),
         "post_statistics_material_defect_count":lineage.post_statistics_material_defect_count,
         "corrected_economic_execution_used":lineage.corrected_economic_execution_used,
-        "economics_boundary":"PRE_STATISTICS"}
+        "economics_boundary":lineage.economics_boundary}
     report["execution_eligible"]=False
     return report

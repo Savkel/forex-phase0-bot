@@ -8,7 +8,7 @@ from bot.forex.stage_a_lineage import (
     LineageEventStore, load_lineage_registry, resolve_lineage_state,
     validate_authorization_lineage,
 )
-from bot.forex.stage_a_orchestration import Authorization
+from bot.forex.stage_a_orchestration import Authorization,IntegrityError,_execution_lineage_disposition
 from bot.forex.stage_a_orchestration import ArtifactStore, record_material_defect
 
 
@@ -61,12 +61,15 @@ def test_economics_boundary_is_irreversible_and_preflight_safe():
     with pytest.raises(LineageError): boundary.assert_pre_statistics()
 
 
-def test_metadata_preflight_reports_boundary_without_crossing_it():
+def test_metadata_preflight_reports_retained_economics_boundary_without_reentering_it():
     from bot.forex.stage_a_preflight import project_preflight
     report=project_preflight(Path(__file__).resolve().parents[1])
     assert report["performance_computed"] is False
     assert report["execution_eligible"] is False
-    assert report["lineage"]["economics_boundary"]=="PRE_STATISTICS"
+    assert report["lineage"]["economics_boundary"]=="ECONOMICS_STARTED"
+    assert report["lineage"]["next_attempt_id"]==3
+    assert report["lineage"]["post_statistics_material_defect_count"]==1
+    assert report["lineage"]["corrected_economic_execution_used"] is False
 
 
 def test_authorization_requires_lineage_attempt_and_separate_counters():
@@ -127,6 +130,63 @@ def test_stable_lineage_overlay_advances_attempt_across_new_run_ids(tmp_path):
     after_start=resolve_lineage_state(base,store)
     assert after_start.next_attempt_id==3
     assert after_start.economics_boundary=="ECONOMICS_STARTED"
+
+
+def test_post_statistics_void_persists_across_freeze_and_enables_one_correction(tmp_path):
+    base=load_lineage_registry(_registry_path(),Path(__file__).resolve().parents[1])
+    store=LineageEventStore(tmp_path,base.stage_lineage_id)
+    store.consume_authorization(2,"run-old","freeze-old","auth-old")
+    store.start_economics(2,"run-old","freeze-old")
+    result=tmp_path/"run-old.attempt-02.result.json"
+    result.write_text('{"retained":true}\n',encoding="utf-8")
+    void=tmp_path/"run-old.attempt-02.void.json"
+    void.write_text('{"status":"VOID_RETAINED"}\n',encoding="utf-8")
+    store.record_post_statistics_defect(2,"run-old","freeze-old",result,void,
+                                        "MANDATORY_GATE_METRICS_NOT_RETAINED")
+    state=resolve_lineage_state(base,store)
+    assert state.next_attempt_id==3
+    assert state.post_statistics_material_defect_count==1
+    assert state.corrected_economic_execution_used is False
+    assert state.performance_verdict is None
+
+
+def test_second_post_statistics_defect_suspends_and_blocks_more_corrections(tmp_path):
+    base=load_lineage_registry(_registry_path(),Path(__file__).resolve().parents[1])
+    store=LineageEventStore(tmp_path,base.stage_lineage_id)
+    for attempt in (2,3):
+        store.consume_authorization(attempt,f"run-{attempt}",f"freeze-{attempt}",f"auth-{attempt}")
+        store.start_economics(attempt,f"run-{attempt}",f"freeze-{attempt}",
+                              corrected_economic_execution=(attempt==3))
+        result=tmp_path/f"run-{attempt}.attempt-{attempt:02d}.result.json"
+        result.write_text('{"retained":true}\n',encoding="utf-8")
+        status="VOID_RETAINED" if attempt==2 else "SUSPENDED_INFRA"
+        void=tmp_path/f"run-{attempt}.attempt-{attempt:02d}.disposition.json"
+        void.write_text(json.dumps({"status":status})+'\n',encoding="utf-8")
+        store.record_post_statistics_defect(attempt,f"run-{attempt}",f"freeze-{attempt}",
+                                            result,void,f"DEFECT_{attempt}")
+    state=resolve_lineage_state(base,store)
+    assert state.post_statistics_material_defect_count==2
+    assert state.corrected_economic_execution_used is True
+    assert state.performance_verdict=="SUSPENDED_INFRA"
+
+
+def test_consumed_correction_deep_integrity_failure_persists_suspension(tmp_path):
+    base=load_lineage_registry(_registry_path(),Path(__file__).resolve().parents[1])
+    store=LineageEventStore(tmp_path,base.stage_lineage_id)
+    store.consume_authorization(2,"original","freeze-original","auth-original")
+    store.start_economics(2,"original","freeze-original")
+    result=tmp_path/"original.result.json"; result.write_text('{"retained":true}\n')
+    void=tmp_path/"original.void.json"; void.write_text('{"status":"VOID_RETAINED"}\n')
+    store.record_post_statistics_defect(2,"original","freeze-original",result,void,"DEFECT_ONE")
+    store.consume_authorization(3,"correction","freeze-new","auth-correction")
+    failure=tmp_path/"correction.deep-integrity-failure.json"
+    failure.write_text('{"status":"SUSPENDED_INFRA"}\n')
+    store.record_infrastructure_suspension(3,"correction","freeze-new",failure)
+    state=resolve_lineage_state(base,store)
+    assert state.corrected_economic_execution_used is True
+    assert state.performance_verdict=="SUSPENDED_INFRA"
+    with pytest.raises(IntegrityError,match="no further"):
+        _execution_lineage_disposition(state)
 
 
 def test_stable_lineage_overlay_rejects_gap_and_tamper(tmp_path):

@@ -78,9 +78,11 @@ def load_lineage_registry(path: Path,root: Path) -> StageLineageState:
 
 class LineageEventStore:
     """Write-once operational events whose filenames survive freeze/run-ID changes."""
-    def __init__(self,root: Path,stage_lineage_id: str,initial_attempt_count: int = 1):
+    def __init__(self,root: Path,stage_lineage_id: str,initial_attempt_count: int = 1,
+                 initial_post_statistics_defect_count: int = 0):
         self.root=Path(root); self.stage_lineage_id=stage_lineage_id
         self.initial_attempt_count=initial_attempt_count
+        self.initial_post_statistics_defect_count=initial_post_statistics_defect_count
 
     def _path(self,attempt: int,event: str) -> Path:
         return self.root/f"{self.stage_lineage_id}.attempt-{attempt:02d}.{event}.json"
@@ -113,14 +115,49 @@ class LineageEventStore:
             "freeze_manifest_sha256":freeze_manifest_sha256,
             "authorization_id":authorization_id,**dict(identities or {})})
 
-    def start_economics(self,attempt: int,run_id: str,freeze_manifest_sha256: str) -> Path:
+    def start_economics(self,attempt: int,run_id: str,freeze_manifest_sha256: str,
+                        corrected_economic_execution: bool = False) -> Path:
         consumed=_read_sealed(self._path(attempt,"authorization-consumed"),self.stage_lineage_id)
         if consumed.get("run_id")!=run_id or consumed.get("freeze_manifest_sha256")!=freeze_manifest_sha256:
             raise LineageError("economics boundary does not match consumed authorization")
         return self._write_once(self._path(attempt,"economics-started"),{
             "schema_version":1,"stage_lineage_id":self.stage_lineage_id,
             "event":"ECONOMICS_STARTED","attempt_id":attempt,"run_id":run_id,
-            "freeze_manifest_sha256":freeze_manifest_sha256})
+            "freeze_manifest_sha256":freeze_manifest_sha256,
+            "corrected_economic_execution":bool(corrected_economic_execution)})
+
+    def record_post_statistics_defect(self,attempt: int,run_id: str,freeze_manifest_sha256: str,
+                                      result_path: Path,void_path: Path,root_cause: str) -> Path:
+        if not root_cause:
+            raise LineageError("post-statistics defect requires an outcome-independent root cause")
+        started=_read_sealed(self._path(attempt,"economics-started"),self.stage_lineage_id)
+        if started.get("run_id")!=run_id or started.get("freeze_manifest_sha256")!=freeze_manifest_sha256:
+            raise LineageError("post-statistics defect lacks matching ECONOMICS_STARTED evidence")
+        if not Path(result_path).is_file() or not Path(void_path).is_file():
+            raise LineageError("post-statistics defect requires retained result and VOID evidence")
+        existing=list(self.root.glob(f"{self.stage_lineage_id}.attempt-*.post-statistics-defect.json"))
+        defect_number=self.initial_post_statistics_defect_count+len(existing)+1
+        status="VOID_RETAINED" if defect_number==1 else "SUSPENDED_INFRA"
+        return self._write_once(self._path(attempt,"post-statistics-defect"),{
+            "schema_version":1,"stage_lineage_id":self.stage_lineage_id,
+            "event":"POST_STATISTICS_MATERIAL_DEFECT","attempt_id":attempt,
+            "run_id":run_id,"freeze_manifest_sha256":freeze_manifest_sha256,
+            "root_cause":root_cause,"defect_number":defect_number,"status":status,
+            "result_file":Path(result_path).name,"result_sha256":_sha(result_path),
+            "void_file":Path(void_path).name,"void_sha256":_sha(void_path)})
+
+    def record_infrastructure_suspension(self,attempt: int,run_id: str,
+                                         freeze_manifest_sha256: str,evidence_path: Path) -> Path:
+        consumed=_read_sealed(self._path(attempt,"authorization-consumed"),self.stage_lineage_id)
+        if consumed.get("run_id")!=run_id or consumed.get("freeze_manifest_sha256")!=freeze_manifest_sha256:
+            raise LineageError("infrastructure suspension lacks matching consumed authorization")
+        if not Path(evidence_path).is_file():
+            raise LineageError("infrastructure suspension evidence is missing")
+        return self._write_once(self._path(attempt,"infrastructure-suspended"),{
+            "schema_version":1,"stage_lineage_id":self.stage_lineage_id,
+            "event":"SUSPENDED_INFRA","attempt_id":attempt,"run_id":run_id,
+            "freeze_manifest_sha256":freeze_manifest_sha256,
+            "evidence_file":Path(evidence_path).name,"evidence_sha256":_sha(evidence_path)})
 
 
 def _read_sealed(path: Path,stage_lineage_id: str) -> dict:
@@ -154,10 +191,42 @@ def resolve_lineage_state(base: StageLineageState,store: LineageEventStore) -> S
         if parent is None or any(start.get(k)!=parent.get(k) for k in ("run_id","freeze_manifest_sha256")):
             raise LineageError("ECONOMICS_STARTED lacks matching consumed authorization")
     boundary="ECONOMICS_STARTED" if starts else base.economics_boundary
+    defects=[]
+    if store.root.exists():
+        for path in store.root.glob(f"{base.stage_lineage_id}.attempt-*.post-statistics-defect.json"):
+            defects.append(_read_sealed(path,base.stage_lineage_id))
+    defects.sort(key=lambda x:int(x["defect_number"]))
+    expected_defects=list(range(base.post_statistics_material_defect_count+1,
+                                base.post_statistics_material_defect_count+len(defects)+1))
+    if [int(x.get("defect_number",-1)) for x in defects]!=expected_defects:
+        raise LineageError("post-statistics defect history is not monotonic")
+    starts_by_attempt={int(x["attempt_id"]):x for x in starts}
+    for defect in defects:
+        attempt=int(defect.get("attempt_id",-1)); parent=starts_by_attempt.get(attempt)
+        if parent is None or any(defect.get(k)!=parent.get(k) for k in ("run_id","freeze_manifest_sha256")):
+            raise LineageError("post-statistics defect lacks matching economics lineage")
+        for prefix in ("result","void"):
+            evidence=store.root/str(defect.get(f"{prefix}_file",""))
+            if not evidence.is_file() or _sha(evidence)!=defect.get(f"{prefix}_sha256"):
+                raise LineageError("post-statistics defect evidence missing or tampered")
+    post_count=base.post_statistics_material_defect_count+len(defects)
+    suspensions=[]
+    if store.root.exists():
+        for path in store.root.glob(f"{base.stage_lineage_id}.attempt-*.infrastructure-suspended.json"):
+            suspensions.append(_read_sealed(path,base.stage_lineage_id))
+    for suspension in suspensions:
+        parent=consumed_by_attempt.get(int(suspension.get("attempt_id",-1)))
+        if parent is None or any(suspension.get(k)!=parent.get(k) for k in ("run_id","freeze_manifest_sha256")):
+            raise LineageError("infrastructure suspension lacks matching authorization lineage")
+        evidence=store.root/str(suspension.get("evidence_file",""))
+        if not evidence.is_file() or _sha(evidence)!=suspension.get("evidence_sha256"):
+            raise LineageError("infrastructure suspension evidence missing or tampered")
+    corrected_used=(base.corrected_economic_execution_used or
+                    any(x.get("corrected_economic_execution") is True for x in starts) or bool(suspensions))
+    verdict="SUSPENDED_INFRA" if post_count>=2 or suspensions else base.performance_verdict
     return StageLineageState(base.stage_lineage_id,base.next_attempt_id+len(consumed),
         (*base.attempts,*consumed),base.pre_statistics_defects,
-        base.post_statistics_material_defect_count,base.corrected_economic_execution_used,
-        base.performance_verdict,boundary)
+        post_count,corrected_used,verdict,boundary)
 
 
 def append_pre_statistics_defect(records: Sequence[Mapping[str,object]],new: Mapping[str,object],

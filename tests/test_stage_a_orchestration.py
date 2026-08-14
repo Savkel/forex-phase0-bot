@@ -7,7 +7,7 @@ from bot.forex.stage_a_orchestration import (
     ArtifactStore, AssembledRealInputs, Authorization, FrozenRunConfig, IntegrityError, RealInputPlan, RunState,
     RunStateMachine, build_run_id, canonical_bytes, execute_synthetic_fixture,
     _required_financing_open_days, assemble_real_inputs, execute_real_authorized,
-    record_material_defect, validate_integrity_snapshot,
+    _execution_lineage_disposition,record_material_defect, validate_integrity_snapshot,
 )
 
 
@@ -149,7 +149,12 @@ def test_integrity_is_immutable_before_synthetic_evaluator(tmp_path):
     c=_config(); store=ArtifactStore(tmp_path); seen=[]
     def evaluator():
         seen.append((tmp_path/f"{build_run_id(c)}.attempt-01.integrity.json").is_file())
-        return {"terminal_verdict":"CLOSED_FAIL"}
+        result=_auditable_gate_results()
+        result["gates"]["G4"]=False
+        result["scenarios"][360]["G4"]=False
+        result["scenario_metrics"][360]["G4"]["stressed_total_return"]=-.01
+        result["terminal_verdict"]="CLOSED_FAIL"
+        return result
     auth=_authorization(c)
     output=execute_synthetic_fixture(c,_snapshot(c),auth,evaluator,store)
     assert seen==[True] and output.is_file()
@@ -159,6 +164,62 @@ def test_output_bytes_are_deterministic_across_fresh_stores(tmp_path):
     a=ArtifactStore(tmp_path/"a").write_result("run",1,{"z":2,"a":1}).read_bytes()
     b=ArtifactStore(tmp_path/"b").write_result("run",1,{"a":1,"z":2}).read_bytes()
     assert a==b
+
+
+def _auditable_gate_results():
+    currencies=("AUD","CAD","CHF","CZK","EUR","GBP","HUF","JPY","NOK","NZD","PLN","SEK","USD","ZAR")
+    scenario={"G1":True,"G3":True,"G4":True,"G5":True}
+    metrics={
+        "G1":{"strategy_rap":.2,"benchmark_median_rap":.1,"excess":.1},
+        "G3":{"strategy_mdd":-.1,"benchmark_median_mdd":-.2},
+        "G4":{"stressed_total_return":.01},
+        "G5":{"loco_excesses":{c:.01 for c in currencies},"pass_count":14,
+              "worst_currency":"AUD","worst_excess":.01},
+    }
+    return {"gates":{f"G{i}":True for i in range(1,6)},
+            "scenarios":{360:scenario,365:scenario},
+            "scenario_metrics":{360:metrics,365:metrics},
+            "G2_metrics":{"mean_ic":.02,"lower_bound":.01,"one_sided_confidence":.95,
+                          "lower_bound_quantile":.05,"threshold":0.0},
+            "terminal_verdict":"SURVIVES_KILL_TEST"}
+
+
+@pytest.mark.parametrize("missing",[
+    ("G2_metrics",None,None),
+    ("G2_metrics","lower_bound",None),
+    ("scenario_metrics",360,"G1"),
+    ("scenario_metrics",360,"G3"),
+    ("scenario_metrics",360,"G4"),
+    ("scenario_metrics",360,"G5"),
+])
+def test_result_serialization_rejects_missing_mandatory_gate_operands(tmp_path,missing):
+    results=_auditable_gate_results(); group,branch,leaf=missing
+    if branch is None: results.pop(group)
+    elif leaf is None: results[group].pop(branch)
+    else: results[group][branch].pop(leaf)
+    with pytest.raises(ValueError,match="auditable"):
+        ArtifactStore(tmp_path).write_result("run",1,{"results":results,
+            "terminal_disposition":"SURVIVES_KILL_TEST"})
+
+
+def test_complete_auditable_result_round_trips_deterministically(tmp_path):
+    value={"results":_auditable_gate_results(),"terminal_disposition":"SURVIVES_KILL_TEST"}
+    a=ArtifactStore(tmp_path/"a").write_result("run",1,value).read_bytes()
+    b=ArtifactStore(tmp_path/"b").write_result("run",1,value).read_bytes()
+    assert a==b
+    assert json.loads(a)==json.loads(b)
+
+
+@pytest.mark.parametrize("mutation",["g1_arithmetic","nonfinite","g2_constants","outer_terminal"])
+def test_result_serialization_rejects_inconsistent_audit_operands(tmp_path,mutation):
+    results=_auditable_gate_results(); outer="SURVIVES_KILL_TEST"
+    if mutation=="g1_arithmetic": results["scenario_metrics"][360]["G1"]["excess"]+=.01
+    elif mutation=="nonfinite": results["scenario_metrics"][360]["G3"]["strategy_mdd"]=float("nan")
+    elif mutation=="g2_constants": results["G2_metrics"]["one_sided_confidence"]=.90
+    else: outer="CLOSED_FAIL"
+    with pytest.raises(ValueError,match="auditable"):
+        ArtifactStore(tmp_path).write_result("run",1,{"results":results,
+            "terminal_disposition":outer})
 
 
 def test_integrated_void_requires_policy_evidence_and_second_defect_suspends(tmp_path):
@@ -184,7 +245,12 @@ def test_real_boundary_writes_both_integrity_artifacts_before_economics(monkeypa
     def compute(value):
         out=tmp_path/"out"
         seen.extend([next(out.glob("*.integrity.json")).is_file(),next(out.glob("*.deep-integrity.json")).is_file()])
-        return {"terminal_verdict":"CLOSED_FAIL"}
+        result=_auditable_gate_results()
+        result["gates"]["G4"]=False
+        result["scenarios"][360]["G4"]=False
+        result["scenario_metrics"][360]["G4"]["stressed_total_return"]=-.01
+        result["terminal_verdict"]="CLOSED_FAIL"
+        return result
     monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",compute)
     auth=_authorization(c)
     result=execute_real_authorized(tmp_path,plan,{"performance_computed":False},auth)
@@ -200,7 +266,11 @@ def test_consumed_authorization_cannot_execute_same_attempt_twice(monkeypatch,tm
     assembled=AssembledRealInputs((),(),{},(),{"status":"DEEP_INTEGRITY_PASSED"})
     calls=[]
     monkeypatch.setattr("bot.forex.stage_a_orchestration.assemble_real_inputs",lambda root,p:assembled)
-    monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",lambda value:(calls.append(1) or {"terminal_verdict":"CLOSED_FAIL"}))
+    failed=_auditable_gate_results(); failed["gates"]["G4"]=False
+    failed["scenarios"][360]["G4"]=False
+    failed["scenario_metrics"][360]["G4"]["stressed_total_return"]=-.01
+    failed["terminal_verdict"]="CLOSED_FAIL"
+    monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",lambda value:(calls.append(1) or failed))
     auth=_authorization(c)
     execute_real_authorized(tmp_path,plan,{},auth)
     with pytest.raises(PermissionError): execute_real_authorized(tmp_path,plan,{},auth)
@@ -211,7 +281,8 @@ def test_real_boundary_preserves_undetermined_suspension(monkeypatch,tmp_path):
     c=_config(); run_id=build_run_id(c); plan=RealInputPlan(run_id,c,_snapshot(c),{"output":"out"},(),1,None)
     assembled=AssembledRealInputs((),(),{},(),{"status":"DEEP_INTEGRITY_PASSED"})
     monkeypatch.setattr("bot.forex.stage_a_orchestration.assemble_real_inputs",lambda root,p:assembled)
-    monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",lambda value:{"terminal_verdict":"UNDETERMINED"})
+    monkeypatch.setattr("bot.forex.stage_a_orchestration._compute_real_stage_a",
+                        lambda value:{"terminal_verdict":"UNDETERMINED","reason":"synthetic degenerate input"})
     auth=_authorization(c)
     payload=json.loads(execute_real_authorized(tmp_path,plan,{},auth).read_text())["result"]
     assert payload["terminal_disposition"]=="UNDETERMINED"

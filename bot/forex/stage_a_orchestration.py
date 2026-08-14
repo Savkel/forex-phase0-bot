@@ -9,6 +9,7 @@ from dataclasses import asdict, dataclass, field
 from enum import Enum
 import hashlib
 import json
+import math
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
@@ -152,6 +153,82 @@ class RunStateMachine:
                              "details":{"evidence":evidence,"defect_number":self.material_defects}})
 
 
+def _validate_auditable_gate_results(results: object) -> None:
+    """Fail closed when a completed verdict omits its frozen numeric gate operands."""
+    if not isinstance(results,Mapping):
+        raise ValueError("auditable Stage-A results must be a mapping")
+    if results.get("terminal_verdict")=="UNDETERMINED":
+        if not results.get("reason"):
+            raise ValueError("auditable UNDETERMINED result requires a reason")
+        return
+    gates=results.get("gates"); scenarios=results.get("scenarios")
+    metrics=results.get("scenario_metrics"); g2=results.get("G2_metrics")
+    if not all(isinstance(x,Mapping) for x in (gates,scenarios,metrics,g2)):
+        raise ValueError("auditable Stage-A result lacks mandatory numeric gate operands")
+    if set(gates)!={"G1","G2","G3","G4","G5"} or set(scenarios)!={360,365} or set(metrics)!={360,365}:
+        raise ValueError("auditable Stage-A result has incomplete gate/scenario identity")
+    required_g2={"mean_ic","lower_bound","one_sided_confidence","lower_bound_quantile","threshold"}
+    numeric=lambda value:isinstance(value,(int,float)) and not isinstance(value,bool) and math.isfinite(float(value))
+    if not required_g2.issubset(g2) or not all(numeric(g2[k]) for k in required_g2):
+        raise ValueError("auditable Stage-A result lacks mandatory G2 operands")
+    if (float(g2["one_sided_confidence"])!=.95 or float(g2["lower_bound_quantile"])!=.05 or
+            float(g2["threshold"])!=0.0):
+        raise ValueError("auditable Stage-A G2 metadata differs from frozen inference")
+    if bool(gates["G2"])!=(float(g2["lower_bound"])>float(g2["threshold"])):
+        raise ValueError("auditable Stage-A G2 verdict disagrees with retained operands")
+    for denominator in (360,365):
+        per=scenarios[denominator]; detail=metrics[denominator]
+        if set(per)!={"G1","G3","G4","G5"} or set(detail)!={"G1","G3","G4","G5"}:
+            raise ValueError("auditable Stage-A scenario is incomplete")
+        g1,g3,g4,g5=(detail[name] for name in ("G1","G3","G4","G5"))
+        if not all(isinstance(x,Mapping) for x in (g1,g3,g4,g5)):
+            raise ValueError("auditable Stage-A scenario lacks numeric operands")
+        if not {"strategy_rap","benchmark_median_rap","excess"}.issubset(g1):
+            raise ValueError("auditable Stage-A result lacks G1 operands")
+        if not {"strategy_mdd","benchmark_median_mdd"}.issubset(g3):
+            raise ValueError("auditable Stage-A result lacks G3 operands")
+        if "stressed_total_return" not in g4:
+            raise ValueError("auditable Stage-A result lacks G4 operands")
+        if not {"loco_excesses","pass_count","worst_currency","worst_excess"}.issubset(g5):
+            raise ValueError("auditable Stage-A result lacks G5 operands")
+        loco=g5["loco_excesses"]
+        scalar_values=(g1["strategy_rap"],g1["benchmark_median_rap"],g1["excess"],
+                       g3["strategy_mdd"],g3["benchmark_median_mdd"],
+                       g4["stressed_total_return"],g5["worst_excess"])
+        if not all(numeric(value) for value in scalar_values):
+            raise ValueError("auditable Stage-A result contains non-finite numeric operands")
+        if not math.isclose(float(g1["excess"]),
+                            float(g1["strategy_rap"])-float(g1["benchmark_median_rap"]),
+                            rel_tol=1e-12,abs_tol=1e-15):
+            raise ValueError("auditable Stage-A G1 operands are arithmetically inconsistent")
+        if (float(g3["strategy_mdd"])>0 or float(g3["benchmark_median_mdd"])>0):
+            raise ValueError("auditable Stage-A signed MDD operands must be non-positive")
+        if (not isinstance(loco,Mapping) or len(loco)!=14 or
+                not all(numeric(value) for value in loco.values())):
+            raise ValueError("auditable Stage-A result requires all 14 LOCO excesses")
+        expected={
+            "G1":float(g1["excess"])>0,
+            "G3":float(g3["strategy_mdd"])>=float(g3["benchmark_median_mdd"]),
+            "G4":float(g4["stressed_total_return"])>0,
+            "G5":all(float(value)>0 for value in loco.values()),
+        }
+        if any(bool(per[name])!=expected[name] for name in expected):
+            raise ValueError("auditable Stage-A verdict disagrees with retained operands")
+        worst=min(((str(currency),float(value)) for currency,value in loco.items()),
+                  key=lambda item:(item[1],item[0]))
+        if (int(g5["pass_count"])!=sum(float(value)>0 for value in loco.values()) or
+                str(g5["worst_currency"])!=worst[0] or float(g5["worst_excess"])!=worst[1]):
+            raise ValueError("auditable Stage-A G5 summary disagrees with retained operands")
+    expected_gates={name:all(bool(scenarios[d][name]) for d in (360,365))
+                    for name in ("G1","G3","G4","G5")}
+    expected_gates["G2"]=bool(gates["G2"])
+    if any(bool(gates[name])!=expected_gates[name] for name in expected_gates):
+        raise ValueError("auditable Stage-A aggregate gate disagrees with scenario operands")
+    expected_terminal="SURVIVES_KILL_TEST" if all(bool(v) for v in gates.values()) else "CLOSED_FAIL"
+    if results.get("terminal_verdict")!=expected_terminal:
+        raise ValueError("auditable Stage-A terminal disposition disagrees with gate operands")
+
+
 class ArtifactStore:
     def __init__(self,root: Path):
         self.root=Path(root); self.root.mkdir(parents=True,exist_ok=True)
@@ -185,6 +262,10 @@ class ArtifactStore:
         return self._write_once(self.root/f"{run_id}.attempt-{attempt:02d}.execution-failure.json",value)
 
     def write_result(self,run_id: str,attempt: int,value: Mapping[str,object]) -> Path:
+        if "results" in value:
+            _validate_auditable_gate_results(value["results"])
+            if value.get("terminal_disposition")!=value["results"].get("terminal_verdict"):
+                raise ValueError("auditable outer/inner terminal dispositions disagree")
         reason=value.get("retry_reason")
         if attempt<1 or (attempt>1 and reason not in
                 ("PRE_STATISTICS_CORRECTION","UNDETERMINED","VOID_CORRECTION")):
@@ -396,6 +477,15 @@ def _verify_certified_financing_identity(root: Path,manifest: Mapping[str,object
             "pairing_cells_compared":repro.get("cells_compared")}
 
 
+def _execution_lineage_disposition(lineage: StageLineageState) -> tuple[int | None,str]:
+    if lineage.economics_boundary=="PRE_STATISTICS":
+        return None,"PRE_STATISTICS_CORRECTION"
+    if (lineage.post_statistics_material_defect_count==1 and
+            not lineage.corrected_economic_execution_used and lineage.performance_verdict is None):
+        return lineage.next_attempt_id-1,"VOID_CORRECTION"
+    raise IntegrityError("Stage-A lineage permits no further economic execution")
+
+
 def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
     """Metadata-only assembly. Never reads candle price fields or financing rates."""
     from bot.forex.stage_a_preflight import FROZEN_SHA256, project_preflight
@@ -463,11 +553,10 @@ def build_real_input_plan(root: Path) -> tuple[RealInputPlan,dict]:
         raise IntegrityError("final freeze manifest differs from verified active identities")
     output=root/paths["output"]
     lineage=resolve_lineage_state(lineage_base,
-        LineageEventStore(output,lineage_base.stage_lineage_id,len(lineage_base.attempts)))
-    if lineage.economics_boundary!="PRE_STATISTICS":
-        raise IntegrityError("Stage-A economics has started; pre-statistics planning is permanently closed")
+        LineageEventStore(output,lineage_base.stage_lineage_id,len(lineage_base.attempts),
+                          lineage_base.post_statistics_material_defect_count))
     run_id=build_run_id(config); attempt=lineage.next_attempt_id
-    corrects=None; retry_reason="PRE_STATISTICS_CORRECTION"
+    corrects,retry_reason=_execution_lineage_disposition(lineage)
     conflicting=any(output.glob(f"{run_id}.attempt-{attempt:02d}.*")) if output.exists() else False
     snapshot={**config.canonical(),"active":all(x.get("preregistration")==paths["spec"]
                  for x in (universe,mask,readiness)),"try_absent":"TRY" not in universe["currencies"],
@@ -639,7 +728,8 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
     if plan.lineage_state is not None:
         lineage_base=load_lineage_registry(Path(root)/plan.paths["lineage"],Path(root))
         lineage_events=LineageEventStore(store.root,plan.lineage_state.stage_lineage_id,
-                                         len(lineage_base.attempts))
+                                         len(lineage_base.attempts),
+                                         lineage_base.post_statistics_material_defect_count)
     if lineage_events is not None:
         lineage_events.consume_authorization(plan.attempt,plan.run_id,
             plan.config.execution_manifest_sha256,authorization.authorization_id,{
@@ -668,9 +758,12 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
             state.transition("deep_integrity_fail",reason=str(exc))
         elif plan.retry_reason=="UNDETERMINED": state.state=RunState.UNDETERMINED_SUSPENDED
         else: state.state=RunState.SUSPENDED_INFRA
-        store.write_integrity_failure(plan.run_id,{"status":state.state.value,
+        failure_path=store.write_integrity_failure(plan.run_id,{"status":state.state.value,
                                       "reason":str(exc),"performance_computed":False,
                                       "state_history":state.history},plan.attempt)
+        if lineage_events is not None and plan.retry_reason=="VOID_CORRECTION":
+            lineage_events.record_infrastructure_suspension(plan.attempt,plan.run_id,
+                plan.config.execution_manifest_sha256,failure_path)
         raise IntegrityError(str(exc)) from exc
     deep_path=store.write_deep_integrity(plan.run_id,assembled.deep_integrity,plan.attempt)
     state.transition("start" if plan.attempt==1 or plan.retry_reason=="PRE_STATISTICS_CORRECTION" else
@@ -679,7 +772,8 @@ def execute_real_authorized(root: Path,plan: RealInputPlan,metadata_integrity: M
     boundary.start_economics()
     if lineage_events is not None:
         lineage_events.start_economics(plan.attempt,plan.run_id,
-                                       plan.config.execution_manifest_sha256)
+                                       plan.config.execution_manifest_sha256,
+                                       corrected_economic_execution=plan.retry_reason=="VOID_CORRECTION")
     store.write_execution_start(plan.run_id,plan.attempt,{"status":"EXECUTION_STARTED",
         "economics_boundary":boundary.state,
         "run_id":plan.run_id,"attempt":plan.attempt,"authorization_id":authorization.authorization_id,
