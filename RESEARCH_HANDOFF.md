@@ -27,7 +27,7 @@ Precedence: constitution; committed preregistration/artifacts; verified Git/code
 
 ## ACTIVE RESEARCH
 
-Direct OANDA TMS `.pro` cross-sectional carry. Stage A is a historical DEVELOPMENT kill-test with no historical OOS claim. It remains OPEN with no valid auditable strategy verdict. Attempt 2 is immutable `VOID_RETAINED`; Attempt 3 crossed the economics boundary but became infrastructure-invalid after a 3,600-second execution timeout and produced no auditable result. No execution is currently authorized.
+Direct OANDA TMS `.pro` cross-sectional carry Stage A is CLOSED with valid frozen disposition `STAGE_A_SURVIVES_KILL_TEST`. Attempt 3 was the single valid auditable execution; structural adjudication established that the 3,600-second Codex supervisory timeout did not terminate it. This is robust historical DEVELOPMENT evidence, not prospective OOS and not trading permission. Authoritative closure: `STAGE_A_CARRY_FINAL_RESULTS.md`.
 
 ## ACTIVE LOCKED SPEC
 
@@ -53,13 +53,13 @@ Price readiness is certified in the active committed artifact: all 13 routed OAN
 
 Financing readiness is certified under the venue-evidenced held-leg model: evidence identity `7e93e702816833ba5ed2de7432c1476af576186fb52da462de2e4c48a3f26dbf`, 5,211 baseline events, 911 closed-market non-events, and 5,211/5,211 required inputs available. No synthetic or shifted holiday valuation is used.
 
-## CURRENT BLOCKER
+## CURRENT STATE
 
-Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Attempt 3 is infrastructure-invalid because the execution process timed out after 3,600 seconds before an auditable result was serialized. Its immutable failure-evidence SHA-256 is `da336df7c75375f2b4d94a8724615d0eaeb9c79d4ec13e55de60c52d66c80b11`. The scientific strategy/specification remains unchanged. Stage A remains OPEN with no valid auditable strategy verdict, and no execution is currently authorized.
+Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Valid operational Attempt 3 used freeze `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`; result SHA-256 `39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8`. All G1-G5 requirements passed under the frozen rules. Absolute post-hoc baseline performance was modest at approximately 2.3% CAGR. Stage A is closed; no tuning, rerun, or trading permission follows.
 
 ## NEXT GATE
 
-Implementation-only runtime profiling/optimization while preserving exact calculations, followed by review, a new immutable freeze, and separately authorized execution. No execution is currently authorized.
+Prospective Stage B is the proper untouched validation path. Any improvement research must be a separate preregistered development phase, initially unlevered and preserving the current baseline risk scale.
 
 ## MEMORY SYNCHRONIZATION
 
