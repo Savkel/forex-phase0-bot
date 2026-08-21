@@ -21,7 +21,7 @@
       "benchmark_rule": "SEEDED_1000",
       "benchmark_space": 4200,
       "financing_event_count": 680,
-      "financing_event_identity_sha256": "db2dc95b93b2a2e1ad447f40d00789078276b36e4fa0524f1491c569cf58d32d",
+      "financing_event_identity_sha256": "28c2158c00c29a522d911319914c322360462891eccee3f4ad4abc02bf03249d",
       "k": 3,
       "required_input_missing_count": 0,
       "routes": {
@@ -128,7 +128,7 @@
       "benchmark_rule": "SEEDED_1000",
       "benchmark_space": 210210,
       "financing_event_count": 680,
-      "financing_event_identity_sha256": "dee9486c48e213de3a9967de09f2b448f56735293317a784dd829ce671a24483",
+      "financing_event_identity_sha256": "37e0f8d638dd063d15d11e1da10e1336d67586afe95f2f791099f71c45837024",
       "k": 4,
       "required_input_missing_count": 0,
       "routes": {
@@ -283,7 +283,7 @@
       "benchmark_rule": "EXHAUSTIVE",
       "benchmark_space": 420,
       "financing_event_count": 680,
-      "financing_event_identity_sha256": "4a7a834ef0aaff1d5cf2175678e4ff4367ed265688261f4b6adad0778d6ac859",
+      "financing_event_identity_sha256": "753a64bdead730db25668eff1564b0a3b316fcda2385ee4e9b776dfb9f402500",
       "k": 2,
       "required_input_missing_count": 0,
       "routes": {
@@ -365,14 +365,16 @@
   "preregistration_sha256": "e7579ac48f9051e6dc8b133b44522a2f3cdb5c01d52efb58e72fef7fbbe7614e",
   "schema_version": 1,
   "source_sha256": {
-    "bot/forex/family1_universe.py": "ef7b84b5ed9f2e22fad41e68b456d3d8272d28ba261536592eeb631c60dcf557",
+    "bot/forex/family1_study.py": "99d9f7a76de9dd6345709103d81dafef3691120f446667a85edce96cc81b7424",
+    "bot/forex/family1_universe.py": "d98a441d476248596d1444c3d6bdd1a6dc5978e8f03b32c65a903d2895c1b6ff",
     "data/tms_swap_archive/derived/parsed_all.json": "b6cdd250c208b2ec614356d78999e36bd30881a407fed56a1b2a219894569c94",
+    "prereg/2026-08-14-tms-carry-financing-readiness.json": "978a01f1c2de89754ee8d622177190839b94aa42190152f82b686f2e5425b07b",
     "prereg/2026-08-14-tms-carry-no-try-direct-gbp-mask.json": "5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
     "prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json": "786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
     "prereg/2026-08-14-tms-carry-no-try-direct-gbp-universe.json": "461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0",
     "prereg/2026-08-21-tms-carry-unlevered-family-1-universe-prereg.md": "e7579ac48f9051e6dc8b133b44522a2f3cdb5c01d52efb58e72fef7fbbe7614e",
     "requirements.txt": "80590e0555abae9ec2ade90ce5c84f81e28569b36c1c4fddf62309f2acf61949",
-    "run_family1_universe.py": "ebda5102f205caf2e7c7dac116462b69928daa85bec73d8e038f2839bfe71ba4"
+    "run_family1_universe.py": "5d9dc54d01001dc04ed9145ee387abbfde1e50083cd72c3c5dbbd711431a46b4"
   },
   "status": "FAMILY1_READINESS_PASSED",
   "transaction_count": 168,

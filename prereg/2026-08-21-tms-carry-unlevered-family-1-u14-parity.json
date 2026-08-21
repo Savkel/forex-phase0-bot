@@ -2,11 +2,3449 @@
   "attempt3_result_sha256": "39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8",
   "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",
   "candidate_economics_computed": false,
+  "control_diagnostics": {
+    "D365_MINUS_D360": {
+      "adverse_total_return": -0.0004841664428136827,
+      "annualized_currency_turnover": 0.0,
+      "annualized_routed_usd_turnover": -0.008293034294744928,
+      "benchmark_mdd_difference": -0.00018760643824777823,
+      "benchmark_rap_excess": -0.0014732354189377905,
+      "cagr": -0.0002564874256933969,
+      "currency_turnover": 0.0,
+      "final_equity": -0.000902491854698928,
+      "max_drawdown": -0.00017317958672824485,
+      "mean_routed_usd_gross": -0.0009350035483766117,
+      "rap": -0.0007180421493175743,
+      "routed_usd_turnover": -0.027654800194390816,
+      "spot_pnl": -3.630056359571476e-05,
+      "spread_x3_total_return": -0.0008568256224954496,
+      "total_financing": -0.0008769937975802444,
+      "total_return": -0.000902491854698928,
+      "total_spread_cost": -1.0802506461186218e-05
+    },
+    "N": 14,
+    "benchmark_book_count": 1000,
+    "benchmark_books_sha256": "5702cf09437e2918171e8a40d25253df59fa08589a073dd49d68a56a6b45a546",
+    "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",
+    "candidate_id": "U14_CONTROL",
+    "concentration": {
+      "currencies": {
+        "AUD": {
+          "longest_consecutive_selected_run": 24,
+          "mean_absolute_weight": 0.03821656050955414,
+          "selection_frequency": 0.15286624203821655
+        },
+        "CAD": {
+          "longest_consecutive_selected_run": 0,
+          "mean_absolute_weight": 0.0,
+          "selection_frequency": 0.0
+        },
+        "CHF": {
+          "longest_consecutive_selected_run": 157,
+          "mean_absolute_weight": 0.25,
+          "selection_frequency": 1.0
+        },
+        "CZK": {
+          "longest_consecutive_selected_run": 49,
+          "mean_absolute_weight": 0.08439490445859872,
+          "selection_frequency": 0.3375796178343949
+        },
+        "EUR": {
+          "longest_consecutive_selected_run": 108,
+          "mean_absolute_weight": 0.24203821656050956,
+          "selection_frequency": 0.9681528662420382
+        },
+        "GBP": {
+          "longest_consecutive_selected_run": 10,
+          "mean_absolute_weight": 0.03503184713375796,
+          "selection_frequency": 0.14012738853503184
+        },
+        "HUF": {
+          "longest_consecutive_selected_run": 157,
+          "mean_absolute_weight": 0.25,
+          "selection_frequency": 1.0
+        },
+        "JPY": {
+          "longest_consecutive_selected_run": 157,
+          "mean_absolute_weight": 0.25,
+          "selection_frequency": 1.0
+        },
+        "NOK": {
+          "longest_consecutive_selected_run": 36,
+          "mean_absolute_weight": 0.10031847133757962,
+          "selection_frequency": 0.4012738853503185
+        },
+        "NZD": {
+          "longest_consecutive_selected_run": 19,
+          "mean_absolute_weight": 0.06369426751592357,
+          "selection_frequency": 0.25477707006369427
+        },
+        "PLN": {
+          "longest_consecutive_selected_run": 43,
+          "mean_absolute_weight": 0.1449044585987261,
+          "selection_frequency": 0.5796178343949044
+        },
+        "SEK": {
+          "longest_consecutive_selected_run": 157,
+          "mean_absolute_weight": 0.25,
+          "selection_frequency": 1.0
+        },
+        "USD": {
+          "longest_consecutive_selected_run": 7,
+          "mean_absolute_weight": 0.041401273885350316,
+          "selection_frequency": 0.16560509554140126
+        },
+        "ZAR": {
+          "longest_consecutive_selected_run": 157,
+          "mean_absolute_weight": 0.25,
+          "selection_frequency": 1.0
+        }
+      },
+      "hhi_max": 0.125,
+      "hhi_mean": 0.125,
+      "hhi_min": 0.125
+    },
+    "currencies": [
+      "AUD",
+      "CAD",
+      "CHF",
+      "CZK",
+      "EUR",
+      "GBP",
+      "HUF",
+      "JPY",
+      "NOK",
+      "NZD",
+      "PLN",
+      "SEK",
+      "USD",
+      "ZAR"
+    ],
+    "denominators": {
+      "360": {
+        "adverse_total_return": 0.024823905109681244,
+        "base": {
+          "annualized_currency_turnover": 18.742302955665025,
+          "annualized_routed_usd_turnover": 19.015386149896308,
+          "blocks": [
+            {
+              "block_id": "B1",
+              "cagr": 0.0266631048330217,
+              "count": 52,
+              "currency_turnover": 29.5,
+              "elapsed_years": 1.1690622861054072,
+              "financing": 0.029455773186518656,
+              "max_drawdown": -0.036155395653365896,
+              "mean_routed_usd_gross": 1.7149688854737692,
+              "rap": 0.08980086496481195,
+              "routed_usd_turnover": 30.208130208722462,
+              "spot_pnl": 0.01659096391728375,
+              "spread_cost": 0.014806164642544833,
+              "start_timestamp": 1680480000000,
+              "stop_timestamp": 1717372800000,
+              "total_return": 0.031240572461255223,
+              "trade_count": 449
+            },
+            {
+              "block_id": "B2",
+              "cagr": -0.02975810453848382,
+              "count": 52,
+              "currency_turnover": 16.0,
+              "elapsed_years": 1.054072553045859,
+              "financing": 0.01653105501242754,
+              "max_drawdown": -0.07977392291683649,
+              "mean_routed_usd_gross": 1.9287819183283892,
+              "rap": -0.06125782069025733,
+              "routed_usd_turnover": 16.369316593983857,
+              "spot_pnl": -0.04334416888017988,
+              "spread_cost": 0.005507744060043051,
+              "start_timestamp": 1717372800000,
+              "stop_timestamp": 1750636800000,
+              "total_return": -0.03134172451211381,
+              "trade_count": 428
+            },
+            {
+              "block_id": "B3",
+              "cagr": 0.07287973291569827,
+              "count": 53,
+              "currency_turnover": 17.0,
+              "elapsed_years": 1.111567419575633,
+              "financing": 0.01617245436608675,
+              "max_drawdown": -0.015481180897593427,
+              "mean_routed_usd_gross": 1.9578789388439888,
+              "rap": 0.2621403241155665,
+              "routed_usd_turnover": 16.83320434191708,
+              "spot_pnl": 0.07123818124141884,
+              "spread_cost": 0.006165286310734311,
+              "start_timestamp": 1750636800000,
+              "stop_timestamp": 1785715200000,
+              "total_return": 0.08133321238405156,
+              "trade_count": 447
+            }
+          ],
+          "cagr": 0.023394111097902792,
+          "calmar": 0.2812913959403889,
+          "currency_turnover": 62.5,
+          "elapsed_years": 3.3347022587268995,
+          "final_equity": 1.0801650638302271,
+          "max_drawdown": -0.08316682072586556,
+          "max_routed_usd_gross": 2.722835298524941,
+          "mean_routed_usd_gross": 1.8677874239263925,
+          "rap": 0.0699083431727019,
+          "routed_usd_turnover": 63.41065114462342,
+          "spot_pnl": 0.044484976278522756,
+          "total_financing": 0.06215928256503286,
+          "total_return": 0.08016506383022715,
+          "total_spread_cost": 0.02647919501332219,
+          "trade_count": 1324
+        },
+        "benchmark": {
+          "adverse_total_return": -0.09831884200107838,
+          "blocks": {
+            "B1": {
+              "max_drawdown": -0.048406695927841414,
+              "rap": -0.07605024578603041,
+              "total_return": -0.02432038605142195
+            },
+            "B2": {
+              "max_drawdown": -0.04886471950563914,
+              "rap": -0.052286216637306704,
+              "total_return": -0.017717655468505955
+            },
+            "B3": {
+              "max_drawdown": -0.04088031819804078,
+              "rap": -0.08497141599614291,
+              "total_return": -0.02075616635608868
+            }
+          },
+          "max_drawdown": -0.09833849517868382,
+          "rap": -0.06357552374081937,
+          "spread_x3_total_return": -0.0885825092610415,
+          "total_return": -0.05574577108158385
+        },
+        "benchmark_mdd_difference": 0.015171674452818251,
+        "benchmark_rap_excess": 0.13348386691352127,
+        "spread_x3_total_return": 0.025289878207012784
+      },
+      "365": {
+        "adverse_total_return": 0.02433973866686756,
+        "base": {
+          "annualized_currency_turnover": 18.742302955665025,
+          "annualized_routed_usd_turnover": 19.007093115601563,
+          "blocks": [
+            {
+              "block_id": "B1",
+              "cagr": 0.026315514216460834,
+              "count": 52,
+              "currency_turnover": 29.5,
+              "elapsed_years": 1.1690622861054072,
+              "financing": 0.029046627739086457,
+              "max_drawdown": -0.036255678876258246,
+              "mean_routed_usd_gross": 1.714612040628897,
+              "rap": 0.08868711560871535,
+              "routed_usd_turnover": 30.200526283967417,
+              "spot_pnl": 0.016588260124515596,
+              "spread_cost": 0.014802470570513442,
+              "start_timestamp": 1680480000000,
+              "stop_timestamp": 1717372800000,
+              "total_return": 0.030832417293096936,
+              "trade_count": 449
+            },
+            {
+              "block_id": "B2",
+              "cagr": -0.029965766060340737,
+              "count": 52,
+              "currency_turnover": 16.0,
+              "elapsed_years": 1.054072553045859,
+              "financing": 0.016296359848903486,
+              "max_drawdown": -0.07991990258739079,
+              "mean_routed_usd_gross": 1.9277902393083957,
+              "rap": -0.06172413522129327,
+              "routed_usd_turnover": 16.361550150596816,
+              "spot_pnl": -0.043324608656299356,
+              "spread_cost": 0.005505086471543923,
+              "start_timestamp": 1717372800000,
+              "stop_timestamp": 1750636800000,
+              "total_return": -0.031560256287211375,
+              "trade_count": 428
+            },
+            {
+              "block_id": "B3",
+              "cagr": 0.07267284841999766,
+              "count": 53,
+              "currency_turnover": 17.0,
+              "elapsed_years": 1.111567419575633,
+              "financing": 0.01593930117946254,
+              "max_drawdown": -0.015485318885759769,
+              "mean_routed_usd_gross": 1.9564322913699865,
+              "rap": 0.26142818876894003,
+              "routed_usd_turnover": 16.820919909864813,
+              "spot_pnl": 0.07118502424671079,
+              "spread_cost": 0.006160835464803625,
+              "start_timestamp": 1750636800000,
+              "stop_timestamp": 1785715200000,
+              "total_return": 0.0811014368539873,
+              "trade_count": 447
+            }
+          ],
+          "cagr": 0.023137623672209395,
+          "calmar": 0.27762927268327575,
+          "currency_turnover": 62.5,
+          "elapsed_years": 3.3347022587268995,
+          "final_equity": 1.0792625719755282,
+          "max_drawdown": -0.08334000031259381,
+          "max_routed_usd_gross": 2.720579768762121,
+          "mean_routed_usd_gross": 1.866852420378016,
+          "rap": 0.06919030102338433,
+          "routed_usd_turnover": 63.38299634442903,
+          "spot_pnl": 0.04444867571492704,
+          "total_financing": 0.06128228876745261,
+          "total_return": 0.07926257197552822,
+          "total_spread_cost": 0.026468392506861005,
+          "trade_count": 1324
+        },
+        "benchmark": {
+          "adverse_total_return": -0.09729715925083021,
+          "blocks": {
+            "B1": {
+              "max_drawdown": -0.04817382915387547,
+              "rap": -0.07551430177529699,
+              "total_return": -0.024161810504830128
+            },
+            "B2": {
+              "max_drawdown": -0.04884035557286459,
+              "rap": -0.05185157112585494,
+              "total_return": -0.01757142459246286
+            },
+            "B3": {
+              "max_drawdown": -0.04078561916144535,
+              "rap": -0.08417208369055745,
+              "total_return": -0.02045998779548347
+            }
+          },
+          "max_drawdown": -0.09832406832716428,
+          "rap": -0.06282033047119914,
+          "spread_x3_total_return": -0.08809809510578376,
+          "total_return": -0.055253764398187244
+        },
+        "benchmark_mdd_difference": 0.014984068014570473,
+        "benchmark_rap_excess": 0.13201063149458347,
+        "spread_x3_total_return": 0.024433052584517334
+      }
+    },
+    "ic": {
+      "bootstrap_block_length": 1,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 20260808,
+      "lower_bound": 0.012079512843844046,
+      "lower_bound_quantile": 0.05,
+      "mean_ic": 0.054105130538251556,
+      "one_sided_confidence": 0.95,
+      "period_count": 157,
+      "series": [
+        0.06373626373626373,
+        0.15604395604395604,
+        -0.14725274725274726,
+        0.43736263736263736,
+        -0.3098901098901099,
+        -0.1956043956043956,
+        -0.03736263736263736,
+        0.4681318681318682,
+        0.23076923076923075,
+        0.3450549450549451,
+        0.11208791208791209,
+        0.3142857142857143,
+        -0.1252747252747253,
+        -0.44175824175824174,
+        -0.07692307692307693,
+        0.13406593406593406,
+        -0.665934065934066,
+        0.4153846153846154,
+        0.22637362637362637,
+        0.04175824175824176,
+        -0.48571428571428577,
+        0.27912087912087913,
+        -0.2175824175824176,
+        0.01978021978021978,
+        -0.06373626373626373,
+        0.12967032967032965,
+        0.12087912087912088,
+        -0.01978021978021978,
+        -0.13406593406593406,
+        -0.2835164835164835,
+        -0.44175824175824174,
+        -0.3318681318681319,
+        -0.3054945054945055,
+        -0.1076923076923077,
+        0.2351648351648352,
+        -0.178021978021978,
+        -0.002197802197802198,
+        -0.23076923076923075,
+        0.01098901098901099,
+        0.006593406593406593,
+        -0.16923076923076924,
+        0.5340659340659341,
+        0.006593406593406593,
+        0.6175824175824175,
+        0.1252747252747253,
+        -0.02417582417582418,
+        0.6483516483516484,
+        -0.015384615384615385,
+        0.8153846153846154,
+        0.45054945054945056,
+        0.17362637362637365,
+        -0.6,
+        -0.3494505494505495,
+        -0.02857142857142857,
+        0.2967032967032967,
+        0.4065934065934066,
+        0.002197802197802198,
+        0.16483516483516483,
+        -0.3494505494505495,
+        -0.17362637362637365,
+        -0.6307692307692307,
+        0.2,
+        0.4769230769230769,
+        -0.5560439560439561,
+        0.1824175824175824,
+        -0.2087912087912088,
+        0.5824175824175825,
+        -0.23076923076923075,
+        -0.01978021978021978,
+        0.032967032967032975,
+        0.0945054945054945,
+        0.1076923076923077,
+        -0.12087912087912088,
+        -0.24395604395604395,
+        -0.16923076923076924,
+        -0.2527472527472528,
+        0.1956043956043956,
+        0.7142857142857143,
+        -0.2175824175824176,
+        0.04175824175824176,
+        0.059340659340659345,
+        0.11208791208791209,
+        0.4461538461538462,
+        -0.4901098901098901,
+        0.054945054945054944,
+        0.12967032967032965,
+        -0.2703296703296703,
+        -0.01098901098901099,
+        0.07692307692307693,
+        0.4021978021978022,
+        0.01978021978021978,
+        -0.3054945054945055,
+        -0.6395604395604396,
+        -0.3758241758241759,
+        0.23956043956043957,
+        0.5956043956043956,
+        0.11208791208791209,
+        0.8725274725274725,
+        0.24395604395604395,
+        -0.21318681318681318,
+        -0.2879120879120879,
+        0.5340659340659341,
+        -0.06813186813186813,
+        0.3450549450549451,
+        -0.002197802197802198,
+        0.24395604395604395,
+        -0.3758241758241759,
+        0.6395604395604396,
+        -0.2,
+        -0.4945054945054946,
+        0.03736263736263736,
+        -0.5824175824175825,
+        0.367032967032967,
+        0.2879120879120879,
+        0.1076923076923077,
+        0.07692307692307693,
+        0.5032967032967033,
+        -0.07692307692307693,
+        -0.11208791208791209,
+        0.2967032967032967,
+        0.2,
+        0.2527472527472528,
+        -0.05054945054945055,
+        0.0989010989010989,
+        0.49890109890109896,
+        0.12967032967032965,
+        -0.47252747252747257,
+        0.18681318681318684,
+        0.5780219780219781,
+        0.0857142857142857,
+        -0.06813186813186813,
+        0.4813186813186813,
+        -0.3362637362637363,
+        0.4681318681318682,
+        0.09010989010989012,
+        -0.3098901098901099,
+        0.5208791208791209,
+        -0.054945054945054944,
+        -0.04175824175824176,
+        0.5340659340659341,
+        0.6043956043956044,
+        0.3098901098901099,
+        -0.04615384615384615,
+        -0.23956043956043957,
+        0.4901098901098901,
+        -0.21318681318681318,
+        0.2967032967032967,
+        0.3098901098901099,
+        -0.0989010989010989,
+        0.3318681318681319,
+        0.03736263736263736,
+        -0.02857142857142857,
+        0.27912087912087913,
+        0.032967032967032975,
+        -0.1164835164835165,
+        0.3318681318681319,
+        -0.3318681318681319
+      ]
+    },
+    "k": 4,
+    "loco": {
+      "AUD": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.013809302405457302,
+            "base": {
+              "annualized_currency_turnover": 19.192118226600986,
+              "annualized_routed_usd_turnover": 19.62778134670011,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.0266631048330217,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029455773186518656,
+                  "max_drawdown": -0.036155395653365896,
+                  "mean_routed_usd_gross": 1.7149688854737692,
+                  "rap": 0.08980086496481195,
+                  "routed_usd_turnover": 30.208130208722462,
+                  "spot_pnl": 0.01659096391728375,
+                  "spread_cost": 0.014806164642544833,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.031240572461255223,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.02975810453848382,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.01653105501242754,
+                  "max_drawdown": -0.07977392291683649,
+                  "mean_routed_usd_gross": 1.9287819183283892,
+                  "rap": -0.06125782069025733,
+                  "routed_usd_turnover": 16.369316593983857,
+                  "spot_pnl": -0.04334416888017988,
+                  "spread_cost": 0.005507744060043051,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.03134172451211381,
+                  "trade_count": 428
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.0627895898846258,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.016396580884265887,
+                  "max_drawdown": -0.022497193488654865,
+                  "mean_routed_usd_gross": 1.9531202583143452,
+                  "rap": 0.22421307267477006,
+                  "routed_usd_turnover": 18.87535998793221,
+                  "spot_pnl": 0.06013530549457358,
+                  "spread_cost": 0.0065726313913083085,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.07003491268585882,
+                  "trade_count": 449
+                }
+              ],
+              "cagr": 0.02017575259132065,
+              "calmar": 0.24259377015052622,
+              "currency_turnover": 64.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0688789695209948,
+              "max_drawdown": -0.08316682072586556,
+              "max_routed_usd_gross": 2.698948049712664,
+              "mean_routed_usd_gross": 1.8661809903717994,
+              "rap": 0.060802688226055335,
+              "routed_usd_turnover": 65.45280679063856,
+              "spot_pnl": 0.03338210053167748,
+              "total_financing": 0.06238340908321205,
+              "total_return": 0.06887896952099481,
+              "total_spread_cost": 0.026886540093896193,
+              "trade_count": 1326
+            },
+            "benchmark_adverse_total_return": -0.11211324280286883,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.051922713282959554,
+                "rap": -0.08808510499451429,
+                "total_return": -0.027719877997030906
+              },
+              "B2": {
+                "max_drawdown": -0.049761681483014075,
+                "rap": -0.05650162755010549,
+                "total_return": -0.019539189253920786
+              },
+              "B3": {
+                "max_drawdown": -0.04099019985558511,
+                "rap": -0.08599568182264261,
+                "total_return": -0.019930921373155663
+              }
+            },
+            "benchmark_max_drawdown": -0.10371845112336425,
+            "benchmark_rap": -0.07349740798855256,
+            "benchmark_rap_excess": 0.1343000962146079,
+            "benchmark_spread_x3_total_return": -0.10028784263287865,
+            "spread_x3_total_return": 0.013764253000964732
+          },
+          "365": {
+            "adverse_total_return": 0.01332520013497196,
+            "base": {
+              "annualized_currency_turnover": 19.192118226600986,
+              "annualized_routed_usd_turnover": 19.618993665952395,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.026315514216460834,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029046627739086457,
+                  "max_drawdown": -0.036255678876258246,
+                  "mean_routed_usd_gross": 1.714612040628897,
+                  "rap": 0.08868711560871535,
+                  "routed_usd_turnover": 30.200526283967417,
+                  "spot_pnl": 0.016588260124515596,
+                  "spread_cost": 0.014802470570513442,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.030832417293096936,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.029965766060340737,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016296359848903486,
+                  "max_drawdown": -0.07991990258739079,
+                  "mean_routed_usd_gross": 1.9277902393083957,
+                  "rap": -0.06172413522129327,
+                  "routed_usd_turnover": 16.361550150596816,
+                  "spot_pnl": -0.043324608656299356,
+                  "spread_cost": 0.005505086471543923,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.031560256287211375,
+                  "trade_count": 428
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.06258109462406503,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.016160170708601058,
+                  "max_drawdown": -0.02251347023596817,
+                  "mean_routed_usd_gross": 1.951675997093703,
+                  "rap": 0.2235036187926224,
+                  "routed_usd_turnover": 18.861426057235978,
+                  "spot_pnl": 0.060090534371953566,
+                  "spread_cost": 0.006567853087272105,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.06980157875402226,
+                  "trade_count": 449
+                }
+              ],
+              "cagr": 0.019918933876635014,
+              "calmar": 0.2390080849762727,
+              "currency_turnover": 64.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.067981934007443,
+              "max_drawdown": -0.08334000031259381,
+              "max_routed_usd_gross": 2.6967033840916668,
+              "mean_routed_usd_gross": 1.86524679237392,
+              "rap": 0.06008308443956012,
+              "routed_usd_turnover": 65.42350249180019,
+              "spot_pnl": 0.03335418584016984,
+              "total_financing": 0.06150315829659115,
+              "total_return": 0.06798193400744301,
+              "total_spread_cost": 0.026875410129329484,
+              "trade_count": 1326
+            },
+            "benchmark_adverse_total_return": -0.1113395976507392,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.051849958449657396,
+                "rap": -0.08735154844941395,
+                "total_return": -0.02774451012062934
+              },
+              "B2": {
+                "max_drawdown": -0.04959286821698655,
+                "rap": -0.05580509228719812,
+                "total_return": -0.01938435710476133
+              },
+              "B3": {
+                "max_drawdown": -0.040908795955193034,
+                "rap": -0.08510248774573903,
+                "total_return": -0.019702313703698127
+              }
+            },
+            "benchmark_max_drawdown": -0.10343009044866969,
+            "benchmark_rap": -0.07270984139862885,
+            "benchmark_rap_excess": 0.13279292583818897,
+            "benchmark_spread_x3_total_return": -0.09933953161607473,
+            "spread_x3_total_return": 0.012913288439307058
+          }
+        },
+        "k": 4
+      },
+      "CAD": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.024823905109681244,
+            "base": {
+              "annualized_currency_turnover": 18.742302955665025,
+              "annualized_routed_usd_turnover": 19.015386149896308,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.0266631048330217,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029455773186518656,
+                  "max_drawdown": -0.036155395653365896,
+                  "mean_routed_usd_gross": 1.7149688854737692,
+                  "rap": 0.08980086496481195,
+                  "routed_usd_turnover": 30.208130208722462,
+                  "spot_pnl": 0.01659096391728375,
+                  "spread_cost": 0.014806164642544833,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.031240572461255223,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.02975810453848382,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.01653105501242754,
+                  "max_drawdown": -0.07977392291683649,
+                  "mean_routed_usd_gross": 1.9287819183283892,
+                  "rap": -0.06125782069025733,
+                  "routed_usd_turnover": 16.369316593983857,
+                  "spot_pnl": -0.04334416888017988,
+                  "spread_cost": 0.005507744060043051,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.03134172451211381,
+                  "trade_count": 428
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07287973291569827,
+                  "count": 53,
+                  "currency_turnover": 17.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01617245436608675,
+                  "max_drawdown": -0.015481180897593427,
+                  "mean_routed_usd_gross": 1.9578789388439888,
+                  "rap": 0.2621403241155665,
+                  "routed_usd_turnover": 16.83320434191708,
+                  "spot_pnl": 0.07123818124141884,
+                  "spread_cost": 0.006165286310734311,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08133321238405156,
+                  "trade_count": 447
+                }
+              ],
+              "cagr": 0.023394111097902792,
+              "calmar": 0.2812913959403889,
+              "currency_turnover": 62.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0801650638302271,
+              "max_drawdown": -0.08316682072586556,
+              "max_routed_usd_gross": 2.722835298524941,
+              "mean_routed_usd_gross": 1.8677874239263925,
+              "rap": 0.0699083431727019,
+              "routed_usd_turnover": 63.41065114462342,
+              "spot_pnl": 0.044484976278522756,
+              "total_financing": 0.06215928256503286,
+              "total_return": 0.08016506383022715,
+              "total_spread_cost": 0.02647919501332219,
+              "trade_count": 1324
+            },
+            "benchmark_adverse_total_return": -0.11235150197849064,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05206823217560519,
+                "rap": -0.08671901185521193,
+                "total_return": -0.028172272143110355
+              },
+              "B2": {
+                "max_drawdown": -0.05070855615586001,
+                "rap": -0.056869348270818076,
+                "total_return": -0.020187021143312223
+              },
+              "B3": {
+                "max_drawdown": -0.04144507472322134,
+                "rap": -0.08756924337979105,
+                "total_return": -0.020210004428967865
+              }
+            },
+            "benchmark_max_drawdown": -0.10489354873335549,
+            "benchmark_rap": -0.07496687986916105,
+            "benchmark_rap_excess": 0.14487522304186295,
+            "benchmark_spread_x3_total_return": -0.10109690978615937,
+            "spread_x3_total_return": 0.025289878207012784
+          },
+          "365": {
+            "adverse_total_return": 0.02433973866686756,
+            "base": {
+              "annualized_currency_turnover": 18.742302955665025,
+              "annualized_routed_usd_turnover": 19.007093115601563,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.026315514216460834,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029046627739086457,
+                  "max_drawdown": -0.036255678876258246,
+                  "mean_routed_usd_gross": 1.714612040628897,
+                  "rap": 0.08868711560871535,
+                  "routed_usd_turnover": 30.200526283967417,
+                  "spot_pnl": 0.016588260124515596,
+                  "spread_cost": 0.014802470570513442,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.030832417293096936,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.029965766060340737,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016296359848903486,
+                  "max_drawdown": -0.07991990258739079,
+                  "mean_routed_usd_gross": 1.9277902393083957,
+                  "rap": -0.06172413522129327,
+                  "routed_usd_turnover": 16.361550150596816,
+                  "spot_pnl": -0.043324608656299356,
+                  "spread_cost": 0.005505086471543923,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.031560256287211375,
+                  "trade_count": 428
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07267284841999766,
+                  "count": 53,
+                  "currency_turnover": 17.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01593930117946254,
+                  "max_drawdown": -0.015485318885759769,
+                  "mean_routed_usd_gross": 1.9564322913699865,
+                  "rap": 0.26142818876894003,
+                  "routed_usd_turnover": 16.820919909864813,
+                  "spot_pnl": 0.07118502424671079,
+                  "spread_cost": 0.006160835464803625,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.0811014368539873,
+                  "trade_count": 447
+                }
+              ],
+              "cagr": 0.023137623672209395,
+              "calmar": 0.27762927268327575,
+              "currency_turnover": 62.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0792625719755282,
+              "max_drawdown": -0.08334000031259381,
+              "max_routed_usd_gross": 2.720579768762121,
+              "mean_routed_usd_gross": 1.866852420378016,
+              "rap": 0.06919030102338433,
+              "routed_usd_turnover": 63.38299634442903,
+              "spot_pnl": 0.04444867571492704,
+              "total_financing": 0.06128228876745261,
+              "total_return": 0.07926257197552822,
+              "total_spread_cost": 0.026468392506861005,
+              "trade_count": 1324
+            },
+            "benchmark_adverse_total_return": -0.11149358224909867,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05203131805847194,
+                "rap": -0.08609085734793553,
+                "total_return": -0.027928001148373904
+              },
+              "B2": {
+                "max_drawdown": -0.05052879377947195,
+                "rap": -0.05647621184751566,
+                "total_return": -0.019941885538255544
+              },
+              "B3": {
+                "max_drawdown": -0.04136512574390627,
+                "rap": -0.08662955242003972,
+                "total_return": -0.02002595891403025
+              }
+            },
+            "benchmark_max_drawdown": -0.10435858724082764,
+            "benchmark_rap": -0.0736899996480357,
+            "benchmark_rap_excess": 0.14288030067142005,
+            "benchmark_spread_x3_total_return": -0.10081143981367935,
+            "spread_x3_total_return": 0.024433052584517334
+          }
+        },
+        "k": 4
+      },
+      "CHF": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.06450651626268322,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 21.298065155823,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.03585692258711326,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.026343337109491258,
+                  "max_drawdown": -0.036689309617077503,
+                  "mean_routed_usd_gross": 1.6720296818248614,
+                  "rap": 0.11618257427110824,
+                  "routed_usd_turnover": 33.86202928696701,
+                  "spot_pnl": 0.03312535260730118,
+                  "spread_cost": 0.017423897878532397,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.04204479183825893,
+                  "trade_count": 439
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.01082199854738497,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.009753041165333334,
+                  "max_drawdown": -0.05634160146218503,
+                  "mean_routed_usd_gross": 1.9712735681796991,
+                  "rap": -0.02648279744216011,
+                  "routed_usd_turnover": 18.628539273626423,
+                  "spot_pnl": -0.01523595052716179,
+                  "spread_cost": 0.006400384589570749,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.011403822603858305,
+                  "trade_count": 432
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07805542425005796,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.009807372677799983,
+                  "max_drawdown": -0.01493204417791072,
+                  "mean_routed_usd_gross": 2.0029886653493927,
+                  "rap": 0.2963780866309623,
+                  "routed_usd_turnover": 18.532137421042197,
+                  "spot_pnl": 0.0864911334241992,
+                  "spread_cost": 0.006537206616621485,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08713323073081658,
+                  "trade_count": 446
+                }
+              ],
+              "cagr": 0.03454733892921569,
+              "calmar": 0.5523121487850069,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.119922797372241,
+              "max_drawdown": -0.0625503875031791,
+              "max_routed_usd_gross": 2.359505591538059,
+              "mean_routed_usd_gross": 1.882867313781879,
+              "rap": 0.11228850783370375,
+              "routed_usd_turnover": 71.02270598163564,
+              "spot_pnl": 0.10438053550433862,
+              "total_financing": 0.0459037509526248,
+              "total_return": 0.11992279737224099,
+              "total_spread_cost": 0.03036148908472461,
+              "trade_count": 1317
+            },
+            "benchmark_adverse_total_return": -0.10639011467502224,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05138628505440673,
+                "rap": -0.08289825772352943,
+                "total_return": -0.027112090130837485
+              },
+              "B2": {
+                "max_drawdown": -0.04933851984366755,
+                "rap": -0.05778059939721202,
+                "total_return": -0.020483429599617797
+              },
+              "B3": {
+                "max_drawdown": -0.04034028939868217,
+                "rap": -0.08232251690216429,
+                "total_return": -0.018672251479058266
+              }
+            },
+            "benchmark_max_drawdown": -0.10137523386286773,
+            "benchmark_rap": -0.07073186827490449,
+            "benchmark_rap_excess": 0.18302037610860825,
+            "benchmark_spread_x3_total_return": -0.09764741672539456,
+            "spread_x3_total_return": 0.05628204203977738
+          },
+          "365": {
+            "adverse_total_return": 0.0641773474093641,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 21.290367254883083,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.03554799989351132,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.025978022003366807,
+                  "max_drawdown": -0.03676955347724964,
+                  "mean_routed_usd_gross": 1.6716897254995975,
+                  "rap": 0.11523079034597701,
+                  "routed_usd_turnover": 33.853705696034844,
+                  "spot_pnl": 0.03312322186589783,
+                  "spread_cost": 0.017419750132593788,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.04168149373666785,
+                  "trade_count": 439
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.010944255283613313,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.009615473022381823,
+                  "max_drawdown": -0.056433320297356926,
+                  "mean_routed_usd_gross": 1.9704495708932954,
+                  "rap": -0.02682466174766048,
+                  "routed_usd_turnover": 18.62113921802386,
+                  "spot_pnl": -0.015230973107740346,
+                  "spread_cost": 0.006397810331472118,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.011532613845078421,
+                  "trade_count": 432
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.0779343250835578,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.009667790998884224,
+                  "max_drawdown": -0.014934285964551153,
+                  "mean_routed_usd_gross": 2.0018978535220056,
+                  "rap": 0.2959372059250626,
+                  "routed_usd_turnover": 18.522190859925136,
+                  "spot_pnl": 0.08644446100154575,
+                  "spread_cost": 0.006533706366196896,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08699748820577269,
+                  "trade_count": 446
+                }
+              ],
+              "cagr": 0.03436001741234285,
+              "calmar": 0.5474657710156368,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.1192467289540668,
+              "max_drawdown": -0.0627619464658028,
+              "max_routed_usd_gross": 2.3582997106976396,
+              "mean_routed_usd_gross": 1.882113564643928,
+              "rap": 0.1117082584596901,
+              "routed_usd_turnover": 70.99703577398384,
+              "spot_pnl": 0.10433670975970326,
+              "total_financing": 0.04526128602463275,
+              "total_return": 0.11924672895406685,
+              "total_spread_cost": 0.03035126683026281,
+              "trade_count": 1317
+            },
+            "benchmark_adverse_total_return": -0.10538502701331892,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.051248434494995165,
+                "rap": -0.08177508236665867,
+                "total_return": -0.0267931449982019
+              },
+              "B2": {
+                "max_drawdown": -0.04925960765060611,
+                "rap": -0.05734087886033172,
+                "total_return": -0.020249928152328234
+              },
+              "B3": {
+                "max_drawdown": -0.040207126777114466,
+                "rap": -0.08139923529489929,
+                "total_return": -0.018571987600246642
+              }
+            },
+            "benchmark_max_drawdown": -0.10117907408750709,
+            "benchmark_rap": -0.07028523224616136,
+            "benchmark_rap_excess": 0.18199349070585147,
+            "benchmark_spread_x3_total_return": -0.09735677801772741,
+            "spread_x3_total_return": 0.05564422925767021
+          }
+        },
+        "k": 4
+      },
+      "CZK": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.04320164862622278,
+            "base": {
+              "annualized_currency_turnover": 19.491995073891626,
+              "annualized_routed_usd_turnover": 18.598053475607752,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.04005295450794377,
+                  "count": 52,
+                  "currency_turnover": 32.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.028405505592747692,
+                  "max_drawdown": -0.031146996286501416,
+                  "mean_routed_usd_gross": 1.6247741348508586,
+                  "rap": 0.13520813676307514,
+                  "routed_usd_turnover": 29.4251015145769,
+                  "spot_pnl": 0.031563329294333774,
+                  "spread_cost": 0.012987629150549703,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.04698120573652953,
+                  "trade_count": 422
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.029758104538475383,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016783381464230356,
+                  "max_drawdown": -0.07977392291683794,
+                  "mean_routed_usd_gross": 1.958222428772964,
+                  "rap": -0.06125782069023915,
+                  "routed_usd_turnover": 16.61917430545898,
+                  "spot_pnl": -0.04400576490848266,
+                  "spread_cost": 0.005591813075291215,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.03134172451210504,
+                  "trade_count": 428
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07303832435823021,
+                  "count": 53,
+                  "currency_turnover": 16.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01666068707218669,
+                  "max_drawdown": -0.015481180897593871,
+                  "mean_routed_usd_gross": 1.95648317704446,
+                  "rap": 0.26097716638055896,
+                  "routed_usd_turnover": 15.974695112996947,
+                  "spot_pnl": 0.07201862895713818,
+                  "spread_cost": 0.006013662606359213,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.0815108879224844,
+                  "trade_count": 442
+                }
+              ],
+              "cagr": 0.02810428458788028,
+              "calmar": 0.33792664371109327,
+              "currency_turnover": 65.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0968326626399503,
+              "max_drawdown": -0.08316682070179626,
+              "max_routed_usd_gross": 2.313746577036226,
+              "mean_routed_usd_gross": 1.847193819692963,
+              "rap": 0.08338947850606175,
+              "routed_usd_turnover": 62.01897093303284,
+              "spot_pnl": 0.05957619334298933,
+              "total_financing": 0.061849574129164676,
+              "total_return": 0.09683266263995027,
+              "total_spread_cost": 0.024593104832200122,
+              "trade_count": 1292
+            },
+            "benchmark_adverse_total_return": -0.10848893656066944,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04997178904852473,
+                "rap": -0.07669510632717325,
+                "total_return": -0.025311340571422147
+              },
+              "B2": {
+                "max_drawdown": -0.05041913290891353,
+                "rap": -0.05604340670065597,
+                "total_return": -0.021041217330556305
+              },
+              "B3": {
+                "max_drawdown": -0.04175793320545895,
+                "rap": -0.08085878801123025,
+                "total_return": -0.020360507105226966
+              }
+            },
+            "benchmark_max_drawdown": -0.10161305678914528,
+            "benchmark_rap": -0.06968227282540851,
+            "benchmark_rap_excess": 0.15307175133147027,
+            "benchmark_spread_x3_total_return": -0.09449231448728262,
+            "spread_x3_total_return": 0.0454742249547051
+          },
+          "365": {
+            "adverse_total_return": 0.0427166273438655,
+            "base": {
+              "annualized_currency_turnover": 19.491995073891626,
+              "annualized_routed_usd_turnover": 18.590325397670085,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.03971467471015622,
+                  "count": 52,
+                  "currency_turnover": 32.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.028011145097876812,
+                  "max_drawdown": -0.03125039656083195,
+                  "mean_routed_usd_gross": 1.6244518530912633,
+                  "rap": 0.1341127887903394,
+                  "routed_usd_turnover": 29.418258766354068,
+                  "spot_pnl": 0.03155653547192231,
+                  "spread_cost": 0.012984568441587742,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.046583112128209425,
+                  "trade_count": 422
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.029965766060334964,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016545361516485262,
+                  "max_drawdown": -0.07991990258739445,
+                  "mean_routed_usd_gross": 1.957246080292906,
+                  "rap": -0.061724135221283345,
+                  "routed_usd_turnover": 16.611547899087046,
+                  "spot_pnl": -0.04398659083531161,
+                  "spread_cost": 0.005589201925799239,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.03156025628720527,
+                  "trade_count": 428
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07282851848065164,
+                  "count": 53,
+                  "currency_turnover": 16.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.016420725513205423,
+                  "max_drawdown": -0.015485318885759103,
+                  "mean_routed_usd_gross": 1.9550706999596206,
+                  "rap": 0.26025846461776847,
+                  "routed_usd_turnover": 15.96339342863735,
+                  "spot_pnl": 0.07196605536726663,
+                  "spread_cost": 0.006009439728276925,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08127583568757646,
+                  "trade_count": 442
+                }
+              ],
+              "cagr": 0.02785049152330399,
+              "calmar": 0.33417916278955495,
+              "currency_turnover": 65.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0959300220357788,
+              "max_drawdown": -0.08334000028853528,
+              "max_routed_usd_gross": 2.3124678895999105,
+              "mean_routed_usd_gross": 1.8462868766486416,
+              "rap": 0.08267911484078298,
+              "routed_usd_turnover": 61.993200094078475,
+              "spot_pnl": 0.059536000003877335,
+              "total_financing": 0.060977232127567824,
+              "total_return": 0.09593002203577883,
+              "total_spread_cost": 0.024583210095663895,
+              "trade_count": 1292
+            },
+            "benchmark_adverse_total_return": -0.10714698019570468,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04985021947392804,
+                "rap": -0.0765084496987864,
+                "total_return": -0.024747005843128167
+              },
+              "B2": {
+                "max_drawdown": -0.05031804573374565,
+                "rap": -0.055619947329845626,
+                "total_return": -0.02079283914081187
+              },
+              "B3": {
+                "max_drawdown": -0.04156651387124277,
+                "rap": -0.07999599736914575,
+                "total_return": -0.02001439545669842
+              }
+            },
+            "benchmark_max_drawdown": -0.10127477378825844,
+            "benchmark_rap": -0.06880218012021755,
+            "benchmark_rap_excess": 0.15148129496100055,
+            "benchmark_spread_x3_total_return": -0.09405661242486046,
+            "spread_x3_total_return": 0.044613747437276086
+          }
+        },
+        "k": 4
+      },
+      "EUR": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.026945662708579787,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 24.052633302233005,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.02889536805987425,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.027509252541149807,
+                  "max_drawdown": -0.03971970366157174,
+                  "mean_routed_usd_gross": 2.0435470891921432,
+                  "rap": 0.09173579169116627,
+                  "routed_usd_turnover": 38.82034522586591,
+                  "spot_pnl": 0.02422844795913339,
+                  "spread_cost": 0.017875356422214647,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.033862344078067874,
+                  "trade_count": 524
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.021292988519372225,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.011031817804216987,
+                  "max_drawdown": -0.067412704554219,
+                  "mean_routed_usd_gross": 2.4213924815885566,
+                  "rap": -0.044410572384297624,
+                  "routed_usd_turnover": 20.524462349786127,
+                  "spot_pnl": -0.027758340781857342,
+                  "spread_cost": 0.006464401263449925,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.022431346275381014,
+                  "trade_count": 488
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07258895561085565,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01008715554660137,
+                  "max_drawdown": -0.016170447026748302,
+                  "mean_routed_usd_gross": 2.4458276696993404,
+                  "rap": 0.26358622736659293,
+                  "routed_usd_turnover": 20.86356302563427,
+                  "spot_pnl": 0.07841123163336527,
+                  "spread_cost": 0.00662647063592418,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08100745201368342,
+                  "trade_count": 502
+                }
+              ],
+              "cagr": 0.02689695940477521,
+              "calmar": 0.3550345010355351,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0925433363810206,
+              "max_drawdown": -0.07575872014219576,
+              "max_routed_usd_gross": 2.8148949423767995,
+              "mean_routed_usd_gross": 2.3044950584373343,
+              "rap": 0.08004547974909247,
+              "routed_usd_turnover": 80.20837060128625,
+              "spot_pnl": 0.0748813388106413,
+              "total_financing": 0.04862822589196816,
+              "total_return": 0.09254333638102064,
+              "total_spread_cost": 0.030966228321588744,
+              "trade_count": 1514
+            },
+            "benchmark_adverse_total_return": -0.11414932429224367,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05192535017515593,
+                "rap": -0.08384815593487768,
+                "total_return": -0.027815485876017287
+              },
+              "B2": {
+                "max_drawdown": -0.051257714212240624,
+                "rap": -0.05896301636205224,
+                "total_return": -0.021017041644902146
+              },
+              "B3": {
+                "max_drawdown": -0.04192154747756183,
+                "rap": -0.08280084726996614,
+                "total_return": -0.020067630247816992
+              }
+            },
+            "benchmark_max_drawdown": -0.1038924894020582,
+            "benchmark_rap": -0.07221904228004924,
+            "benchmark_rap_excess": 0.1522645220291417,
+            "benchmark_spread_x3_total_return": -0.10236328614379964,
+            "spread_x3_total_return": 0.0283417365557328
+          },
+          "365": {
+            "adverse_total_return": 0.02672450597167564,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 24.043556072228313,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.028572493527772913,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.02712753506677279,
+                  "max_drawdown": -0.03981012186458244,
+                  "mean_routed_usd_gross": 2.043127414743523,
+                  "rap": 0.0907641371244494,
+                  "routed_usd_turnover": 38.810854936004304,
+                  "spot_pnl": 0.024226581797878764,
+                  "spread_cost": 0.017871045347568004,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.033483071517083296,
+                  "trade_count": 524
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.021432248093956052,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.010875910652723576,
+                  "max_drawdown": -0.06751255213702478,
+                  "mean_routed_usd_gross": 2.420310868985783,
+                  "rap": -0.04473306269285517,
+                  "routed_usd_turnover": 20.515755525192567,
+                  "spot_pnl": -0.027748226261186375,
+                  "spread_cost": 0.006461628669355662,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.022577964671995243,
+                  "trade_count": 488
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.0724616631960957,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.009943180839116515,
+                  "max_drawdown": -0.01617293921729368,
+                  "mean_routed_usd_gross": 2.444392696851111,
+                  "rap": 0.2631415998967715,
+                  "routed_usd_turnover": 20.85149028068978,
+                  "spot_pnl": 0.07836503337228615,
+                  "spread_cost": 0.006622658273648499,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08086484830314289,
+                  "trade_count": 502
+                }
+              ],
+              "cagr": 0.026697174108304633,
+              "calmar": 0.3518470635738015,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0918346831770207,
+              "max_drawdown": -0.07587721164171313,
+              "max_routed_usd_gross": 2.813343682103864,
+              "mean_routed_usd_gross": 2.3035133992804635,
+              "rap": 0.07948525398783615,
+              "routed_usd_turnover": 80.17810074188661,
+              "spot_pnl": 0.07484338890897853,
+              "total_financing": 0.04794662655861287,
+              "total_return": 0.0918346831770207,
+              "total_spread_cost": 0.030955332290572155,
+              "trade_count": 1514
+            },
+            "benchmark_adverse_total_return": -0.11292382409527951,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.0518675178713226,
+                "rap": -0.08204978943149902,
+                "total_return": -0.027457933979431914
+              },
+              "B2": {
+                "max_drawdown": -0.051124500269445816,
+                "rap": -0.058518121606503826,
+                "total_return": -0.020742189423676838
+              },
+              "B3": {
+                "max_drawdown": -0.041836693235932976,
+                "rap": -0.08165057100628301,
+                "total_return": -0.0199000795461719
+              }
+            },
+            "benchmark_max_drawdown": -0.10363836298514884,
+            "benchmark_rap": -0.07156035212453099,
+            "benchmark_rap_excess": 0.15104560611236714,
+            "benchmark_spread_x3_total_return": -0.10192876718392058,
+            "spread_x3_total_return": 0.02767439123688309
+          }
+        },
+        "k": 4
+      },
+      "GBP": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.0249547780563113,
+            "base": {
+              "annualized_currency_turnover": 18.292487684729064,
+              "annualized_routed_usd_turnover": 18.617075304786194,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.0266631048330217,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029455773186518656,
+                  "max_drawdown": -0.036155395653365896,
+                  "mean_routed_usd_gross": 1.7149688854737692,
+                  "rap": 0.08980086496481195,
+                  "routed_usd_turnover": 30.208130208722462,
+                  "spot_pnl": 0.01659096391728375,
+                  "spread_cost": 0.014806164642544833,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.031240572461255223,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.019945417524388942,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016367684539683253,
+                  "max_drawdown": -0.06996115962942306,
+                  "mean_routed_usd_gross": 1.9363293551888865,
+                  "rap": -0.0388936001178249,
+                  "routed_usd_turnover": 15.970829721141682,
+                  "spot_pnl": -0.03143873457862694,
+                  "spread_cost": 0.006597900769548562,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.021012508028829036,
+                  "trade_count": 419
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.06392309594802259,
+                  "count": 53,
+                  "currency_turnover": 15.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.016437349600189083,
+                  "max_drawdown": -0.015481180876422362,
+                  "mean_routed_usd_gross": 1.9436894844245234,
+                  "rap": 0.22803315837640828,
+                  "routed_usd_turnover": 15.903443139895137,
+                  "spot_pnl": 0.061839580776176274,
+                  "spread_cost": 0.006290893721328894,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.07130354608936607,
+                  "trade_count": 437
+                }
+              ],
+              "cagr": 0.02378959106333811,
+              "calmar": 0.32415198425001246,
+              "currency_turnover": 61.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0815576583077928,
+              "max_drawdown": -0.07339023735541794,
+              "max_routed_usd_gross": 2.7263456929331826,
+              "mean_routed_usd_gross": 1.865497141330942,
+              "rap": 0.07068552102423659,
+              "routed_usd_turnover": 62.0824030697593,
+              "spot_pnl": 0.046991810114833124,
+              "total_financing": 0.06226080732639077,
+              "total_return": 0.08155765830779282,
+              "total_spread_cost": 0.027694959133422296,
+              "trade_count": 1305
+            },
+            "benchmark_adverse_total_return": -0.11228005850773531,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05155524591238764,
+                "rap": -0.081394216083583,
+                "total_return": -0.0261556103954243
+              },
+              "B2": {
+                "max_drawdown": -0.05071928052469071,
+                "rap": -0.05692639700182191,
+                "total_return": -0.0199070422177135
+              },
+              "B3": {
+                "max_drawdown": -0.04099251413448596,
+                "rap": -0.08436305885148898,
+                "total_return": -0.020186077001539016
+              }
+            },
+            "benchmark_max_drawdown": -0.10160287243710536,
+            "benchmark_rap": -0.07143630812817958,
+            "benchmark_rap_excess": 0.14212182915241617,
+            "benchmark_spread_x3_total_return": -0.0997764659622915,
+            "spread_x3_total_return": 0.024297978771835593
+          },
+          "365": {
+            "adverse_total_return": 0.02447239675520141,
+            "base": {
+              "annualized_currency_turnover": 18.292487684729064,
+              "annualized_routed_usd_turnover": 18.60904239875626,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.026315514216460834,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029046627739086457,
+                  "max_drawdown": -0.036255678876258246,
+                  "mean_routed_usd_gross": 1.714612040628897,
+                  "rap": 0.08868711560871535,
+                  "routed_usd_turnover": 30.200526283967417,
+                  "spot_pnl": 0.016588260124515596,
+                  "spread_cost": 0.014802470570513442,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.030832417293096936,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.020151844596209223,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.01613533283484606,
+                  "max_drawdown": -0.07010536016063829,
+                  "mean_routed_usd_gross": 1.935335315658884,
+                  "rap": -0.03934874879319931,
+                  "routed_usd_turnover": 15.963176205790049,
+                  "spot_pnl": -0.031425109236085186,
+                  "spread_cost": 0.006594650459215179,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.02122985898902985,
+                  "trade_count": 419
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.06371576875494944,
+                  "count": 53,
+                  "currency_turnover": 15.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.016200421840719945,
+                  "max_drawdown": -0.015485318864589148,
+                  "mean_routed_usd_gross": 1.9422587336209693,
+                  "rap": 0.22732337495584004,
+                  "routed_usd_turnover": 15.891913230119663,
+                  "spot_pnl": 0.06179339691161414,
+                  "spread_cost": 0.006286379956457952,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.07107149176750416,
+                  "trade_count": 437
+                }
+              ],
+              "cagr": 0.023533409628605728,
+              "calmar": 0.31991284555097727,
+              "currency_turnover": 61.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0806554292285193,
+              "max_drawdown": -0.07356194024680307,
+              "max_routed_usd_gross": 2.7240908506449295,
+              "mean_routed_usd_gross": 1.8645667223495286,
+              "rap": 0.06997240663779979,
+              "routed_usd_turnover": 62.05561571987713,
+              "spot_pnl": 0.046956547800044525,
+              "total_financing": 0.06138238241465249,
+              "total_return": 0.08065542922851932,
+              "total_spread_cost": 0.027683500986186577,
+              "trade_count": 1305
+            },
+            "benchmark_adverse_total_return": -0.11134422616042378,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05142309578418991,
+                "rap": -0.07979249295766024,
+                "total_return": -0.02581121096754646
+              },
+              "B2": {
+                "max_drawdown": -0.050686074970398454,
+                "rap": -0.056659900371845276,
+                "total_return": -0.019827038154036747
+              },
+              "B3": {
+                "max_drawdown": -0.04099311984663556,
+                "rap": -0.08361947360889278,
+                "total_return": -0.019963495251399788
+              }
+            },
+            "benchmark_max_drawdown": -0.10132309230466668,
+            "benchmark_rap": -0.07053969703614885,
+            "benchmark_rap_excess": 0.14051210367394862,
+            "benchmark_spread_x3_total_return": -0.09902189274619333,
+            "spread_x3_total_return": 0.023443331932266
+          }
+        },
+        "k": 4
+      },
+      "HUF": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.03662766009907292,
+            "base": {
+              "annualized_currency_turnover": 18.742302955665025,
+              "annualized_routed_usd_turnover": 17.965705825903378,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.03973251049071669,
+                  "count": 52,
+                  "currency_turnover": 33.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.017716449859094402,
+                  "max_drawdown": -0.029051045650361984,
+                  "mean_routed_usd_gross": 1.5406215023187382,
+                  "rap": 0.1410646847407557,
+                  "routed_usd_turnover": 29.75757957555057,
+                  "spot_pnl": 0.04012488616615914,
+                  "spread_cost": 0.01123723498394197,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.04660410104131163,
+                  "trade_count": 408
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.015408499146243204,
+                  "count": 52,
+                  "currency_turnover": 14.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.015196730911382383,
+                  "max_drawdown": -0.061927907632593704,
+                  "mean_routed_usd_gross": 1.7246454243716545,
+                  "rap": -0.029000570895270087,
+                  "routed_usd_turnover": 14.658177785475868,
+                  "spot_pnl": -0.027109260620378602,
+                  "spread_cost": 0.005078958948417752,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.01623487681780178,
+                  "trade_count": 387
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.039374006891490065,
+                  "count": 53,
+                  "currency_turnover": 15.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.013915295119658706,
+                  "max_drawdown": -0.011733558703149183,
+                  "mean_routed_usd_gross": 1.7243724716992197,
+                  "rap": 0.1808286760245041,
+                  "routed_usd_turnover": 15.494522436236576,
+                  "spot_pnl": 0.03533668401795223,
+                  "spread_cost": 0.0040912204251118914,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.043861893462954216,
+                  "trade_count": 402
+                }
+              ],
+              "cagr": 0.02185956051275606,
+              "calmar": 0.34568834658703723,
+              "currency_turnover": 62.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.074773371096399,
+              "max_drawdown": -0.06323487826122676,
+              "max_routed_usd_gross": 2.433724986062846,
+              "mean_routed_usd_gross": 1.6636026827258539,
+              "rap": 0.06916637512941079,
+              "routed_usd_turnover": 59.910279797263016,
+              "spot_pnl": 0.048352309563732786,
+              "total_financing": 0.04682847589013553,
+              "total_return": 0.07477337109639892,
+              "total_spread_cost": 0.02040741435747162,
+              "trade_count": 1197
+            },
+            "benchmark_adverse_total_return": -0.09362380825398126,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04750152077206843,
+                "rap": -0.06826554759570297,
+                "total_return": -0.02143059245840162
+              },
+              "B2": {
+                "max_drawdown": -0.04910548823537336,
+                "rap": -0.052732542575827115,
+                "total_return": -0.018860239139853296
+              },
+              "B3": {
+                "max_drawdown": -0.03642665738932915,
+                "rap": -0.0710139057002317,
+                "total_return": -0.017044832250806774
+              }
+            },
+            "benchmark_max_drawdown": -0.09471183319013105,
+            "benchmark_rap": -0.06588415702015507,
+            "benchmark_rap_excess": 0.13505053214956586,
+            "benchmark_spread_x3_total_return": -0.0846313253574909,
+            "spread_x3_total_return": 0.03299964540352773
+          },
+          "365": {
+            "adverse_total_return": 0.03621555111783992,
+            "base": {
+              "annualized_currency_turnover": 18.742302955665025,
+              "annualized_routed_usd_turnover": 17.960475938387358,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.03952087560678974,
+                  "count": 52,
+                  "currency_turnover": 33.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.01747170791344629,
+                  "max_drawdown": -0.029112307499029377,
+                  "mean_routed_usd_gross": 1.5404264955838325,
+                  "rap": 0.14034088668505532,
+                  "routed_usd_turnover": 29.753119709122917,
+                  "spot_pnl": 0.04011894736896726,
+                  "spread_cost": 0.011235599478038703,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.04635505580437038,
+                  "trade_count": 408
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.015596631687490814,
+                  "count": 52,
+                  "currency_turnover": 14.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.014983514726913442,
+                  "max_drawdown": -0.062067544990013435,
+                  "mean_routed_usd_gross": 1.7240536966713431,
+                  "rap": -0.0294146113632922,
+                  "routed_usd_turnover": 14.653485285439146,
+                  "spot_pnl": -0.02710100717988702,
+                  "spread_cost": 0.005077275563116229,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.0164330147025199,
+                  "trade_count": 387
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.03920409774515998,
+                  "count": 53,
+                  "currency_turnover": 15.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.013717411630111889,
+                  "max_drawdown": -0.011745665684435358,
+                  "mean_routed_usd_gross": 1.7234601531630491,
+                  "rap": 0.1800743283357116,
+                  "routed_usd_turnover": 15.486234684988403,
+                  "spot_pnl": 0.035317390481841786,
+                  "spread_cost": 0.004089093552838634,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.04367221422399847,
+                  "trade_count": 402
+                }
+              ],
+              "cagr": 0.021669241819667562,
+              "calmar": 0.34181096874905104,
+              "currency_turnover": 62.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.074105996347404,
+              "max_drawdown": -0.06339539628869129,
+              "max_routed_usd_gross": 2.432228703073528,
+              "mean_routed_usd_gross": 1.6630341281204506,
+              "rap": 0.06860053928352215,
+              "routed_usd_turnover": 59.89283967955045,
+              "spot_pnl": 0.04833533067092203,
+              "total_financing": 0.04617263427047172,
+              "total_return": 0.074105996347404,
+              "total_spread_cost": 0.020401968593993573,
+              "trade_count": 1197
+            },
+            "benchmark_adverse_total_return": -0.09299863929332952,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04735428357408089,
+                "rap": -0.06766422533483149,
+                "total_return": -0.021472231764328498
+              },
+              "B2": {
+                "max_drawdown": -0.04893444401392838,
+                "rap": -0.05234371094941616,
+                "total_return": -0.018621699052088714
+              },
+              "B3": {
+                "max_drawdown": -0.03633786137247441,
+                "rap": -0.06989734058802993,
+                "total_return": -0.016769855190071792
+              }
+            },
+            "benchmark_max_drawdown": -0.09433561123367873,
+            "benchmark_rap": -0.0652911328466266,
+            "benchmark_rap_excess": 0.13389167213014874,
+            "benchmark_spread_x3_total_return": -0.08389317357071924,
+            "spread_x3_total_return": 0.03235808979767918
+          }
+        },
+        "k": 4
+      },
+      "JPY": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": -0.015560806296920582,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 20.319897510836885,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": -0.0028181304151591036,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.02216605178097531,
+                  "max_drawdown": -0.03956144971091147,
+                  "mean_routed_usd_gross": 1.6264251691112213,
+                  "rap": -0.006574402627213268,
+                  "routed_usd_turnover": 32.79143259470127,
+                  "spot_pnl": -0.00839178704013488,
+                  "spread_cost": 0.01706804928137891,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": -0.0032937845405319743,
+                  "trade_count": 439
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.02195978339000615,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.008342718276765464,
+                  "max_drawdown": -0.05808815947249024,
+                  "mean_routed_usd_gross": 1.8829706680457978,
+                  "rap": -0.05992457073412922,
+                  "routed_usd_turnover": 17.802640294061856,
+                  "spot_pnl": -0.025269906911910833,
+                  "spread_cost": 0.006129981052414382,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.02313336601089755,
+                  "trade_count": 432
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.056799664787789084,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.010609335633973085,
+                  "max_drawdown": -0.013953036812574537,
+                  "mean_routed_usd_gross": 1.8510904411124638,
+                  "rap": 0.23610090465438022,
+                  "routed_usd_turnover": 17.166735237723795,
+                  "spot_pnl": 0.05715736549528666,
+                  "spread_cost": 0.006102169922189811,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.06333342745504611,
+                  "trade_count": 446
+                }
+              ],
+              "cagr": 0.01046137369905642,
+              "calmar": 0.12712077164272081,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0353135769789776,
+              "max_drawdown": -0.08229476240483047,
+              "max_routed_usd_gross": 2.234498657480771,
+              "mean_routed_usd_gross": 1.787238069497615,
+              "rap": 0.03855515642789593,
+              "routed_usd_turnover": 67.76080812648686,
+              "spot_pnl": 0.023495671543240962,
+              "total_financing": 0.04111810569171403,
+              "total_return": 0.035313576978977634,
+              "total_spread_cost": 0.029300200255983094,
+              "trade_count": 1317
+            },
+            "benchmark_adverse_total_return": -0.10532455050455836,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05062917845703091,
+                "rap": -0.0848928074905595,
+                "total_return": -0.026378458881906763
+              },
+              "B2": {
+                "max_drawdown": -0.04719893539890002,
+                "rap": -0.06110938449471576,
+                "total_return": -0.019634051268242414
+              },
+              "B3": {
+                "max_drawdown": -0.03963564972153516,
+                "rap": -0.0814450435194802,
+                "total_return": -0.017988007620612312
+              }
+            },
+            "benchmark_max_drawdown": -0.09969366380159744,
+            "benchmark_rap": -0.07065411148755532,
+            "benchmark_rap_excess": 0.10920926791545124,
+            "benchmark_spread_x3_total_return": -0.09439937273087706,
+            "spread_x3_total_return": -0.023937607760012858
+          },
+          "365": {
+            "adverse_total_return": -0.015833700413856122,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 20.31349631632347,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": -0.003074967267071238,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.021859195258260133,
+                  "max_drawdown": -0.039722746362828354,
+                  "mean_routed_usd_gross": 1.6261325637966872,
+                  "rap": -0.007466207044223414,
+                  "routed_usd_turnover": 32.78441204718777,
+                  "spot_pnl": -0.008388567732518872,
+                  "spread_cost": 0.01706452058622608,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": -0.003593893060483966,
+                  "trade_count": 439
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.022068146982199832,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.008225488556879322,
+                  "max_drawdown": -0.058164328345669314,
+                  "mean_routed_usd_gross": 1.882294838393798,
+                  "rap": -0.060241413630090695,
+                  "routed_usd_turnover": 17.796583090968195,
+                  "spot_pnl": -0.025261529597744272,
+                  "spread_cost": 0.0061278618011843915,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.023247451697378296,
+                  "trade_count": 432
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.05666087881062598,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.010458871685793326,
+                  "max_drawdown": -0.013955790853383387,
+                  "mean_routed_usd_gross": 1.8501787971373775,
+                  "rap": 0.23554262652715555,
+                  "routed_usd_turnover": 17.15846691052845,
+                  "spot_pnl": 0.057128067912580974,
+                  "spread_cost": 0.006099244275562596,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.06317820483322723,
+                  "trade_count": 446
+                }
+              ],
+              "cagr": 0.01029051013226212,
+              "calmar": 0.1246459215232629,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.034729899420278,
+              "max_drawdown": -0.08255793696660652,
+              "max_routed_usd_gross": 2.233635076205668,
+              "mean_routed_usd_gross": 1.7866095615425877,
+              "rap": 0.03797921000835199,
+              "routed_usd_turnover": 67.73946204868443,
+              "spot_pnl": 0.02347797058231784,
+              "total_financing": 0.04054355550093273,
+              "total_return": 0.03472989942027804,
+              "total_spread_cost": 0.02929162666297307,
+              "trade_count": 1317
+            },
+            "benchmark_adverse_total_return": -0.10431225145691658,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05046262193492079,
+                "rap": -0.08460822615700683,
+                "total_return": -0.02614272777557647
+              },
+              "B2": {
+                "max_drawdown": -0.0470894177541179,
+                "rap": -0.060859744615059136,
+                "total_return": -0.0193671448047269
+              },
+              "B3": {
+                "max_drawdown": -0.03953908551417851,
+                "rap": -0.08051699336527063,
+                "total_return": -0.017723177971915804
+              }
+            },
+            "benchmark_max_drawdown": -0.09951168965388635,
+            "benchmark_rap": -0.07008855028828778,
+            "benchmark_rap_excess": 0.10806776029663978,
+            "benchmark_spread_x3_total_return": -0.09377564354376539,
+            "spread_x3_total_return": -0.024488180753147737
+          }
+        },
+        "k": 4
+      },
+      "NOK": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": -0.0019066345632116066,
+            "base": {
+              "annualized_currency_turnover": 18.142549261083744,
+              "annualized_routed_usd_turnover": 18.318944095540314,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.0266631048330217,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029455773186518656,
+                  "max_drawdown": -0.036155395653365896,
+                  "mean_routed_usd_gross": 1.7149688854737692,
+                  "rap": 0.08980086496481195,
+                  "routed_usd_turnover": 30.208130208722462,
+                  "spot_pnl": 0.01659096391728375,
+                  "spread_cost": 0.014806164642544833,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.031240572461255223,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.03908469838742845,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.017505856093884487,
+                  "max_drawdown": -0.08117253250433776,
+                  "mean_routed_usd_gross": 1.8211348215132115,
+                  "rap": -0.08878707722272089,
+                  "routed_usd_turnover": 15.769150052997484,
+                  "spot_pnl": -0.054682518798932864,
+                  "spread_cost": 0.0052630392777360145,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.04115402663172418,
+                  "trade_count": 423
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.052937037930786524,
+                  "count": 53,
+                  "currency_turnover": 15.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01813653848336033,
+                  "max_drawdown": -0.027068390440459722,
+                  "mean_routed_usd_gross": 1.6767727781937454,
+                  "rap": 0.17904337084635474,
+                  "routed_usd_turnover": 15.110943991170123,
+                  "spot_pnl": 0.04515864983170943,
+                  "spread_cost": 0.004941902238954041,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.05901419367469063,
+                  "trade_count": 402
+                }
+              ],
+              "cagr": 0.013913071148786482,
+              "calmar": 0.1645343676880261,
+              "currency_turnover": 60.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0471541565545892,
+              "max_drawdown": -0.0845602736029416,
+              "max_routed_usd_gross": 2.388913007282921,
+              "mean_routed_usd_gross": 1.7372378981375254,
+              "rap": 0.043889659593436554,
+              "routed_usd_turnover": 61.08822425289008,
+              "spot_pnl": 0.007067094950060313,
+              "total_financing": 0.06509816776376331,
+              "total_return": 0.04715415655458921,
+              "total_spread_cost": 0.0250111061592349,
+              "trade_count": 1274
+            },
+            "benchmark_adverse_total_return": -0.10020651942928421,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.049692449840690045,
+                "rap": -0.08305554364719434,
+                "total_return": -0.025067016724406976
+              },
+              "B2": {
+                "max_drawdown": -0.04868304281018171,
+                "rap": -0.058838264535904974,
+                "total_return": -0.01978480725341497
+              },
+              "B3": {
+                "max_drawdown": -0.039752147865447784,
+                "rap": -0.07771638552549405,
+                "total_return": -0.01812544731226967
+              }
+            },
+            "benchmark_max_drawdown": -0.09833677817085712,
+            "benchmark_rap": -0.06553072933201948,
+            "benchmark_rap_excess": 0.10942038892545602,
+            "benchmark_spread_x3_total_return": -0.0880717521389986,
+            "spread_x3_total_return": -0.003268297768829753
+          },
+          "365": {
+            "adverse_total_return": -0.002465607830375527,
+            "base": {
+              "annualized_currency_turnover": 18.142549261083744,
+              "annualized_routed_usd_turnover": 18.310928429667708,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.026315514216460834,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029046627739086457,
+                  "max_drawdown": -0.036255678876258246,
+                  "mean_routed_usd_gross": 1.714612040628897,
+                  "rap": 0.08868711560871535,
+                  "routed_usd_turnover": 30.200526283967417,
+                  "spot_pnl": 0.016588260124515596,
+                  "spread_cost": 0.014802470570513442,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.030832417293096936,
+                  "trade_count": 449
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.03930305990538474,
+                  "count": 52,
+                  "currency_turnover": 16.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.017257207324472116,
+                  "max_drawdown": -0.08132379381617794,
+                  "mean_routed_usd_gross": 1.8202026705111602,
+                  "rap": -0.0893171073841918,
+                  "routed_usd_turnover": 15.761684524486379,
+                  "spot_pnl": -0.05465635594773939,
+                  "spread_cost": 0.0052605092712944175,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.0413836984352689,
+                  "trade_count": 423
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.05270588295857559,
+                  "count": 53,
+                  "currency_turnover": 15.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.017874567337697465,
+                  "max_drawdown": -0.02708668216704202,
+                  "mean_routed_usd_gross": 1.675490839712557,
+                  "rap": 0.17829676066610817,
+                  "routed_usd_turnover": 15.099283585345715,
+                  "spot_pnl": 0.04512442448639754,
+                  "spread_cost": 0.004938140929054773,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.058755769517848444,
+                  "trade_count": 402
+                }
+              ],
+              "cagr": 0.013645701349464412,
+              "calmar": 0.16103274763415892,
+              "currency_turnover": 60.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0462336102935779,
+              "max_drawdown": -0.08473867303354532,
+              "max_routed_usd_gross": 2.386835469451902,
+              "mean_routed_usd_gross": 1.736378213274194,
+              "rap": 0.04312147305651788,
+              "routed_usd_turnover": 61.06149439379951,
+              "spot_pnl": 0.007056328663173756,
+              "total_financing": 0.06417840240125622,
+              "total_return": 0.046233610293577865,
+              "total_spread_cost": 0.025001120770862625,
+              "trade_count": 1274
+            },
+            "benchmark_adverse_total_return": -0.09914313423796073,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04946574153740657,
+                "rap": -0.08204000842191563,
+                "total_return": -0.025048731520354917
+              },
+              "B2": {
+                "max_drawdown": -0.048519063339616475,
+                "rap": -0.05811017227370187,
+                "total_return": -0.019410420443260523
+              },
+              "B3": {
+                "max_drawdown": -0.03961024003175595,
+                "rap": -0.07669552482898394,
+                "total_return": -0.0179046938828063
+              }
+            },
+            "benchmark_max_drawdown": -0.09801121595190371,
+            "benchmark_rap": -0.06545314627022311,
+            "benchmark_rap_excess": 0.10857461932674099,
+            "benchmark_spread_x3_total_return": -0.08778597712341163,
+            "spread_x3_total_return": -0.004144671889828588
+          }
+        },
+        "k": 4
+      },
+      "NZD": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.030670337294073535,
+            "base": {
+              "annualized_currency_turnover": 17.692733990147783,
+              "annualized_routed_usd_turnover": 17.511521723121223,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.023841149771948622,
+                  "count": 52,
+                  "currency_turnover": 30.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029835705198482793,
+                  "max_drawdown": -0.04368192396675008,
+                  "mean_routed_usd_gross": 1.6390394825155505,
+                  "rap": 0.07881491033528944,
+                  "routed_usd_turnover": 28.365850373447106,
+                  "spot_pnl": 0.012682948469989856,
+                  "spread_cost": 0.01459106097724559,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.027927592691223913,
+                  "trade_count": 427
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.022608593118050635,
+                  "count": 52,
+                  "currency_turnover": 12.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016630174552854617,
+                  "max_drawdown": -0.07362706977656364,
+                  "mean_routed_usd_gross": 1.9229124941741713,
+                  "rap": -0.044004176552108115,
+                  "routed_usd_turnover": 13.120381509840662,
+                  "spot_pnl": -0.03642494821254155,
+                  "spread_cost": 0.0046867874340809305,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.023816425658613527,
+                  "trade_count": 419
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07287973291571226,
+                  "count": 53,
+                  "currency_turnover": 17.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01624573518645595,
+                  "max_drawdown": -0.015481180897592872,
+                  "mean_routed_usd_gross": 1.9667505035165067,
+                  "rap": 0.26214032411561106,
+                  "routed_usd_turnover": 16.90947916054974,
+                  "spot_pnl": 0.07156097654785842,
+                  "spread_cost": 0.006193222530459199,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.0813332123840671,
+                  "trade_count": 447
+                }
+              ],
+              "cagr": 0.024782504618455325,
+              "calmar": 0.321301174441309,
+              "currency_turnover": 59.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0850595208013198,
+              "max_drawdown": -0.0771316963330374,
+              "max_routed_usd_gross": 2.7351730426848415,
+              "mean_routed_usd_gross": 1.8436896781798748,
+              "rap": 0.07258245944675283,
+              "routed_usd_turnover": 58.39571104383751,
+              "spot_pnl": 0.0478189768053067,
+              "total_financing": 0.06271161493779338,
+              "total_return": 0.08505952080131984,
+              "total_spread_cost": 0.02547107094178572,
+              "trade_count": 1293
+            },
+            "benchmark_adverse_total_return": -0.1080521336455626,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05073093610772661,
+                "rap": -0.08451516551032072,
+                "total_return": -0.026612267563099923
+              },
+              "B2": {
+                "max_drawdown": -0.05009677482240038,
+                "rap": -0.05453548865685047,
+                "total_return": -0.019672029742389796
+              },
+              "B3": {
+                "max_drawdown": -0.040824288024165656,
+                "rap": -0.09032013236245759,
+                "total_return": -0.020877678440291925
+              }
+            },
+            "benchmark_max_drawdown": -0.1014774129426575,
+            "benchmark_rap": -0.07173157232450833,
+            "benchmark_rap_excess": 0.14431403177126118,
+            "benchmark_spread_x3_total_return": -0.09647988978268035,
+            "spread_x3_total_return": 0.031952541678623936
+          },
+          "365": {
+            "adverse_total_return": 0.03017353489911989,
+            "base": {
+              "annualized_currency_turnover": 17.692733990147783,
+              "annualized_routed_usd_turnover": 17.503750924144793,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.02348918437383718,
+                  "count": 52,
+                  "currency_turnover": 30.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029421201877263818,
+                  "max_drawdown": -0.04378643712637453,
+                  "mean_routed_usd_gross": 1.6387032225217697,
+                  "rap": 0.07771274875802726,
+                  "routed_usd_turnover": 28.358768666517157,
+                  "spot_pnl": 0.012680711145558153,
+                  "spread_cost": 0.014587420091070384,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.027514492931755674,
+                  "trade_count": 427
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.02281860297377769,
+                  "count": 52,
+                  "currency_turnover": 12.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016393962670288947,
+                  "max_drawdown": -0.07377423187793153,
+                  "mean_routed_usd_gross": 1.9219092894038126,
+                  "rap": -0.0444619711010481,
+                  "routed_usd_turnover": 13.114007797378779,
+                  "spot_pnl": -0.03640840155572462,
+                  "spread_cost": 0.00468445763238537,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.024037516441592466,
+                  "trade_count": 419
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07267284842000321,
+                  "count": 53,
+                  "currency_turnover": 17.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.016011413920620374,
+                  "max_drawdown": -0.01548531888575988,
+                  "mean_routed_usd_gross": 1.9652836013384685,
+                  "rap": 0.26142818876896184,
+                  "routed_usd_turnover": 16.89702127904276,
+                  "spot_pnl": 0.07150708022457461,
+                  "spread_cost": 0.006188708376431756,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08110143685399351,
+                  "trade_count": 447
+                }
+              ],
+              "cagr": 0.02452352758174836,
+              "calmar": 0.3172220036224163,
+              "currency_turnover": 59.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0841453821826992,
+              "max_drawdown": -0.07730714547449324,
+              "max_routed_usd_gross": 2.7328882421672667,
+              "mean_routed_usd_gross": 1.8427508375227333,
+              "rap": 0.0718713109653354,
+              "routed_usd_turnover": 58.369797742938694,
+              "spot_pnl": 0.04777938981440817,
+              "total_financing": 0.06182657846817301,
+              "total_return": 0.08414538218269918,
+              "total_spread_cost": 0.025460586099887494,
+              "trade_count": 1293
+            },
+            "benchmark_adverse_total_return": -0.10737296583680733,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05051288167126616,
+                "rap": -0.08361088139414657,
+                "total_return": -0.026450776005577104
+              },
+              "B2": {
+                "max_drawdown": -0.05002888454473792,
+                "rap": -0.05394513921772979,
+                "total_return": -0.019410420443260523
+              },
+              "B3": {
+                "max_drawdown": -0.04077943871986939,
+                "rap": -0.08883867205954411,
+                "total_return": -0.02059644738368882
+              }
+            },
+            "benchmark_max_drawdown": -0.10104603930144918,
+            "benchmark_rap": -0.07068104912188575,
+            "benchmark_rap_excess": 0.14255236008722116,
+            "benchmark_spread_x3_total_return": -0.0957578307928551,
+            "spread_x3_total_return": 0.031082944952918412
+          }
+        },
+        "k": 4
+      },
+      "PLN": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.02159263655070487,
+            "base": {
+              "annualized_currency_turnover": 16.79310344827586,
+              "annualized_routed_usd_turnover": 14.740233150482657,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.0017018669903714478,
+                  "count": 52,
+                  "currency_turnover": 30.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029621243234822705,
+                  "max_drawdown": -0.04666247671732804,
+                  "mean_routed_usd_gross": 1.4988178413562265,
+                  "rap": 0.009055910225236326,
+                  "routed_usd_turnover": 24.985333650285938,
+                  "spot_pnl": -0.015061596658130297,
+                  "spread_cost": 0.012569771973378129,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.0019898746033151227,
+                  "trade_count": 399
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.017914178695159877,
+                  "count": 52,
+                  "currency_turnover": 12.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.017915928447589574,
+                  "max_drawdown": -0.07026682754105007,
+                  "mean_routed_usd_gross": 1.6304785074365893,
+                  "rap": -0.03358267872111037,
+                  "routed_usd_turnover": 11.028812498048527,
+                  "spot_pnl": -0.03194639850963681,
+                  "spread_cost": 0.004880732507989403,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.01887364638043043,
+                  "trade_count": 378
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07699086041836267,
+                  "count": 53,
+                  "currency_turnover": 13.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01591365450111942,
+                  "max_drawdown": -0.015481180897593094,
+                  "mean_routed_usd_gross": 1.8669429554997867,
+                  "rap": 0.2732082942749095,
+                  "routed_usd_turnover": 13.14014263274117,
+                  "spot_pnl": 0.07298480137724415,
+                  "spread_cost": 0.0044126770653313534,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08593999769956628,
+                  "trade_count": 434
+                }
+              ],
+              "cagr": 0.019799358134130918,
+              "calmar": 0.25911391151560986,
+              "currency_turnover": 56.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0675644508463136,
+              "max_drawdown": -0.0764117913172645,
+              "max_routed_usd_gross": 2.691072195861732,
+              "mean_routed_usd_gross": 1.6666967310746188,
+              "rap": 0.05961643554974704,
+              "routed_usd_turnover": 49.15428878107564,
+              "spot_pnl": 0.025976806209477035,
+              "total_financing": 0.06345082618353179,
+              "total_return": 0.06756445084631357,
+              "total_spread_cost": 0.021863181546698893,
+              "trade_count": 1211
+            },
+            "benchmark_adverse_total_return": -0.10593240595649672,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.052524646530122954,
+                "rap": -0.08558520547054858,
+                "total_return": -0.0279328028945926
+              },
+              "B2": {
+                "max_drawdown": -0.04961838051627232,
+                "rap": -0.05325763444668671,
+                "total_return": -0.019331237343634955
+              },
+              "B3": {
+                "max_drawdown": -0.04061418198247607,
+                "rap": -0.07973086391254772,
+                "total_return": -0.019148123483585133
+              }
+            },
+            "benchmark_max_drawdown": -0.09895978218914325,
+            "benchmark_rap": -0.06834424730377414,
+            "benchmark_rap_excess": 0.1279606828535212,
+            "benchmark_spread_x3_total_return": -0.09294918660056145,
+            "spread_x3_total_return": 0.021692637408789572
+          },
+          "365": {
+            "adverse_total_return": 0.021014325284414603,
+            "base": {
+              "annualized_currency_turnover": 16.79310344827586,
+              "annualized_routed_usd_turnover": 14.733637867536196,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.0013541816826287967,
+                  "count": 52,
+                  "currency_turnover": 30.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.02920967960908395,
+                  "max_drawdown": -0.0468947773270284,
+                  "mean_routed_usd_gross": 1.4984945995506465,
+                  "rap": 0.007860256964170323,
+                  "routed_usd_turnover": 24.979392831946363,
+                  "spot_pnl": -0.01505978187932816,
+                  "spread_cost": 0.012566593843100176,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.0015833038866570615,
+                  "trade_count": 399
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.018145967068856073,
+                  "count": 52,
+                  "currency_turnover": 12.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.017661190752515328,
+                  "max_drawdown": -0.07043711019027155,
+                  "mean_routed_usd_gross": 1.6296029915038601,
+                  "rap": -0.0340829912321392,
+                  "routed_usd_turnover": 11.02299075609351,
+                  "spot_pnl": -0.031931075288000293,
+                  "spread_cost": 0.00487811252817921,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.019117727890788916,
+                  "trade_count": 378
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07678376406929543,
+                  "count": 53,
+                  "currency_turnover": 13.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.015683714675203384,
+                  "max_drawdown": -0.015485318885760213,
+                  "mean_routed_usd_gross": 1.8654956213636302,
+                  "rap": 0.27250756931534115,
+                  "routed_usd_turnover": 13.129911888097276,
+                  "spot_pnl": 0.07292799879833636,
+                  "spread_cost": 0.004409260389807519,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08570788580066746,
+                  "trade_count": 434
+                }
+              ],
+              "cagr": 0.019533817800247766,
+              "calmar": 0.254096621684115,
+              "currency_turnover": 56.0,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0666377599067236,
+              "max_drawdown": -0.07687555100410426,
+              "max_routed_usd_gross": 2.6887554387142907,
+              "mean_routed_usd_gross": 1.6658110997904887,
+              "rap": 0.05887296956298716,
+              "routed_usd_turnover": 49.13229547613713,
+              "spot_pnl": 0.025937141631007885,
+              "total_financing": 0.06255458503680295,
+              "total_return": 0.0666377599067236,
+              "total_spread_cost": 0.021853966761086915,
+              "trade_count": 1211
+            },
+            "benchmark_adverse_total_return": -0.1049956744421745,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05242031461425217,
+                "rap": -0.08476153245889678,
+                "total_return": -0.027779742809978025
+              },
+              "B2": {
+                "max_drawdown": -0.04942522128689891,
+                "rap": -0.05322825120500581,
+                "total_return": -0.019293724078278784
+              },
+              "B3": {
+                "max_drawdown": -0.04051436199425529,
+                "rap": -0.07884463123380066,
+                "total_return": -0.01887960328593713
+              }
+            },
+            "benchmark_max_drawdown": -0.0987281241115236,
+            "benchmark_rap": -0.06776521374382707,
+            "benchmark_rap_excess": 0.12663818330681423,
+            "benchmark_spread_x3_total_return": -0.0922306423983828,
+            "spread_x3_total_return": 0.02080563028119098
+          }
+        },
+        "k": 4
+      },
+      "SEK": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.03574562104344836,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 22.111383687398465,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.022868687817620748,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.0292784967714923,
+                  "max_drawdown": -0.03456984441499533,
+                  "mean_routed_usd_gross": 1.7997456001472076,
+                  "rap": 0.07981948958780534,
+                  "routed_usd_turnover": 34.98743788612639,
+                  "spot_pnl": 0.013641540456932198,
+                  "spread_cost": 0.016133759033831924,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.02678627819459134,
+                  "trade_count": 466
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.01458250307475184,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.01215202054400001,
+                  "max_drawdown": -0.06137672760644808,
+                  "mean_routed_usd_gross": 2.1717464750487534,
+                  "rap": -0.0279653765351289,
+                  "routed_usd_turnover": 19.23934978831947,
+                  "spot_pnl": -0.022146046298162313,
+                  "spread_cost": 0.005782471540834046,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.01536492805760159,
+                  "trade_count": 434
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07630671118444665,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.011618987583922881,
+                  "max_drawdown": -0.016370328916915144,
+                  "mean_routed_usd_gross": 2.209785266745976,
+                  "rap": 0.2815662830063911,
+                  "routed_usd_turnover": 19.508093451498915,
+                  "spot_pnl": 0.08073282708989239,
+                  "spread_cost": 0.006240848327520486,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08517322777003411,
+                  "trade_count": 446
+                }
+              ],
+              "cagr": 0.028185253789266396,
+              "calmar": 0.4313302242591366,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0971207472458928,
+              "max_drawdown": -0.06534495429268394,
+              "max_routed_usd_gross": 2.570102878271019,
+              "mean_routed_usd_gross": 2.061377114953673,
+              "rap": 0.08503881867661967,
+              "routed_usd_turnover": 73.73488112594478,
+              "spot_pnl": 0.07222832124866231,
+              "total_financing": 0.05304950489941529,
+              "total_return": 0.09712074724589281,
+              "total_spread_cost": 0.028157078902186442,
+              "trade_count": 1346
+            },
+            "benchmark_adverse_total_return": -0.10552015782221491,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04965991052284441,
+                "rap": -0.07512708761408338,
+                "total_return": -0.02527559833290055
+              },
+              "B2": {
+                "max_drawdown": -0.04886873043302187,
+                "rap": -0.05210619373820212,
+                "total_return": -0.01905997869576409
+              },
+              "B3": {
+                "max_drawdown": -0.0401046018490569,
+                "rap": -0.0763077084600938,
+                "total_return": -0.018882336441310266
+              }
+            },
+            "benchmark_max_drawdown": -0.09943589215883264,
+            "benchmark_rap": -0.0688069146421213,
+            "benchmark_rap_excess": 0.15384573331874096,
+            "benchmark_spread_x3_total_return": -0.09344504669230597,
+            "spread_x3_total_return": 0.038031888290664284
+          },
+          "365": {
+            "adverse_total_return": 0.03543326792242629,
+            "base": {
+              "annualized_currency_turnover": 20.541564039408865,
+              "annualized_routed_usd_turnover": 22.10229391555327,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.02252401093699219,
+                  "count": 52,
+                  "currency_turnover": 32.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.028871850002819974,
+                  "max_drawdown": -0.03461360234248789,
+                  "mean_routed_usd_gross": 1.7993515204247332,
+                  "rap": 0.07867759572872488,
+                  "routed_usd_turnover": 34.978238161532275,
+                  "spot_pnl": 0.013639525527774405,
+                  "spread_cost": 0.016129577850176973,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.026381797680413044,
+                  "trade_count": 466
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.014737563922585073,
+                  "count": 52,
+                  "currency_turnover": 18.0,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.011979862771140902,
+                  "max_drawdown": -0.0614928602167929,
+                  "mean_routed_usd_gross": 2.1706978335531932,
+                  "rap": -0.02831341502846068,
+                  "routed_usd_turnover": 19.230543799329656,
+                  "spot_pnl": -0.0221379751722183,
+                  "spread_cost": 0.005779793533613815,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.015528242970311856,
+                  "trade_count": 434
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07616038619114751,
+                  "count": 53,
+                  "currency_turnover": 18.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01145254635508028,
+                  "max_drawdown": -0.016373157214866763,
+                  "mean_routed_usd_gross": 2.208371292281684,
+                  "rap": 0.28104963760684626,
+                  "routed_usd_turnover": 19.495787482379445,
+                  "spot_pnl": 0.0806814545247353,
+                  "spread_cost": 0.006236934568205724,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08500923902187951,
+                  "trade_count": 446
+                }
+              ],
+              "cagr": 0.027966051454463292,
+              "calmar": 0.42562169236868,
+              "currency_turnover": 68.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0963409580573371,
+              "max_drawdown": -0.06570635838325334,
+              "max_routed_usd_gross": 2.568561312018252,
+              "mean_routed_usd_gross": 2.0604219420240852,
+              "rap": 0.08441348830581531,
+              "routed_usd_turnover": 73.7045694432413,
+              "spot_pnl": 0.0721830048802914,
+              "total_financing": 0.05230425912904118,
+              "total_return": 0.09634095805733711,
+              "total_spread_cost": 0.028146305951996516,
+              "trade_count": 1346
+            },
+            "benchmark_adverse_total_return": -0.10463555853187817,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04951571060075638,
+                "rap": -0.07457964084332422,
+                "total_return": -0.025108675779212275
+              },
+              "B2": {
+                "max_drawdown": -0.0487391827117587,
+                "rap": -0.05180360838548219,
+                "total_return": -0.01891197634830205
+              },
+              "B3": {
+                "max_drawdown": -0.040007794728665114,
+                "rap": -0.07556984679517617,
+                "total_return": -0.01869566166575143
+              }
+            },
+            "benchmark_max_drawdown": -0.09892063163146153,
+            "benchmark_rap": -0.06827700009906663,
+            "benchmark_rap_excess": 0.15269048840488195,
+            "benchmark_spread_x3_total_return": -0.09260801996668255,
+            "spread_x3_total_return": 0.03729389014963114
+          }
+        },
+        "k": 4
+      },
+      "USD": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.03839008370271024,
+            "base": {
+              "annualized_currency_turnover": 16.3432881773399,
+              "annualized_routed_usd_turnover": 18.50918529173495,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.026503681548085467,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.029455741624635413,
+                  "max_drawdown": -0.036155395653365896,
+                  "mean_routed_usd_gross": 1.7199937131873948,
+                  "rap": 0.08924989082254423,
+                  "routed_usd_turnover": 30.730932207996567,
+                  "spot_pnl": 0.016569543057911695,
+                  "spread_cost": 0.014971916486458906,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.031053368196085396,
+                  "trade_count": 451
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.02166726180002787,
+                  "count": 52,
+                  "currency_turnover": 12.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.016318325444178924,
+                  "max_drawdown": -0.0705859769093855,
+                  "mean_routed_usd_gross": 2.0040881528963643,
+                  "rap": -0.041724334153241685,
+                  "routed_usd_turnover": 15.471755226745532,
+                  "spot_pnl": -0.03477619844509095,
+                  "spread_cost": 0.0050763269073013425,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.022825394527724807,
+                  "trade_count": 440
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.07697295896484224,
+                  "count": 53,
+                  "currency_turnover": 12.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01490752640427034,
+                  "max_drawdown": -0.015481180897592983,
+                  "mean_routed_usd_gross": 2.091156720124901,
+                  "rap": 0.27239568627567007,
+                  "routed_usd_turnover": 15.519934564801137,
+                  "spot_pnl": 0.07717192533661675,
+                  "spread_cost": 0.005513471600282271,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08591993369983975,
+                  "trade_count": 457
+                }
+              ],
+              "cagr": 0.027331317718581882,
+              "calmar": 0.3635603632815515,
+              "currency_turnover": 54.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0940851484284817,
+              "max_drawdown": -0.07517683575812617,
+              "max_routed_usd_gross": 2.757924470515176,
+              "mean_routed_usd_gross": 1.9393857528851925,
+              "rap": 0.07968878374096498,
+              "routed_usd_turnover": 61.72262199954325,
+              "spot_pnl": 0.058965269949437474,
+              "total_financing": 0.06068159347308476,
+              "total_return": 0.0940851484284817,
+              "total_spread_cost": 0.025561714994042528,
+              "trade_count": 1348
+            },
+            "benchmark_adverse_total_return": -0.11361592326026904,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.052465935133865604,
+                "rap": -0.09273297620536308,
+                "total_return": -0.030233406683913777
+              },
+              "B2": {
+                "max_drawdown": -0.048658025663987525,
+                "rap": -0.0590000217029127,
+                "total_return": -0.020418427733606526
+              },
+              "B3": {
+                "max_drawdown": -0.04021007294759632,
+                "rap": -0.09016571057205408,
+                "total_return": -0.020195757165737738
+              }
+            },
+            "benchmark_max_drawdown": -0.10158654255767469,
+            "benchmark_rap": -0.07865593603593696,
+            "benchmark_rap_excess": 0.15834471977690195,
+            "benchmark_spread_x3_total_return": -0.10201022068366022,
+            "spread_x3_total_return": 0.040562922057517437
+          },
+          "365": {
+            "adverse_total_return": 0.037933424912123925,
+            "base": {
+              "annualized_currency_turnover": 16.3432881773399,
+              "annualized_routed_usd_turnover": 18.501306307511463,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.026156143831165712,
+                  "count": 52,
+                  "currency_turnover": 29.5,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.02904659662159674,
+                  "max_drawdown": -0.036255678876258246,
+                  "mean_routed_usd_gross": 1.7196349250526952,
+                  "rap": 0.08813671629736357,
+                  "routed_usd_turnover": 30.723126096049292,
+                  "spot_pnl": 0.016566847549395355,
+                  "spread_cost": 0.014968158311956649,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.030645285859043803,
+                  "trade_count": 451
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.02187276202906885,
+                  "count": 52,
+                  "currency_turnover": 12.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.0160866798046201,
+                  "max_drawdown": -0.07073079346087352,
+                  "mean_routed_usd_gross": 2.0030694234474122,
+                  "rap": -0.04216980726334975,
+                  "routed_usd_turnover": 15.46441552242419,
+                  "spot_pnl": -0.03476068187254732,
+                  "spread_cost": 0.005073867946200416,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.023041749028459124,
+                  "trade_count": 440
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.0767842784404924,
+                  "count": 53,
+                  "currency_turnover": 12.5,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.014692813530916749,
+                  "max_drawdown": -0.015485318885759547,
+                  "mean_routed_usd_gross": 2.089658724775416,
+                  "rap": 0.2717595474742708,
+                  "routed_usd_turnover": 15.508806314583218,
+                  "spot_pnl": 0.0771163667534167,
+                  "spread_cost": 0.005509551080899929,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.08570846229754014,
+                  "trade_count": 457
+                }
+              ],
+              "cagr": 0.027081174167572497,
+              "calmar": 0.35941632663534945,
+              "currency_turnover": 54.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0931970450483501,
+              "max_drawdown": -0.07534764606018596,
+              "max_routed_usd_gross": 2.7557054615403693,
+              "mean_routed_usd_gross": 1.9384238123254949,
+              "rap": 0.07900260745396982,
+              "routed_usd_turnover": 61.696347933056714,
+              "spot_pnl": 0.058922532430264754,
+              "total_financing": 0.059826089957133566,
+              "total_return": 0.09319704504835014,
+              "total_spread_cost": 0.02555157733905701,
+              "trade_count": 1348
+            },
+            "benchmark_adverse_total_return": -0.11252490688988337,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.05230468487379908,
+                "rap": -0.09267218896737753,
+                "total_return": -0.029959888630750886
+              },
+              "B2": {
+                "max_drawdown": -0.04845956750178443,
+                "rap": -0.05825523311710428,
+                "total_return": -0.02027215525075604
+              },
+              "B3": {
+                "max_drawdown": -0.0401301733125487,
+                "rap": -0.0891874255811525,
+                "total_return": -0.019929137689154053
+              }
+            },
+            "benchmark_max_drawdown": -0.10124217457387025,
+            "benchmark_rap": -0.07797414275255715,
+            "benchmark_rap_excess": 0.15697675020652696,
+            "benchmark_spread_x3_total_return": -0.10133225388421907,
+            "spread_x3_total_return": 0.0397181039814567
+          }
+        },
+        "k": 4
+      },
+      "ZAR": {
+        "N": 13,
+        "denominators": {
+          "360": {
+            "adverse_total_return": 0.04786922329640464,
+            "base": {
+              "annualized_currency_turnover": 18.742302955665025,
+              "annualized_routed_usd_turnover": 18.015264285949996,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.04501140116430791,
+                  "count": 52,
+                  "currency_turnover": 33.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.03353669305339042,
+                  "max_drawdown": -0.033747734570596655,
+                  "mean_routed_usd_gross": 1.5591215407613546,
+                  "rap": 0.1763876954253872,
+                  "routed_usd_turnover": 29.99288014911006,
+                  "spot_pnl": 0.03154627676531484,
+                  "spread_cost": 0.012264067948007771,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.05281890187070171,
+                  "trade_count": 408
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.015946504511222592,
+                  "count": 52,
+                  "currency_turnover": 14.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.020627224423740327,
+                  "max_drawdown": -0.04708306110925364,
+                  "mean_routed_usd_gross": 1.7117173068584461,
+                  "rap": -0.03606515943243229,
+                  "routed_usd_turnover": 14.43036662333346,
+                  "spot_pnl": -0.0330547573924051,
+                  "spread_cost": 0.005261392402869895,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.01680148916409485,
+                  "trade_count": 387
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.05137979741737064,
+                  "count": 53,
+                  "currency_turnover": 15.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.019127371894996647,
+                  "max_drawdown": -0.014163485286209587,
+                  "mean_routed_usd_gross": 1.7478803727386858,
+                  "rap": 0.21524905298136185,
+                  "routed_usd_turnover": 15.652295733475976,
+                  "spot_pnl": 0.04553934797133572,
+                  "spread_cost": 0.005381338760361304,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.057273368999016805,
+                  "trade_count": 402
+                }
+              ],
+              "cagr": 0.027424288311418854,
+              "calmar": 0.4881533492742899,
+              "currency_turnover": 62.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.0944153576051465,
+              "max_drawdown": -0.05617965820000825,
+              "max_routed_usd_gross": 2.477501647713401,
+              "mean_routed_usd_gross": 1.6733839479705732,
+              "rap": 0.09321615481450807,
+              "routed_usd_turnover": 60.0755425059195,
+              "spot_pnl": 0.044030867344245474,
+              "total_financing": 0.0732912893721276,
+              "total_return": 0.09441535760514652,
+              "total_spread_cost": 0.022906799111238958,
+              "trade_count": 1197
+            },
+            "benchmark_adverse_total_return": -0.08195889837017895,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.04412307807105581,
+                "rap": -0.07460174106334164,
+                "total_return": -0.021262406947620993
+              },
+              "B2": {
+                "max_drawdown": -0.043841991591176244,
+                "rap": -0.036039607193402295,
+                "total_return": -0.011943319296966626
+              },
+              "B3": {
+                "max_drawdown": -0.03643501623955009,
+                "rap": -0.0480374880406984,
+                "total_return": -0.01187151642296519
+              }
+            },
+            "benchmark_max_drawdown": -0.08737061928550094,
+            "benchmark_rap": -0.051421411923868746,
+            "benchmark_rap_excess": 0.1446375667383768,
+            "benchmark_spread_x3_total_return": -0.07281999975816372,
+            "spread_x3_total_return": 0.04699902313602422
+          },
+          "365": {
+            "adverse_total_return": 0.047161322943432005,
+            "base": {
+              "annualized_currency_turnover": 18.742302955665025,
+              "annualized_routed_usd_turnover": 18.006233685934912,
+              "blocks": [
+                {
+                  "block_id": "B1",
+                  "cagr": 0.04461405221299097,
+                  "count": 52,
+                  "currency_turnover": 33.0,
+                  "elapsed_years": 1.1690622861054072,
+                  "financing": 0.03307006287123768,
+                  "max_drawdown": -0.033862748955853506,
+                  "mean_routed_usd_gross": 1.5587423418495543,
+                  "rap": 0.17488956401256897,
+                  "routed_usd_turnover": 29.984200398576267,
+                  "spot_pnl": 0.031541384526024285,
+                  "spread_cost": 0.012260526725550091,
+                  "start_timestamp": 1680480000000,
+                  "stop_timestamp": 1717372800000,
+                  "total_return": 0.05235092067170144,
+                  "trade_count": 408
+                },
+                {
+                  "block_id": "B2",
+                  "cagr": -0.016203724154079224,
+                  "count": 52,
+                  "currency_turnover": 14.5,
+                  "elapsed_years": 1.054072553045859,
+                  "financing": 0.020332874138941106,
+                  "max_drawdown": -0.04729534268943936,
+                  "mean_routed_usd_gross": 1.7107129249108388,
+                  "rap": -0.03671736335775416,
+                  "routed_usd_turnover": 14.422427910227615,
+                  "spot_pnl": -0.03304059978237581,
+                  "spread_cost": 0.005258409007983622,
+                  "start_timestamp": 1717372800000,
+                  "stop_timestamp": 1750636800000,
+                  "total_return": -0.017072379848301678,
+                  "trade_count": 387
+                },
+                {
+                  "block_id": "B3",
+                  "cagr": 0.051145625507517556,
+                  "count": 53,
+                  "currency_turnover": 15.0,
+                  "elapsed_years": 1.111567419575633,
+                  "financing": 0.01884946123380933,
+                  "max_drawdown": -0.014184562670320311,
+                  "mean_routed_usd_gross": 1.7463847006388098,
+                  "rap": 0.21429890147163863,
+                  "routed_usd_turnover": 15.63879983484764,
+                  "spot_pnl": 0.04549927372899144,
+                  "spread_cost": 0.005376787500224455,
+                  "start_timestamp": 1750636800000,
+                  "stop_timestamp": 1785715200000,
+                  "total_return": 0.05701161527081888,
+                  "trade_count": 402
+                }
+              ],
+              "cagr": 0.02712616256396294,
+              "calmar": 0.48100422746606425,
+              "currency_turnover": 62.5,
+              "elapsed_years": 3.3347022587268995,
+              "final_equity": 1.093356733482862,
+              "max_drawdown": -0.0563948527165008,
+              "max_routed_usd_gross": 2.475117561108287,
+              "mean_routed_usd_gross": 1.6724207834738685,
+              "rap": 0.09225134829950303,
+              "routed_usd_turnover": 60.04542814365154,
+              "spot_pnl": 0.044000058472639936,
+              "total_financing": 0.0722523982439882,
+              "total_return": 0.093356733482862,
+              "total_spread_cost": 0.022895723233758165,
+              "trade_count": 1197
+            },
+            "benchmark_adverse_total_return": -0.08115464147007956,
+            "benchmark_blocks": {
+              "B1": {
+                "max_drawdown": -0.044106828874604376,
+                "rap": -0.07418280792758271,
+                "total_return": -0.02107452620159206
+              },
+              "B2": {
+                "max_drawdown": -0.043771726443371795,
+                "rap": -0.0359105750420797,
+                "total_return": -0.011809664228280059
+              },
+              "B3": {
+                "max_drawdown": -0.036390151882084276,
+                "rap": -0.04726919598540301,
+                "total_return": -0.01181635615341492
+              }
+            },
+            "benchmark_max_drawdown": -0.08691725829355768,
+            "benchmark_rap": -0.05121257389650263,
+            "benchmark_rap_excess": 0.14346392219600568,
+            "benchmark_spread_x3_total_return": -0.07250819940178588,
+            "spread_x3_total_return": 0.04598615892279412
+          }
+        },
+        "k": 4
+      }
+    }
+  },
   "discrete": {
     "benchmark_book_count": 1000,
-    "canonical_sha256": "4b3575165330f88bedd5d4c58e07bf167669c9b8c62d0bffe0e7fcaa38691477",
+    "canonical_sha256": "e8fa3dd34a07f9bc19fb6f1fd066563a2c6c65e200a5cb3fa5674c7ed3af95bc",
+    "closed_market_non_event_count": 911,
+    "comparison": {
+      "actual_shape": {
+        "discrete_scalars": 35487,
+        "mappings": 3389,
+        "numeric_scalars": 8252,
+        "sequences": 6097
+      },
+      "discrete_mismatch_count": 0,
+      "discrete_values_compared": 35487,
+      "expected_shape": {
+        "discrete_scalars": 35487,
+        "mappings": 3389,
+        "numeric_scalars": 8252,
+        "sequences": 6097
+      },
+      "max_abs_difference": 0.0,
+      "mismatch_count": 0,
+      "numeric_mismatch_count": 0,
+      "numeric_values_compared": 8252,
+      "shape_mismatch_count": 0
+    },
     "exact": true,
     "financing_event_count": 680,
+    "held_leg_record_count": 680,
     "loco_case_count": 14,
     "membership_count": 157,
     "signal_step_count": 168,
@@ -15,13 +3453,13 @@
   "floating": {
     "attempt3_max_abs_diff": 0.0,
     "attempt3_scalars_compared": 55,
-    "baseline_vector_max_abs_diff": 0.0,
-    "baseline_vector_values_compared": 11094,
-    "benchmark_path_sha256": "3d4904deea70d7944a2144b8e18748f7e4d77c59948b67426a6f86b81fac8a6d",
-    "loco_path_sha256": "8e73bb5a5d287b1383e39e70cb4ea1ce3701dd6bd2b04630a16c4b7c78fc92fd",
+    "benchmark_path_sha256": "1ced93a4c3bd5cf2588b376b9a600e522a926335be832024ba707cc373637a97",
+    "loco_path_sha256": "a6505e877403d1c3922708df9dfbcaf55d89643c252a67a53f5fb0d9c695826d",
+    "section12_max_abs_diff": 0.0,
+    "section12_values_compared": 585914836,
     "tolerance": 1e-12
   },
-  "implementation_sha256": "e9bf3e4e9c936f70e8cc90c87280b3e79e91d41c73b2db712182b5115851b35e",
+  "implementation_sha256": "ad7e80aa4e0903c2436f81a3f8ff8890a0dd91d1b34f7cb95c00968cd4492f4f",
   "network_accessed": false,
   "posthoc": {
     "accounting_periods": 157,
@@ -39,7 +3477,7 @@
         "final_equity": 1.0792625719755282,
         "total_financing": 0.06128228876745261,
         "total_return": 0.07926257197552822,
-        "total_spread_cost": 0.026468392506861
+        "total_spread_cost": 0.026468392506861005
       }
     }
   },
@@ -49,10 +3487,10 @@
     "365": true,
     "elapsed_years": true
   },
-  "readiness_artifact_sha256": "19ed0ce6e63fd7977813e0e852cd796b7ab1ceeec53de476e3f7d2e820ce3f6c",
+  "readiness_artifact_sha256": "cc7c923c80857cb826673a404ea921a18e7296529ed20cd86f616a27734a723e",
   "readiness_integrity": {
     "performance_computed": false,
-    "readiness_sha256": "19ed0ce6e63fd7977813e0e852cd796b7ab1ceeec53de476e3f7d2e820ce3f6c",
+    "readiness_sha256": "cc7c923c80857cb826673a404ea921a18e7296529ed20cd86f616a27734a723e",
     "status": "FAMILY1_ARTIFACT_INTEGRITY_PASSED",
     "universe_sha256": "171a54e0d45c031d32cbf519f3a01da09ab660fd585adc270b775e518e2c576d"
   },
@@ -169,6 +3607,958 @@
     },
     "terminal_verdict": "SURVIVES_KILL_TEST"
   },
-  "schema_version": 1,
+  "schema_version": 2,
+  "section12_parity": {
+    "cell_count": 15,
+    "cells": {
+      "benchmark_adverse_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 166,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 726,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 836,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 272
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 336000,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 166,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 726,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 836,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 272
+        },
+        "instances": 2000,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 13008550,
+        "shape_mismatch_count": 0
+      },
+      "benchmark_base_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 166,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 726,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 836,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 272
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 336000,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 166,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 726,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 836,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 272
+        },
+        "instances": 2000,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 13008550,
+        "shape_mismatch_count": 0
+      },
+      "benchmark_spread_x3_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 166,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 726,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 836,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 272
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 336000,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 166,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 726,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 836,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 272
+        },
+        "instances": 2000,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 13008550,
+        "shape_mismatch_count": 0
+      },
+      "ic_bootstrap_mean_array": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":0,\"mappings\":0,\"numeric_scalars\":10000,\"sequences\":1}": 1
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 0,
+        "expected_shapes": {
+          "{\"discrete_scalars\":0,\"mappings\":0,\"numeric_scalars\":10000,\"sequences\":1}": 1
+        },
+        "instances": 1,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 10000,
+        "shape_mismatch_count": 0
+      },
+      "ic_bootstrap_scalars": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":0,\"mappings\":1,\"numeric_scalars\":7,\"sequences\":0}": 1
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 0,
+        "expected_shapes": {
+          "{\"discrete_scalars\":0,\"mappings\":1,\"numeric_scalars\":7,\"sequences\":0}": 1
+        },
+        "instances": 1,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 7,
+        "shape_mismatch_count": 0
+      },
+      "ic_period_array": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":0,\"mappings\":0,\"numeric_scalars\":157,\"sequences\":1}": 1
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 0,
+        "expected_shapes": {
+          "{\"discrete_scalars\":0,\"mappings\":0,\"numeric_scalars\":157,\"sequences\":1}": 1
+        },
+        "instances": 1,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 157,
+        "shape_mismatch_count": 0
+      },
+      "loco_benchmark_adverse_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 2296,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6237,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6240,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 10066,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6564,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6566,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6574,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 12044,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 3588
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 4704000,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 2296,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6237,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6240,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 10066,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6564,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6566,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6574,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 12044,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 3588
+        },
+        "instances": 28000,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 182097205,
+        "shape_mismatch_count": 0
+      },
+      "loco_benchmark_base_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 2296,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6233,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6247,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 10066,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6527,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6544,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6561,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6562,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 12044,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 3588
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 4704000,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 2296,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6233,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6247,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 10066,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6527,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6544,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6561,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6562,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 12044,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 3588
+        },
+        "instances": 28000,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 182097132,
+        "shape_mismatch_count": 0
+      },
+      "loco_benchmark_spread_x3_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 2296,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6231,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6239,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 10066,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6564,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6574,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6575,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6584,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 12044,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 3588
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 4704000,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":5982,\"sequences\":6}": 2296,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6231,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6239,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6307,\"sequences\":6}": 10066,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6564,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6574,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6575,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6584,\"sequences\":6}": 1,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6632,\"sequences\":6}": 12044,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6957,\"sequences\":6}": 3588
+        },
+        "instances": 28000,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 182097225,
+        "shape_mismatch_count": 0
+      },
+      "loco_strategy_adverse_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6316,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6361,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6465,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6503,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6512,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6531,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6537,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6565,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6600,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6616,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6925,\"sequences\":6}": 2
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 4704,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6316,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6361,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6465,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6503,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6512,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6531,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6537,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6565,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6600,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6616,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6925,\"sequences\":6}": 2
+        },
+        "instances": 28,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 182694,
+        "shape_mismatch_count": 0
+      },
+      "loco_strategy_base_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6316,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6361,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6465,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6503,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6512,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6531,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6537,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6565,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6600,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6616,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6925,\"sequences\":6}": 2
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 4704,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6316,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6361,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6465,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6503,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6512,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6531,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6537,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6565,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6600,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6616,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6925,\"sequences\":6}": 2
+        },
+        "instances": 28,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 182694,
+        "shape_mismatch_count": 0
+      },
+      "loco_strategy_spread_x3_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6316,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6361,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6465,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6503,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6512,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6531,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6537,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6565,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6600,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6616,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6925,\"sequences\":6}": 2
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 4704,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6316,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6361,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6465,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6503,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6512,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6531,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6537,\"sequences\":6}": 4,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6565,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6600,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6616,\"sequences\":6}": 2,
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6925,\"sequences\":6}": 2
+        },
+        "instances": 28,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 182694,
+        "shape_mismatch_count": 0
+      },
+      "strategy_adverse_full_path_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 336,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2
+        },
+        "instances": 2,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 13126,
+        "shape_mismatch_count": 0
+      },
+      "strategy_base_full_path_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 336,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2
+        },
+        "instances": 2,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 13126,
+        "shape_mismatch_count": 0
+      },
+      "strategy_spread_x3_full_path_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 336,
+        "expected_shapes": {
+          "{\"discrete_scalars\":168,\"mappings\":674,\"numeric_scalars\":6563,\"sequences\":6}": 2
+        },
+        "instances": 2,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 13126,
+        "shape_mismatch_count": 0
+      }
+    },
+    "expected_actual_shapes": {
+      "benchmark_adverse_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "benchmark_base_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "benchmark_spread_x3_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "ic_bootstrap_mean_array": {
+        "actual": {
+          "bootstrap_means": [
+            10000
+          ],
+          "instances": 1
+        },
+        "expected": {
+          "bootstrap_means": [
+            10000
+          ],
+          "instances": 1
+        }
+      },
+      "ic_bootstrap_scalars": {
+        "actual": {
+          "instances": 1,
+          "scalar_mapping_fields": 7
+        },
+        "expected": {
+          "instances": 1,
+          "scalar_mapping_fields": 7
+        }
+      },
+      "ic_period_array": {
+        "actual": {
+          "instances": 1,
+          "series": [
+            157
+          ]
+        },
+        "expected": {
+          "instances": 1,
+          "series": [
+            157
+          ]
+        }
+      },
+      "loco_benchmark_adverse_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "loco_benchmark_base_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "loco_benchmark_spread_x3_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28000,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "loco_strategy_adverse_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "loco_strategy_base_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "loco_strategy_spread_x3_full_paths_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 28,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "strategy_adverse_full_path_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "strategy_base_full_path_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      },
+      "strategy_spread_x3_full_path_and_components": {
+        "actual": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        },
+        "expected": {
+          "equities": [
+            168
+          ],
+          "financing_cashflows_by_event": [
+            680
+          ],
+          "instances": 2,
+          "period_returns": [
+            157
+          ],
+          "spot_cashflows_by_step": [
+            168
+          ],
+          "spread_costs_by_trade": [
+            168
+          ],
+          "trades": [
+            168
+          ]
+        }
+      }
+    },
+    "max_abs_difference": 0.0,
+    "mismatch_count": 0,
+    "tolerance": 1e-12
+  },
   "status": "U14_PARITY_PASSED"
 }
