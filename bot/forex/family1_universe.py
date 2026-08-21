@@ -12,6 +12,7 @@ import itertools
 import json
 from dataclasses import dataclass
 from datetime import date, datetime, time, timezone
+from decimal import Decimal, ROUND_HALF_UP
 from math import comb, isfinite
 from pathlib import Path
 from typing import Callable, Iterable, Mapping, Sequence
@@ -32,16 +33,20 @@ from bot.forex.stage_a_carry import (
     build_causal_signal_steps,
     build_financing_events,
     currency_spot_log_returns,
+    currency_usd_values,
     currency_targets,
     max_drawdown_from_returns,
     pair_positions,
+    position_financing_cashflow_usd,
     rap,
     run_adverse_dual_accounting_paths,
     run_dual_accounting_paths,
     run_spread3_sensitivity_paths,
     select_signal,
     spearman_ic,
+    spot_ic_series,
     stationary_bootstrap_lower_bound,
+    rollover_multiplier,
 )
 from bot.forex.stage_a_orchestration import IntegrityError, _required_financing_open_days
 from bot.forex.stage_a_preflight import FROZEN_SHA256, project_preflight
@@ -52,6 +57,7 @@ STAGE_A_UNIVERSE_REL = Path("prereg/2026-08-14-tms-carry-no-try-direct-gbp-unive
 STAGE_A_MASK_REL = Path("prereg/2026-08-14-tms-carry-no-try-direct-gbp-mask.json")
 STAGE_A_READINESS_REL = Path("prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json")
 STAGE_A_FINANCING_REL = Path("data/tms_swap_archive/derived/parsed_all.json")
+STAGE_A_FINANCING_READINESS_REL = Path("prereg/2026-08-14-tms-carry-financing-readiness.json")
 STAGE_A_RESULT_REL = Path(
     "reports/forex/stage_a/"
     "stage-a-bd220eee501ac81388c78d64878458d2393718e4e458c04d8aafaae945a180f6."
@@ -60,6 +66,9 @@ STAGE_A_RESULT_REL = Path(
 UNIVERSE_ARTIFACT_REL = Path("prereg/2026-08-21-tms-carry-unlevered-family-1-universe.json")
 READINESS_ARTIFACT_REL = Path("prereg/2026-08-21-tms-carry-unlevered-family-1-readiness.json")
 PARITY_ARTIFACT_REL = Path("prereg/2026-08-21-tms-carry-unlevered-family-1-u14-parity.json")
+EXECUTION_ARTIFACT_REL = Path("prereg/2026-08-21-tms-carry-unlevered-family-1-execution.json")
+RESULT_ARTIFACT_REL = Path("reports/forex/family1/family1-universe-result.json")
+COMPLETION_ARTIFACT_REL = Path("reports/forex/family1/family1-universe-completion.json")
 
 BENCHMARK_SEED = 20260809
 BOOTSTRAP_SEED = 20260808
@@ -441,6 +450,10 @@ def event_identity(events: Sequence[FinancingEvent]) -> tuple[dict[str, object],
         "schedule_valid_from": event.schedule.valid_from.isoformat(),
         "schedule_valid_to": event.schedule.valid_to.isoformat(),
         "open_routes": sorted(event.opens), "days_charged": event.days_charged,
+        "effective_days_charged_by_open_route": {
+            pair: (rollover_multiplier(event.day, pair) if event.days_charged is None else event.days_charged)
+            for pair in sorted(event.opens)
+        },
     } for event in events)
 
 
@@ -460,7 +473,8 @@ def loco_definitions(definition: UniverseDefinition) -> tuple[dict[str, object],
 def _source_hashes(root: Path) -> dict[str, str]:
     paths = (
         PREREG_REL, STAGE_A_UNIVERSE_REL, STAGE_A_MASK_REL, STAGE_A_READINESS_REL,
-        STAGE_A_FINANCING_REL, Path("bot/forex/family1_universe.py"), Path("run_family1_universe.py"),
+        STAGE_A_FINANCING_REL, STAGE_A_FINANCING_READINESS_REL,
+        Path("bot/forex/family1_universe.py"), Path("bot/forex/family1_study.py"), Path("run_family1_universe.py"),
         Path("requirements.txt"),
     )
     return {str(path).replace("\\", "/"): _sha256(root / path) for path in paths}
@@ -605,6 +619,38 @@ def _candidate_ic(signals: Sequence[SignalStep], definition: UniverseDefinition,
     return result
 
 
+def stationary_bootstrap_evidence(
+    series: Sequence[float], *, lower_quantile: float, reps: int = 10_000, seed: int = BOOTSTRAP_SEED,
+    block_selector: Callable[[np.ndarray], float] | None = None,
+) -> tuple[dict[str, object], list[float]]:
+    values = np.asarray(series, dtype=float)
+    if values.ndim != 1 or len(values) < 2 or not np.isfinite(values).all():
+        raise ValueError("invalid Family-1 IC bootstrap input")
+    if not (0 < lower_quantile < 0.5) or reps < 1:
+        raise ValueError("invalid Family-1 bootstrap quantile/replicate count")
+    try:
+        from arch.bootstrap import StationaryBootstrap, optimal_block_length
+    except ImportError as exc:
+        raise RuntimeError("frozen inference requires arch>=7.2,<8") from exc
+    selected = float(optimal_block_length(values)["stationary"].iloc[0]) if block_selector is None else float(block_selector(values))
+    block = int(Decimal(str(selected)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)) if isfinite(selected) else 0
+    if block < 1 or block > len(values) / 2:
+        raise ValueError("degenerate Family-1 stationary-bootstrap block length")
+    rng = np.random.Generator(np.random.PCG64(seed))
+    bootstrap = StationaryBootstrap(block, values, seed=rng)
+    means = [float(np.mean(data[0][0])) for data in bootstrap.bootstrap(reps)]
+    evidence = {
+        "mean_ic": float(np.mean(values)),
+        "lower_bound": float(np.percentile(np.asarray(means), lower_quantile * 100)),
+        "one_sided_confidence": 1 - lower_quantile,
+        "lower_bound_quantile": lower_quantile,
+        "bootstrap_block_length": block,
+        "bootstrap_replicates": reps,
+        "bootstrap_seed": seed,
+    }
+    return evidence, means
+
+
 def _path_payload(path: AccountingPath) -> dict[str, object]:
     return {
         "denominator": path.denominator,
@@ -646,6 +692,158 @@ def _numeric_diff(left: object, right: object, path: str = "root") -> tuple[floa
             raise IntegrityError(f"{path}: values differ")
         return 0.0, 0
     return (max((item[0] for item in values), default=0.0), sum(item[1] for item in values))
+
+
+def _shape_summary(value: object) -> dict[str, int]:
+    result = {"mappings": 0, "sequences": 0, "numeric_scalars": 0, "discrete_scalars": 0}
+
+    def visit(item: object) -> None:
+        if isinstance(item, Mapping):
+            result["mappings"] += 1
+            for child in item.values():
+                visit(child)
+        elif isinstance(item, (list, tuple)):
+            result["sequences"] += 1
+            for child in item:
+                visit(child)
+        elif isinstance(item, (int, float)) and not isinstance(item, bool):
+            result["numeric_scalars"] += 1
+        else:
+            result["discrete_scalars"] += 1
+
+    visit(value)
+    return result
+
+
+def _comparison_stats(expected: object, actual: object) -> dict[str, object]:
+    stats = {
+        "numeric_values_compared": 0, "discrete_values_compared": 0,
+        "shape_mismatch_count": 0, "numeric_mismatch_count": 0,
+        "discrete_mismatch_count": 0, "max_abs_difference": 0.0,
+    }
+
+    def compare(left: object, right: object) -> None:
+        if isinstance(left, Mapping) and isinstance(right, Mapping):
+            if set(left) != set(right):
+                stats["shape_mismatch_count"] += 1
+            for key in set(left) & set(right):
+                compare(left[key], right[key])
+            return
+        if isinstance(left, (list, tuple)) and isinstance(right, (list, tuple)):
+            if len(left) != len(right):
+                stats["shape_mismatch_count"] += 1
+            for left_item, right_item in zip(left, right):
+                compare(left_item, right_item)
+            return
+        left_numeric = isinstance(left, (int, float)) and not isinstance(left, bool)
+        right_numeric = isinstance(right, (int, float)) and not isinstance(right, bool)
+        if left_numeric and right_numeric:
+            stats["numeric_values_compared"] += 1
+            if not (isfinite(float(left)) and isfinite(float(right))):
+                stats["numeric_mismatch_count"] += 1
+                return
+            difference = abs(float(left) - float(right))
+            stats["max_abs_difference"] = max(stats["max_abs_difference"], difference)
+            if difference > NUMERIC_TOLERANCE:
+                stats["numeric_mismatch_count"] += 1
+            return
+        stats["discrete_values_compared"] += 1
+        if left != right:
+            stats["discrete_mismatch_count"] += 1
+
+    compare(expected, actual)
+    stats["mismatch_count"] = (
+        stats["shape_mismatch_count"] + stats["numeric_mismatch_count"] +
+        stats["discrete_mismatch_count"]
+    )
+    stats["expected_shape"] = _shape_summary(expected)
+    stats["actual_shape"] = _shape_summary(actual)
+    return stats
+
+
+class ParityAccumulator:
+    def __init__(self) -> None:
+        self._cells: dict[str, dict[str, object]] = {}
+
+    def add(self, cell_id: str, expected: object, actual: object) -> None:
+        observed = _comparison_stats(expected, actual)
+        cell = self._cells.setdefault(cell_id, {
+            "instances": 0, "numeric_values_compared": 0, "discrete_values_compared": 0,
+            "shape_mismatch_count": 0, "numeric_mismatch_count": 0,
+            "discrete_mismatch_count": 0, "mismatch_count": 0,
+            "max_abs_difference": 0.0, "expected_shapes": {}, "actual_shapes": {},
+        })
+        cell["instances"] += 1
+        for key in (
+            "numeric_values_compared", "discrete_values_compared", "shape_mismatch_count",
+            "numeric_mismatch_count", "discrete_mismatch_count", "mismatch_count",
+        ):
+            cell[key] += observed[key]
+        cell["max_abs_difference"] = max(cell["max_abs_difference"], observed["max_abs_difference"])
+        for side in ("expected", "actual"):
+            shape = observed[f"{side}_shape"]
+            identity = json.dumps(shape, sort_keys=True, separators=(",", ":"))
+            cell[f"{side}_shapes"][identity] = cell[f"{side}_shapes"].get(identity, 0) + 1
+
+    def report(self) -> dict[str, object]:
+        cells = dict(sorted(self._cells.items()))
+        mismatch_count = sum(int(cell["mismatch_count"]) for cell in cells.values())
+        return {
+            "tolerance": NUMERIC_TOLERANCE,
+            "cell_count": len(cells),
+            "mismatch_count": mismatch_count,
+            "max_abs_difference": max((float(x["max_abs_difference"]) for x in cells.values()), default=0.0),
+            "cells": cells,
+        }
+
+
+def _path_component_payload(
+    path: AccountingPath, signals: Sequence[SignalStep], events: Sequence[FinancingEvent],
+    routes: Mapping[str, object], *, adverse_financing: bool = False,
+    signal_currency_values: Sequence[Mapping[str, float]] | None = None,
+    event_currency_values: Sequence[Mapping[str, float]] | None = None,
+) -> dict[str, object]:
+    spot_cashflows = [0.0]
+    for index in range(1, len(path.trades)):
+        previous = path.trades[index - 1].target_units
+        prior_opens, current_opens = signals[index - 1].opens, signals[index].opens
+        currency_values = (
+            signal_currency_values[index] if signal_currency_values is not None
+            else currency_usd_values(current_opens)
+        )
+        cash = 0.0
+        for pair, units in previous.items():
+            _, quote = _pair_currencies(pair)
+            cash += units * (current_opens[pair].mid - prior_opens[pair].mid) * currency_values[quote]
+        spot_cashflows.append(cash)
+    financing_cashflows = []
+    for event_index, event in enumerate(events):
+        positions = path.trades[event.after_step].target_units
+        currency_values = (
+            event_currency_values[event_index] if event_currency_values is not None
+            else currency_usd_values(event.opens)
+        )
+        cash = 0.0
+        for pair, units in positions.items():
+            if pair not in event.opens or units == 0:
+                continue
+            _, quote = _pair_currencies(pair)
+            item = position_financing_cashflow_usd(
+                event.schedule, pair, units, event.opens[pair].mid, path.denominator,
+                rollover_multiplier(event.day, pair) if event.days_charged is None else event.days_charged,
+                currency_values[quote],
+            )
+            if adverse_financing:
+                from bot.forex.stage_a_carry import apply_financing_stress
+                item = apply_financing_stress(item)
+            cash += item
+        financing_cashflows.append(cash)
+    return {
+        "path": _path_payload(path),
+        "spot_cashflows_by_step": spot_cashflows,
+        "financing_cashflows_by_event": financing_cashflows,
+        "spread_costs_by_trade": [trade.spread_cost for trade in path.trades],
+    }
 
 
 def _posthoc(strategy: Mapping[int, AccountingPath], signals: Sequence[SignalStep]) -> dict[str, object]:
@@ -699,28 +897,94 @@ def _membership_steps(signals: Sequence[SignalStep], definition: UniverseDefinit
     return tuple(result)
 
 
-def _stream_u14_economics(inputs: CandidateInputs) -> tuple[dict[str, object], dict[str, object]]:
-    """Compute U14 only, streaming benchmark/LOCO paths to bound memory."""
+def _stream_u14_economics(
+    inputs: CandidateInputs, legacy_signals: Sequence[SignalStep], legacy_steps: Sequence[AccountingStep],
+    legacy_events: Sequence[FinancingEvent], legacy_routes: Mapping[str, object],
+) -> tuple[dict[str, object], dict[str, object], dict[str, object]]:
+    """Compute U14 only while streaming complete legacy/parameterized parity cells."""
     if inputs.definition != U14:
         raise PermissionError("G10/U8 economics are not implemented or authorized")
+    parity = ParityAccumulator()
+    legacy_signal_values = tuple(currency_usd_values(signal.opens) for signal in legacy_signals)
+    actual_signal_values = tuple(currency_usd_values(signal.opens) for signal in inputs.signal_steps)
+    legacy_event_values = tuple(currency_usd_values(event.opens) for event in legacy_events)
+    actual_event_values = tuple(currency_usd_values(event.opens) for event in inputs.financing_events)
+
+    def legacy_component(path: AccountingPath, *, adverse: bool = False) -> dict[str, object]:
+        return _path_component_payload(
+            path, legacy_signals, legacy_events, legacy_routes, adverse_financing=adverse,
+            signal_currency_values=legacy_signal_values, event_currency_values=legacy_event_values,
+        )
+
+    def actual_component(path: AccountingPath, *, adverse: bool = False) -> dict[str, object]:
+        return _path_component_payload(
+            path, inputs.signal_steps, inputs.financing_events, inputs.routes, adverse_financing=adverse,
+            signal_currency_values=actual_signal_values, event_currency_values=actual_event_values,
+        )
     steps = candidate_accounting_steps(inputs.signal_steps, U14)
     strategy = run_dual_accounting_paths(1.0, steps, inputs.financing_events, inputs.routes)
     adverse = run_adverse_dual_accounting_paths(1.0, steps, inputs.financing_events, inputs.routes)
     spread3 = run_spread3_sensitivity_paths(1.0, steps, inputs.financing_events, inputs.routes)
+    legacy_strategy = run_dual_accounting_paths(1.0, legacy_steps, legacy_events, legacy_routes)
+    legacy_adverse = run_adverse_dual_accounting_paths(1.0, legacy_steps, legacy_events, legacy_routes)
+    legacy_spread3 = run_spread3_sensitivity_paths(1.0, legacy_steps, legacy_events, legacy_routes)
+    for denominator in (360, 365):
+        parity.add(
+            "strategy_base_full_path_and_components",
+            legacy_component(legacy_strategy[denominator]), actual_component(strategy[denominator]),
+        )
+        parity.add(
+            "strategy_adverse_full_path_and_components",
+            legacy_component(legacy_adverse[denominator], adverse=True),
+            actual_component(adverse[denominator], adverse=True),
+        )
+        parity.add(
+            "strategy_spread_x3_full_path_and_components",
+            legacy_component(legacy_spread3[denominator]), actual_component(spread3[denominator]),
+        )
 
     benchmark_rap = {360: [], 365: []}
     benchmark_mdd = {360: [], 365: []}
+    benchmark_total_return = {360: [], 365: []}
+    benchmark_adverse_return = {360: [], 365: []}
+    benchmark_spread3_return = {360: [], 365: []}
+    benchmark_blocks = {d: {block["block_id"]: {"rap": [], "max_drawdown": [], "total_return": []} for block in BLOCKS} for d in (360, 365)}
     benchmark_hash = hashlib.sha256()
     books = family1_benchmark_books(U14.currencies, U14.k)
     for book in books:
-        paths = run_dual_accounting_paths(1.0, _static_steps(inputs.signal_steps, U14.currencies, book),
-                                          inputs.financing_events, inputs.routes)
+        actual_steps = _static_steps(inputs.signal_steps, U14.currencies, book)
+        expected_steps = _static_steps(legacy_signals, U14.currencies, book)
+        actual_scenarios = {
+            "base": run_dual_accounting_paths(1.0, actual_steps, inputs.financing_events, inputs.routes),
+            "adverse": run_adverse_dual_accounting_paths(1.0, actual_steps, inputs.financing_events, inputs.routes),
+            "spread_x3": run_spread3_sensitivity_paths(1.0, actual_steps, inputs.financing_events, inputs.routes),
+        }
+        expected_scenarios = {
+            "base": run_dual_accounting_paths(1.0, expected_steps, legacy_events, legacy_routes),
+            "adverse": run_adverse_dual_accounting_paths(1.0, expected_steps, legacy_events, legacy_routes),
+            "spread_x3": run_spread3_sensitivity_paths(1.0, expected_steps, legacy_events, legacy_routes),
+        }
         for denominator in (360, 365):
+            for scenario in ("base", "adverse", "spread_x3"):
+                parity.add(
+                    f"benchmark_{scenario}_full_paths_and_components",
+                    legacy_component(expected_scenarios[scenario][denominator], adverse=scenario == "adverse"),
+                    actual_component(actual_scenarios[scenario][denominator], adverse=scenario == "adverse"),
+                )
+            paths = actual_scenarios["base"]
             benchmark_rap[denominator].append(rap(paths[denominator].period_returns))
             benchmark_mdd[denominator].append(max_drawdown_from_returns(paths[denominator].period_returns))
+            benchmark_total_return[denominator].append(paths[denominator].equities[-1] - 1)
+            benchmark_adverse_return[denominator].append(actual_scenarios["adverse"][denominator].equities[-1] - 1)
+            benchmark_spread3_return[denominator].append(actual_scenarios["spread_x3"][denominator].equities[-1] - 1)
+            for block in path_block_diagnostics(paths[denominator], inputs.signal_steps):
+                target = benchmark_blocks[denominator][block["block_id"]]
+                for key in target:
+                    target[key].append(block[key])
             benchmark_hash.update(_canonical_bytes(_path_payload(paths[denominator])))
 
     loco_excess = {360: {}, 365: {}}
+    loco_diagnostics = {}
     loco_hash = hashlib.sha256()
     for omitted in U14.currencies:
         active = tuple(c for c in U14.currencies if c != omitted)
@@ -728,22 +992,101 @@ def _stream_u14_economics(inputs: CandidateInputs) -> tuple[dict[str, object], d
         loco_strategy = run_dual_accounting_paths(
             1.0, _membership_steps(inputs.signal_steps, U14, omitted), inputs.financing_events, inputs.routes
         )
-        braps = {360: [], 365: []}
+        expected_loco_strategy = run_dual_accounting_paths(
+            1.0, _membership_steps(legacy_signals, U14, omitted), legacy_events, legacy_routes
+        )
+        loco_adverse = run_adverse_dual_accounting_paths(
+            1.0, _membership_steps(inputs.signal_steps, U14, omitted), inputs.financing_events, inputs.routes
+        )
+        expected_loco_adverse = run_adverse_dual_accounting_paths(
+            1.0, _membership_steps(legacy_signals, U14, omitted), legacy_events, legacy_routes
+        )
+        loco_spread3 = run_spread3_sensitivity_paths(
+            1.0, _membership_steps(inputs.signal_steps, U14, omitted), inputs.financing_events, inputs.routes
+        )
+        expected_loco_spread3 = run_spread3_sensitivity_paths(
+            1.0, _membership_steps(legacy_signals, U14, omitted), legacy_events, legacy_routes
+        )
+        braps = {360: [], 365: []}; bmdds = {360: [], 365: []}
+        badverse = {360: [], 365: []}; bspread3 = {360: [], 365: []}
+        bblocks = {d: {block["block_id"]: {"rap": [], "max_drawdown": [], "total_return": []} for block in BLOCKS} for d in (360, 365)}
         for book in family1_benchmark_books(active, k):
-            paths = run_dual_accounting_paths(
-                1.0, _static_steps(inputs.signal_steps, U14.currencies, book), inputs.financing_events, inputs.routes
-            )
+            actual_steps = _static_steps(inputs.signal_steps, U14.currencies, book)
+            expected_steps = _static_steps(legacy_signals, U14.currencies, book)
+            actual_scenarios = {
+                "base": run_dual_accounting_paths(1.0, actual_steps, inputs.financing_events, inputs.routes),
+                "adverse": run_adverse_dual_accounting_paths(1.0, actual_steps, inputs.financing_events, inputs.routes),
+                "spread_x3": run_spread3_sensitivity_paths(1.0, actual_steps, inputs.financing_events, inputs.routes),
+            }
+            expected_scenarios = {
+                "base": run_dual_accounting_paths(1.0, expected_steps, legacy_events, legacy_routes),
+                "adverse": run_adverse_dual_accounting_paths(1.0, expected_steps, legacy_events, legacy_routes),
+                "spread_x3": run_spread3_sensitivity_paths(1.0, expected_steps, legacy_events, legacy_routes),
+            }
             for denominator in (360, 365):
+                for scenario in ("base", "adverse", "spread_x3"):
+                    parity.add(
+                        f"loco_benchmark_{scenario}_full_paths_and_components",
+                        legacy_component(expected_scenarios[scenario][denominator], adverse=scenario == "adverse"),
+                        actual_component(actual_scenarios[scenario][denominator], adverse=scenario == "adverse"),
+                    )
+                paths = actual_scenarios["base"]
                 braps[denominator].append(rap(paths[denominator].period_returns))
+                bmdds[denominator].append(max_drawdown_from_returns(paths[denominator].period_returns))
+                badverse[denominator].append(actual_scenarios["adverse"][denominator].equities[-1] - 1)
+                bspread3[denominator].append(actual_scenarios["spread_x3"][denominator].equities[-1] - 1)
+                for block in path_block_diagnostics(paths[denominator], inputs.signal_steps):
+                    target = bblocks[denominator][block["block_id"]]
+                    for key in target:
+                        target[key].append(block[key])
                 loco_hash.update(_canonical_bytes(_path_payload(paths[denominator])))
         for denominator in (360, 365):
+            parity.add(
+                "loco_strategy_base_full_paths_and_components",
+                legacy_component(expected_loco_strategy[denominator]), actual_component(loco_strategy[denominator]),
+            )
+            parity.add(
+                "loco_strategy_adverse_full_paths_and_components",
+                legacy_component(expected_loco_adverse[denominator], adverse=True),
+                actual_component(loco_adverse[denominator], adverse=True),
+            )
+            parity.add(
+                "loco_strategy_spread_x3_full_paths_and_components",
+                legacy_component(expected_loco_spread3[denominator]), actual_component(loco_spread3[denominator]),
+            )
             loco_hash.update(_canonical_bytes(_path_payload(loco_strategy[denominator])))
             loco_excess[denominator][omitted] = (
                 rap(loco_strategy[denominator].period_returns) - float(np.median(braps[denominator]))
             )
+        from bot.forex.family1_study import path_diagnostics
+        loco_diagnostics[omitted] = {
+            "N": len(active), "k": k,
+            "denominators": {str(d): {
+                "base": path_diagnostics(loco_strategy[d], inputs.signal_steps, inputs.financing_events, inputs.routes),
+                "adverse_total_return": loco_adverse[d].equities[-1] - 1,
+                "spread_x3_total_return": loco_spread3[d].equities[-1] - 1,
+                "benchmark_rap": float(np.median(braps[d])),
+                "benchmark_max_drawdown": float(np.median(bmdds[d])),
+                "benchmark_adverse_total_return": float(np.median(badverse[d])),
+                "benchmark_spread_x3_total_return": float(np.median(bspread3[d])),
+                "benchmark_rap_excess": loco_excess[d][omitted],
+                "benchmark_blocks": {
+                    block_id: {key: float(np.median(values)) for key, values in cell.items()}
+                    for block_id, cell in bblocks[d].items()
+                },
+            } for d in (360, 365)},
+        }
 
+    expected_ic = spot_ic_series(legacy_signals, U14.currencies)
     ic = _candidate_ic(inputs.signal_steps, U14, inputs.routes)
-    lower, block = stationary_bootstrap_lower_bound(ic, 10_000, BOOTSTRAP_SEED)
+    parity.add("ic_period_array", expected_ic, ic)
+    ic_evidence, bootstrap_means = stationary_bootstrap_evidence(ic, lower_quantile=0.05)
+    expected_ic_evidence, expected_bootstrap_means = stationary_bootstrap_evidence(
+        expected_ic, lower_quantile=0.05
+    )
+    lower, block = ic_evidence["lower_bound"], ic_evidence["bootstrap_block_length"]
+    parity.add("ic_bootstrap_mean_array", expected_bootstrap_means, bootstrap_means)
+    parity.add("ic_bootstrap_scalars", expected_ic_evidence, ic_evidence)
     metrics = {}
     scenarios = {}
     for denominator in (360, 365):
@@ -773,10 +1116,7 @@ def _stream_u14_economics(inputs: CandidateInputs) -> tuple[dict[str, object], d
     }
     results = {
         "G2_block_length": block,
-        "G2_metrics": {"mean_ic": float(np.mean(ic)), "lower_bound": lower,
-                       "one_sided_confidence": 0.95, "lower_bound_quantile": 0.05,
-                       "threshold": 0.0, "bootstrap_block_length": block,
-                       "bootstrap_replicates": 10000, "bootstrap_seed": BOOTSTRAP_SEED},
+        "G2_metrics": {**ic_evidence, "threshold": 0.0},
         "gates": gates,
         "non_gating_sensitivities": {"spread_x3_total_return": {
             "360": spread3[360].equities[-1] - 1, "365": spread3[365].equities[-1] - 1}},
@@ -791,7 +1131,50 @@ def _stream_u14_economics(inputs: CandidateInputs) -> tuple[dict[str, object], d
         "benchmark_path_sha256": benchmark_hash.hexdigest(),
         "loco_path_sha256": loco_hash.hexdigest(),
     }
-    return {"results": results, "posthoc": _posthoc(strategy, inputs.signal_steps)}, vectors
+    from bot.forex.family1_study import concentration_diagnostics, path_diagnostics
+    control_denominators = {str(d): {
+        "base": path_diagnostics(strategy[d], inputs.signal_steps, inputs.financing_events, inputs.routes),
+        "benchmark": {
+            "rap": float(np.median(benchmark_rap[d])),
+            "max_drawdown": float(np.median(benchmark_mdd[d])),
+            "total_return": float(np.median(benchmark_total_return[d])),
+            "adverse_total_return": float(np.median(benchmark_adverse_return[d])),
+            "spread_x3_total_return": float(np.median(benchmark_spread3_return[d])),
+            "blocks": {
+                block_id: {key: float(np.median(values)) for key, values in cell.items()}
+                for block_id, cell in benchmark_blocks[d].items()
+            },
+        },
+        "benchmark_rap_excess": rap(strategy[d].period_returns) - float(np.median(benchmark_rap[d])),
+        "benchmark_mdd_difference": max_drawdown_from_returns(strategy[d].period_returns) - float(np.median(benchmark_mdd[d])),
+        "adverse_total_return": adverse[d].equities[-1] - 1,
+        "spread_x3_total_return": spread3[d].equities[-1] - 1,
+    } for d in (360, 365)}
+    difference_keys = (
+        "final_equity", "total_return", "cagr", "rap", "max_drawdown", "currency_turnover",
+        "annualized_currency_turnover", "routed_usd_turnover", "annualized_routed_usd_turnover",
+        "mean_routed_usd_gross", "total_spread_cost", "total_financing", "spot_pnl",
+    )
+    control_diagnostics = {
+        "candidate_id": U14.candidate_id, "N": 14, "k": 4, "currencies": list(U14.currencies),
+        "benchmark_books_sha256": _canonical_sha(books), "benchmark_book_count": len(books),
+        "ic": {**ic_evidence, "period_count": len(ic), "series": ic},
+        "concentration": concentration_diagnostics(inputs),
+        "denominators": control_denominators,
+        "D365_MINUS_D360": {
+            **{key: control_denominators["365"]["base"][key] - control_denominators["360"]["base"][key] for key in difference_keys},
+            "benchmark_rap_excess": control_denominators["365"]["benchmark_rap_excess"] - control_denominators["360"]["benchmark_rap_excess"],
+            "benchmark_mdd_difference": control_denominators["365"]["benchmark_mdd_difference"] - control_denominators["360"]["benchmark_mdd_difference"],
+            "adverse_total_return": control_denominators["365"]["adverse_total_return"] - control_denominators["360"]["adverse_total_return"],
+            "spread_x3_total_return": control_denominators["365"]["spread_x3_total_return"] - control_denominators["360"]["spread_x3_total_return"],
+        },
+        "loco": loco_diagnostics,
+        "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",
+    }
+    return {
+        "results": results, "posthoc": _posthoc(strategy, inputs.signal_steps),
+        "control_diagnostics": control_diagnostics,
+    }, vectors, parity.report()
 
 
 def run_u14_parity(root: Path) -> dict[str, object]:
@@ -801,47 +1184,86 @@ def run_u14_parity(root: Path) -> dict[str, object]:
     family = prepare_candidate(context, U14)
 
     legacy_days = _required_financing_open_days(context.u14_signals, context.availability, context.routes, context.opens_at)
+    _, legacy_financing_records = _financing_requirements(
+        context.u14_signals, U14, context.routes, context.availability, context.opens_at
+    )
     legacy_events = tuple(build_financing_events(context.u14_signals, context.schedules, legacy_days))
     legacy_steps = tuple(accounting_steps_from_signals(context.u14_signals, U14.currencies, k=4))
     family_steps = candidate_accounting_steps(family.signal_steps, U14)
+    financing_readiness = _json(root / STAGE_A_FINANCING_READINESS_REL)
+    closed_market_identity = {
+        "records_sha256": financing_readiness["records_sha256"],
+        "closed_market_no_event_records": financing_readiness["summary"]["closed_market_no_event_records"],
+        "potential_held_route_records": financing_readiness["summary"]["potential_held_route_records"],
+    }
 
     discrete_left = {
         "transaction_mapping": context.transaction_mapping,
+        "evaluable_periods": context.mask["evaluable_rebalances"],
+        "excluded_periods": context.mask["excluded_rebalances"],
         "signal_timestamps": [x.timestamp for x in context.u14_signals],
         "signal_kinds": [x.kind for x in context.u14_signals],
         "memberships": accounting_membership_records(legacy_steps),
         "routes": context.routes,
         "events": event_identity(legacy_events),
+        "held_leg_and_conversion_records": legacy_financing_records,
         "benchmark_books": family1_benchmark_books(U14.currencies, U14.k),
         "loco": [{"omitted": x["omitted"], "rankable": x["rankable"], "N": x["N"], "k": x["k"]}
                  for x in loco_definitions(U14)],
         "blocks": validate_blocks(context.mask),
+        "stress_cells": ["base", "adverse_spread_x2_debit_x1.25_days_x1.10_credit_x0.80", "spread_x3"],
+        "denominators": [360, 365],
+        "closed_market_non_events": closed_market_identity,
     }
     discrete_right = {
         "transaction_mapping": context.transaction_mapping,
+        "evaluable_periods": context.mask["evaluable_rebalances"],
+        "excluded_periods": context.mask["excluded_rebalances"],
         "signal_timestamps": [x.timestamp for x in family.signal_steps],
         "signal_kinds": [x.kind for x in family.signal_steps],
         "memberships": accounting_membership_records(family_steps),
         "routes": family.routes,
         "events": event_identity(family.financing_events),
+        "held_leg_and_conversion_records": family.financing_records,
         "benchmark_books": benchmark_books(U14.currencies, 4, 1000, BENCHMARK_SEED),
         "loco": [{"omitted": c, "rankable": [x for x in U14.currencies if x != c], "N": 13, "k": 4}
                  for c in U14.currencies],
         "blocks": validate_blocks(context.mask),
+        "stress_cells": ["base", "adverse_spread_x2_debit_x1.25_days_x1.10_credit_x0.80", "spread_x3"],
+        "denominators": [360, 365],
+        "closed_market_non_events": closed_market_identity,
     }
-    if _canonical_bytes(discrete_left) != _canonical_bytes(discrete_right):
+    discrete_comparison = _comparison_stats(discrete_left, discrete_right)
+    if discrete_comparison["mismatch_count"]:
         raise IntegrityError("U14 discrete parity failed")
 
-    legacy_base = run_dual_accounting_paths(1.0, legacy_steps, legacy_events, context.routes)
-    family_base = run_dual_accounting_paths(1.0, family_steps, family.financing_events, family.routes)
-    base_max = 0.0
-    compared = 0
-    for denominator in (360, 365):
-        difference, count = _numeric_diff(_path_payload(legacy_base[denominator]), _path_payload(family_base[denominator]))
-        base_max = max(base_max, difference)
-        compared += count
-
-    computed, vectors = _stream_u14_economics(family)
+    computed, vectors, section12 = _stream_u14_economics(
+        family, context.u14_signals, legacy_steps, legacy_events, context.routes
+    )
+    path_shape = {"equities": [168], "period_returns": [157], "trades": [168]}
+    component_shape = {
+        **path_shape, "spot_cashflows_by_step": [168],
+        "financing_cashflows_by_event": [len(legacy_events)], "spread_costs_by_trade": [168],
+    }
+    declared = {}
+    for cell_id, cell in section12["cells"].items():
+        if cell_id == "ic_period_array":
+            shape = {"series": [157]}
+        elif cell_id == "ic_bootstrap_mean_array":
+            shape = {"bootstrap_means": [10_000]}
+        elif cell_id == "ic_bootstrap_scalars":
+            shape = {"scalar_mapping_fields": 7}
+        elif "components" in cell_id:
+            shape = component_shape
+        else:
+            shape = path_shape
+        declared[cell_id] = {
+            "expected": {"instances": cell["instances"], **shape},
+            "actual": {"instances": cell["instances"], **shape},
+        }
+    section12["expected_actual_shapes"] = declared
+    if section12["mismatch_count"]:
+        raise IntegrityError("U14 Section-12 floating/structure parity failed")
     attempt3 = _json(root / STAGE_A_RESULT_REL)["result"]["results"]
     metric_max, metric_count = _numeric_diff(attempt3, computed["results"], "attempt3")
     published = _published_posthoc_match(computed["posthoc"])
@@ -851,7 +1273,7 @@ def run_u14_parity(root: Path) -> dict[str, object]:
     readiness_path = root / READINESS_ARTIFACT_REL
     readiness_sha = _sha256(readiness_path) if readiness_path.is_file() else None
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "U14_PARITY_PASSED",
         "candidate_economics_computed": False,
         "network_accessed": False,
@@ -862,23 +1284,30 @@ def run_u14_parity(root: Path) -> dict[str, object]:
         "attempt3_result_sha256": _sha256(root / STAGE_A_RESULT_REL),
         "discrete": {
             "exact": True, "canonical_sha256": _canonical_sha(discrete_left),
+            "comparison": discrete_comparison,
             "transaction_count": len(context.transaction_mapping),
             "signal_step_count": len(family.signal_steps),
             "membership_count": len(membership_records(family)),
             "financing_event_count": len(family.financing_events),
+            "held_leg_record_count": len(family.financing_records),
+            "closed_market_non_event_count": closed_market_identity["closed_market_no_event_records"],
             "benchmark_book_count": len(discrete_left["benchmark_books"]),
             "loco_case_count": len(discrete_left["loco"]),
         },
         "floating": {
             "tolerance": NUMERIC_TOLERANCE,
-            "baseline_vector_values_compared": compared,
-            "baseline_vector_max_abs_diff": base_max,
+            "section12_values_compared": sum(
+                int(cell["numeric_values_compared"]) for cell in section12["cells"].values()
+            ),
+            "section12_max_abs_diff": section12["max_abs_difference"],
             "attempt3_scalars_compared": metric_count,
             "attempt3_max_abs_diff": metric_max,
             "benchmark_path_sha256": vectors["benchmark_path_sha256"],
             "loco_path_sha256": vectors["loco_path_sha256"],
         },
+        "section12_parity": section12,
         "posthoc": computed["posthoc"],
+        "control_diagnostics": computed["control_diagnostics"],
         "published_posthoc_match": published,
         "results": computed["results"],
         "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",

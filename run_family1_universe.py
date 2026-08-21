@@ -1,4 +1,4 @@
-"""Family-1 infrastructure entry point; no candidate-economic mode exists."""
+"""Family-1 frozen infrastructure and fail-closed one-shot execution entry point."""
 from __future__ import annotations
 
 import argparse
@@ -18,7 +18,10 @@ from bot.forex.family1_universe import (
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("preflight", "emit-readiness", "u14-parity"), nargs="?", default="preflight")
+    parser.add_argument(
+        "mode", choices=("preflight", "emit-readiness", "u14-parity", "execute-candidates"),
+        nargs="?", default="preflight",
+    )
     args = parser.parse_args(argv)
     root = Path(__file__).resolve().parent
     if args.mode == "emit-readiness":
@@ -30,6 +33,11 @@ def main(argv=None) -> int:
             raise PermissionError("hash-bound Family-1 readiness artifacts are required before U14 parity")
         path = emit_u14_parity_artifact(root)
         print(json.dumps({"mode": "U14_PARITY_COMPLETE", "path": str(path.relative_to(root))}, sort_keys=True))
+        return 0
+    if args.mode == "execute-candidates":
+        from bot.forex.family1_study import execute_family1_candidates
+        path = execute_family1_candidates(root)
+        print(json.dumps({"mode": "FAMILY1_CANDIDATE_ECONOMICS_COMPLETE", "path": str(path.relative_to(root))}, sort_keys=True))
         return 0
     context = load_frozen_context(root)
     print(json.dumps({

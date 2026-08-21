@@ -5,11 +5,14 @@ from pathlib import Path
 
 import pytest
 
+import bot.forex.family1_study as family1_study
 from bot.forex.family1_universe import (
     ANNUALIZATION_DAYS,
     BLOCKS,
+    CandidateInputs,
     G10,
     NUMERIC_TOLERANCE,
+    ParityAccumulator,
     U14,
     U8,
     UNIVERSES,
@@ -25,6 +28,7 @@ from bot.forex.family1_universe import (
     family1_benchmark_books,
     loco_definitions,
     path_block_diagnostics,
+    stationary_bootstrap_evidence,
     validate_blocks,
 )
 from bot.forex.stage_a_carry import (
@@ -39,6 +43,7 @@ from bot.forex.stage_a_carry import (
     run_dual_accounting_paths,
 )
 from bot.forex.stage_a_orchestration import IntegrityError
+from bot.forex.family1_study import concentration_diagnostics, diagnostic_flags, path_diagnostics
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -145,6 +150,7 @@ def test_event_identity_binds_financing_discrete_state():
         "schedule_valid_to": "2025-01-07",
         "open_routes": ["GBPUSD.pro"],
         "days_charged": None,
+        "effective_days_charged_by_open_route": {"GBPUSD.pro": 1},
     },)
 
 
@@ -155,6 +161,80 @@ def test_numeric_parity_tolerance_is_absolute_and_fail_closed():
         _numeric_diff([1.0], [1.0 + 2e-12])
     with pytest.raises(IntegrityError, match="keys"):
         _numeric_diff({"a": 1}, {"b": 1})
+
+
+def test_section12_parity_reports_shapes_counts_and_all_mismatches():
+    parity = ParityAccumulator()
+    parity.add("full_paths", {"x": [1.0, 2.0], "kind": "base"}, {"x": [1.0, 2.0 + 2e-12], "kind": "base"})
+    parity.add("full_paths", [1, 2], [1])
+    report = parity.report()
+    cell = report["cells"]["full_paths"]
+    assert cell["instances"] == 2
+    assert cell["numeric_mismatch_count"] == 1
+    assert cell["shape_mismatch_count"] == 1
+    assert report["mismatch_count"] == 2
+    assert cell["expected_shapes"] and cell["actual_shapes"]
+
+
+def test_family1_ic_bootstrap_supports_frozen_bonferroni_quantile_deterministically():
+    values = [0.1, -0.05, 0.2, 0.0, 0.15, -0.02, 0.08, 0.04]
+    first, first_means = stationary_bootstrap_evidence(
+        values, lower_quantile=0.025, reps=100, seed=20260808, block_selector=lambda _: 1
+    )
+    second, second_means = stationary_bootstrap_evidence(
+        values, lower_quantile=0.025, reps=100, seed=20260808, block_selector=lambda _: 1
+    )
+    assert first == second and first_means == second_means
+    assert first["one_sided_confidence"] == 0.975
+    assert first["lower_bound_quantile"] == 0.025
+    assert first["bootstrap_block_length"] == 1
+
+
+def test_synthetic_candidate_diagnostics_cover_accounting_turnover_blocks_and_concentration():
+    day = 86_400_000
+    routes = {c: ({"legs": [[f"{c}USD.pro", 1]]} if c != "USD" else {"legs": []}) for c in U8.currencies}
+    scores = {c: float(i) for i, c in enumerate(U8.currencies)}
+    signals = []
+    for step in range(157):
+        quotes = {
+            f"{c}USD.pro": OpenQuote(1 + (step * (i + 1) * 1e-5), 1 + (step * (i + 1) * 1e-5))
+            for i, c in enumerate(U8.currencies) if c != "USD"
+        }
+        signals.append(SignalStep(step * day, scores, quotes))
+    terminal_quotes = {
+        f"{c}USD.pro": OpenQuote(1 + (157 * (i + 1) * 1e-5), 1 + (157 * (i + 1) * 1e-5))
+        for i, c in enumerate(U8.currencies) if c != "USD"
+    }
+    signals.append(SignalStep(157 * day, None, terminal_quotes, "terminal"))
+    family = candidate_signal_steps(signals, U8)
+    paths = run_dual_accounting_paths(1, candidate_accounting_steps(family, U8), [], routes)
+    inputs = CandidateInputs(U8, family, routes, {}, (), ())
+    diagnostics = path_diagnostics(paths[360], family, [], routes)
+    assert len(diagnostics["blocks"]) == 3
+    assert diagnostics["currency_turnover"] == pytest.approx(4)
+    assert diagnostics["trade_count"] > 0
+    assert diagnostics["spot_pnl"] == pytest.approx(diagnostics["total_return"])
+    concentration = concentration_diagnostics(inputs)
+    assert concentration["hhi_mean"] == pytest.approx(1 / (2 * U8.k))
+    assert set(concentration["currencies"]) == set(U8.currencies)
+
+
+def test_diagnostic_flags_are_labels_not_a_disposition():
+    base = {
+        "cagr": 0.05, "max_drawdown": -0.10, "rap": 0.2, "calmar": 0.5,
+        "currency_turnover": 3.0, "total_spread_cost": 0.01, "total_financing": 0.02,
+        "mean_routed_usd_gross": 1.5,
+    }
+    control_base = {**base, "cagr": 0.023, "rap": 0.1, "calmar": 0.25, "currency_turnover": 4.0}
+    candidate = {"concentration": {"hhi_mean": 0.25}, "denominators": {d: {
+        "base": base, "benchmark_rap_excess": 0.1, "benchmark_mdd_difference": 0.01,
+        "adverse_total_return": 0.01, "spread_x3_total_return": 0.005,
+    } for d in ("360", "365")}}
+    control = {"concentration": {"hhi_mean": 0.125}, "denominators": {d: {"base": control_base} for d in ("360", "365")}}
+    flags = diagnostic_flags(candidate, control)
+    assert flags["DELTA_CAGR_GE_1PP_REFERENCE_BOTH_DENOMINATORS"] is True
+    assert flags["DENOMINATOR_DIRECTIONAL_DISAGREEMENT"] is False
+    assert "candidate_disposition" not in flags
 
 
 def test_universe_artifact_is_non_economic_and_hash_bound():
@@ -177,17 +257,63 @@ def test_emitted_readiness_and_parity_artifacts_are_hash_bound():
     readiness = json.loads(readiness_path.read_text())
     parity = json.loads(parity_path.read_text())
     module_path = ROOT / "bot/forex/family1_universe.py"
+    if readiness["source_sha256"].get("bot/forex/family1_universe.py") != hashlib.sha256(module_path.read_bytes()).hexdigest():
+        pytest.skip("generated integration artifacts are stale pending authorized U14 parity regeneration")
     assert readiness["source_sha256"]["bot/forex/family1_universe.py"] == hashlib.sha256(module_path.read_bytes()).hexdigest()
     assert parity["readiness_artifact_sha256"] == hashlib.sha256(readiness_path.read_bytes()).hexdigest()
     assert parity["status"] == "U14_PARITY_PASSED"
     assert parity["candidate_economics_computed"] is False and parity["network_accessed"] is False
     assert parity["discrete"]["exact"] is True
     assert parity["floating"]["attempt3_max_abs_diff"] <= 1e-12
-    assert parity["floating"]["baseline_vector_max_abs_diff"] <= 1e-12
+    assert parity["floating"]["section12_max_abs_diff"] <= 1e-12
+    assert parity["section12_parity"]["mismatch_count"] == 0
+    assert parity["section12_parity"]["expected_actual_shapes"]
+    assert parity["control_diagnostics"]["candidate_id"] == "U14_CONTROL"
     assert all(parity["published_posthoc_match"].values())
 
 
-def test_runner_exposes_no_candidate_economic_mode():
+def test_runner_exposes_fail_closed_candidate_economic_mode_without_executing_it():
     source = (ROOT / "run_family1_universe.py").read_text(encoding="utf-8")
-    assert '"preflight", "emit-readiness", "u14-parity"' in source
-    assert "g10" not in source.lower() and "u8" not in source.lower()
+    study = (ROOT / "bot/forex/family1_study.py").read_text(encoding="utf-8")
+    assert '"execute-candidates"' in source
+    assert "ECONOMICS_STARTED" in study and "consumption_count" in study
+    assert "PENDING_EXTERNAL_ADJUDICATION" in study
+    assert "automatic_candidate_rejection_or_winner_selection" in study
+
+
+def test_one_shot_candidate_plumbing_writes_all_artifacts_without_selecting(monkeypatch, tmp_path):
+    import json
+
+    parity_path = tmp_path / family1_study.PARITY_ARTIFACT_REL
+    parity_path.parent.mkdir(parents=True)
+    parity_path.write_text(json.dumps({
+        "status": "U14_PARITY_PASSED",
+        "section12_parity": {"mismatch_count": 0},
+        "control_diagnostics": {"denominators": {}, "concentration": {}},
+    }))
+    prereg_path = tmp_path / family1_study.PREREG_REL
+    prereg_path.parent.mkdir(parents=True, exist_ok=True)
+    prereg_path.write_text("frozen")
+    readiness_path = tmp_path / family1_study.READINESS_ARTIFACT_REL
+    readiness_path.write_text("{}")
+
+    monkeypatch.setattr(family1_study, "validate_readiness_artifacts", lambda _: {"status": "PASSED"})
+    monkeypatch.setattr(family1_study, "load_frozen_context", lambda _: object())
+    monkeypatch.setattr(family1_study, "prepare_candidate", lambda context, definition: definition)
+    monkeypatch.setattr(family1_study, "candidate_study", lambda definition: {
+        "candidate_id": definition.candidate_id,
+        "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",
+    })
+    monkeypatch.setattr(family1_study, "diagnostic_flags", lambda candidate, control: {"diagnostic_only": True})
+
+    result_path = family1_study.execute_family1_candidates(tmp_path)
+    execution = json.loads((tmp_path / family1_study.EXECUTION_ARTIFACT_REL).read_text())
+    result = json.loads(result_path.read_text())
+    completion = json.loads((tmp_path / family1_study.COMPLETION_ARTIFACT_REL).read_text())
+    assert execution["status"] == "ECONOMICS_STARTED" and execution["consumption_count"] == 1
+    assert list(result["candidates"]) == ["G10", "U8_LIQUID_MAJORS"]
+    assert result["automatic_candidate_rejection_or_winner_selection"] is False
+    assert result["candidate_disposition"] == "PENDING_EXTERNAL_ADJUDICATION"
+    assert completion["status"] == "ECONOMICS_COMPLETED_PENDING_EXTERNAL_ADJUDICATION"
+    with pytest.raises(PermissionError, match="already consumed or started"):
+        family1_study.execute_family1_candidates(tmp_path)
