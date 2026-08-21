@@ -1,0 +1,174 @@
+{
+  "attempt3_result_sha256": "39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8",
+  "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",
+  "candidate_economics_computed": false,
+  "discrete": {
+    "benchmark_book_count": 1000,
+    "canonical_sha256": "4b3575165330f88bedd5d4c58e07bf167669c9b8c62d0bffe0e7fcaa38691477",
+    "exact": true,
+    "financing_event_count": 680,
+    "loco_case_count": 14,
+    "membership_count": 157,
+    "signal_step_count": 168,
+    "transaction_count": 168
+  },
+  "floating": {
+    "attempt3_max_abs_diff": 0.0,
+    "attempt3_scalars_compared": 55,
+    "baseline_vector_max_abs_diff": 0.0,
+    "baseline_vector_values_compared": 11094,
+    "benchmark_path_sha256": "3d4904deea70d7944a2144b8e18748f7e4d77c59948b67426a6f86b81fac8a6d",
+    "loco_path_sha256": "8e73bb5a5d287b1383e39e70cb4ea1ce3701dd6bd2b04630a16c4b7c78fc92fd",
+    "tolerance": 1e-12
+  },
+  "implementation_sha256": "e9bf3e4e9c936f70e8cc90c87280b3e79e91d41c73b2db712182b5115851b35e",
+  "network_accessed": false,
+  "posthoc": {
+    "accounting_periods": 157,
+    "elapsed_years": 3.3347022587268995,
+    "scenarios": {
+      "360": {
+        "cagr": 0.023394111097902792,
+        "final_equity": 1.0801650638302271,
+        "total_financing": 0.06215928256503286,
+        "total_return": 0.08016506383022715,
+        "total_spread_cost": 0.02647919501332219
+      },
+      "365": {
+        "cagr": 0.023137623672209395,
+        "final_equity": 1.0792625719755282,
+        "total_financing": 0.06128228876745261,
+        "total_return": 0.07926257197552822,
+        "total_spread_cost": 0.026468392506861
+      }
+    }
+  },
+  "preregistration_sha256": "e7579ac48f9051e6dc8b133b44522a2f3cdb5c01d52efb58e72fef7fbbe7614e",
+  "published_posthoc_match": {
+    "360": true,
+    "365": true,
+    "elapsed_years": true
+  },
+  "readiness_artifact_sha256": "19ed0ce6e63fd7977813e0e852cd796b7ab1ceeec53de476e3f7d2e820ce3f6c",
+  "readiness_integrity": {
+    "performance_computed": false,
+    "readiness_sha256": "19ed0ce6e63fd7977813e0e852cd796b7ab1ceeec53de476e3f7d2e820ce3f6c",
+    "status": "FAMILY1_ARTIFACT_INTEGRITY_PASSED",
+    "universe_sha256": "171a54e0d45c031d32cbf519f3a01da09ab660fd585adc270b775e518e2c576d"
+  },
+  "results": {
+    "G2_block_length": 1,
+    "G2_metrics": {
+      "bootstrap_block_length": 1,
+      "bootstrap_replicates": 10000,
+      "bootstrap_seed": 20260808,
+      "lower_bound": 0.012079512843844046,
+      "lower_bound_quantile": 0.05,
+      "mean_ic": 0.054105130538251556,
+      "one_sided_confidence": 0.95,
+      "threshold": 0.0
+    },
+    "gates": {
+      "G1": true,
+      "G2": true,
+      "G3": true,
+      "G4": true,
+      "G5": true
+    },
+    "non_gating_sensitivities": {
+      "spread_x3_total_return": {
+        "360": 0.025289878207012784,
+        "365": 0.024433052584517334
+      }
+    },
+    "scenario_metrics": {
+      "360": {
+        "G1": {
+          "benchmark_median_rap": -0.06357552374081937,
+          "excess": 0.13348386691352127,
+          "strategy_rap": 0.0699083431727019
+        },
+        "G3": {
+          "benchmark_median_mdd": -0.09833849517868382,
+          "strategy_mdd": -0.08316682072586556
+        },
+        "G4": {
+          "stressed_total_return": 0.024823905109681244
+        },
+        "G5": {
+          "loco_excesses": {
+            "AUD": 0.1343000962146079,
+            "CAD": 0.14487522304186295,
+            "CHF": 0.18302037610860825,
+            "CZK": 0.15307175133147027,
+            "EUR": 0.1522645220291417,
+            "GBP": 0.14212182915241617,
+            "HUF": 0.13505053214956586,
+            "JPY": 0.10920926791545124,
+            "NOK": 0.10942038892545602,
+            "NZD": 0.14431403177126118,
+            "PLN": 0.1279606828535212,
+            "SEK": 0.15384573331874096,
+            "USD": 0.15834471977690195,
+            "ZAR": 0.1446375667383768
+          },
+          "pass_count": 14,
+          "worst_currency": "JPY",
+          "worst_excess": 0.10920926791545124
+        }
+      },
+      "365": {
+        "G1": {
+          "benchmark_median_rap": -0.06282033047119914,
+          "excess": 0.13201063149458347,
+          "strategy_rap": 0.06919030102338433
+        },
+        "G3": {
+          "benchmark_median_mdd": -0.09832406832716428,
+          "strategy_mdd": -0.08334000031259381
+        },
+        "G4": {
+          "stressed_total_return": 0.02433973866686756
+        },
+        "G5": {
+          "loco_excesses": {
+            "AUD": 0.13279292583818897,
+            "CAD": 0.14288030067142005,
+            "CHF": 0.18199349070585147,
+            "CZK": 0.15148129496100055,
+            "EUR": 0.15104560611236714,
+            "GBP": 0.14051210367394862,
+            "HUF": 0.13389167213014874,
+            "JPY": 0.10806776029663978,
+            "NOK": 0.10857461932674099,
+            "NZD": 0.14255236008722116,
+            "PLN": 0.12663818330681423,
+            "SEK": 0.15269048840488195,
+            "USD": 0.15697675020652696,
+            "ZAR": 0.14346392219600568
+          },
+          "pass_count": 14,
+          "worst_currency": "JPY",
+          "worst_excess": 0.10806776029663978
+        }
+      }
+    },
+    "scenarios": {
+      "360": {
+        "G1": true,
+        "G3": true,
+        "G4": true,
+        "G5": true
+      },
+      "365": {
+        "G1": true,
+        "G3": true,
+        "G4": true,
+        "G5": true
+      }
+    },
+    "terminal_verdict": "SURVIVES_KILL_TEST"
+  },
+  "schema_version": 1,
+  "status": "U14_PARITY_PASSED"
+}

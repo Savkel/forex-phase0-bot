@@ -1,0 +1,381 @@
+{
+  "cache_sha256": {
+    "AUD_USD": "1935c5b9b2bfba36db871127507aa8783218f83c391d227b2935cd51909c667c",
+    "EUR_HUF": "fa0b094b2a51090983936e2188189577f4175533d657f0a849e0d53a7c35a099",
+    "EUR_NOK": "e0a0538837308bf155ced5c43bd6ef9ae497cd81ee7659858859c3ab17fe2998",
+    "EUR_PLN": "9574ab9b949d8b30262909306e869e9c6b03ce3d448b2a74879829090ea06caa",
+    "EUR_SEK": "78a732c412fe8288f3bf7a6217a1a79b4a52330c44ad1499b6368bfc9fa69ac1",
+    "EUR_USD": "69eb5ae48b2b2bf91a8f23608fdac24fe3f303699eee1403c511c52d25c263bc",
+    "EUR_ZAR": "4e5b1479ab19a4483881446977467c56c8215e95adab7aa1dae2e27766f94dd1",
+    "GBP_USD": "5a745800892dc3df1b43f9722652c9ebf65a82ea25fa63bd6fab907104da607e",
+    "NZD_USD": "9d71e931e8c71ed8c5a7129f7e57688cc966fd3c8a31c22d1a18a8aaed46f38e",
+    "USD_CAD": "515c131f1ef6a8193b6e4877edbbf5d8a1349c585d450786c48e7861f2786e22",
+    "USD_CHF": "3c8249eb8a2db2ab544d1b7b7cb11c7c996c3f3d2a48022ee695c9aa42e0b2c4",
+    "USD_CZK": "f673cb336b5d3b6f5d48e56668bc85134fbf63a0f901980c24ae2b08ea186bc0",
+    "USD_JPY": "5c86bf3f6fce167303d83ebe5dceeccfb127c6d4862ab45ee2832e32d81875d8"
+  },
+  "candidate_economics_authorized": false,
+  "candidates": {
+    "G10": {
+      "N": 10,
+      "benchmark_rule": "SEEDED_1000",
+      "benchmark_space": 4200,
+      "financing_event_count": 680,
+      "financing_event_identity_sha256": "db2dc95b93b2a2e1ad447f40d00789078276b36e4fa0524f1491c569cf58d32d",
+      "k": 3,
+      "required_input_missing_count": 0,
+      "routes": {
+        "AUD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "AUDUSD.pro",
+              1
+            ]
+          ]
+        },
+        "CAD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCAD.pro",
+              -1
+            ]
+          ]
+        },
+        "CHF": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCHF.pro",
+              -1
+            ]
+          ]
+        },
+        "EUR": {
+          "kind": "direct",
+          "legs": [
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "GBP": {
+          "kind": "direct",
+          "legs": [
+            [
+              "GBPUSD.pro",
+              1
+            ]
+          ]
+        },
+        "JPY": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDJPY.pro",
+              -1
+            ]
+          ]
+        },
+        "NOK": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURNOK.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "NZD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "NZDUSD.pro",
+              1
+            ]
+          ]
+        },
+        "SEK": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURSEK.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "USD": {
+          "kind": "numeraire",
+          "legs": []
+        }
+      },
+      "signal_membership_count": 157,
+      "signal_membership_sha256": "19b70fae4a7dcfe99a264ba4a0f91f1c0c73697923d1ee77bcce8c26c77b586d",
+      "venue_evidenced_held_pair_events": 3790
+    },
+    "U14_CONTROL": {
+      "N": 14,
+      "benchmark_rule": "SEEDED_1000",
+      "benchmark_space": 210210,
+      "financing_event_count": 680,
+      "financing_event_identity_sha256": "dee9486c48e213de3a9967de09f2b448f56735293317a784dd829ce671a24483",
+      "k": 4,
+      "required_input_missing_count": 0,
+      "routes": {
+        "AUD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "AUDUSD.pro",
+              1
+            ]
+          ]
+        },
+        "CAD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCAD.pro",
+              -1
+            ]
+          ]
+        },
+        "CHF": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCHF.pro",
+              -1
+            ]
+          ]
+        },
+        "CZK": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCZK.pro",
+              -1
+            ]
+          ]
+        },
+        "EUR": {
+          "kind": "direct",
+          "legs": [
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "GBP": {
+          "kind": "direct",
+          "legs": [
+            [
+              "GBPUSD.pro",
+              1
+            ]
+          ]
+        },
+        "HUF": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURHUF.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "JPY": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDJPY.pro",
+              -1
+            ]
+          ]
+        },
+        "NOK": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURNOK.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "NZD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "NZDUSD.pro",
+              1
+            ]
+          ]
+        },
+        "PLN": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURPLN.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "SEK": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURSEK.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "USD": {
+          "kind": "numeraire",
+          "legs": []
+        },
+        "ZAR": {
+          "kind": "via_EUR",
+          "legs": [
+            [
+              "EURZAR.pro",
+              -1
+            ],
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        }
+      },
+      "signal_membership_count": 157,
+      "signal_membership_sha256": "36ef09e6afb7b9fd323eb723bdb8781f723f8430f79fb98f6be43b72ec5fb36e",
+      "venue_evidenced_held_pair_events": 5211
+    },
+    "U8_LIQUID_MAJORS": {
+      "N": 8,
+      "benchmark_rule": "EXHAUSTIVE",
+      "benchmark_space": 420,
+      "financing_event_count": 680,
+      "financing_event_identity_sha256": "4a7a834ef0aaff1d5cf2175678e4ff4367ed265688261f4b6adad0778d6ac859",
+      "k": 2,
+      "required_input_missing_count": 0,
+      "routes": {
+        "AUD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "AUDUSD.pro",
+              1
+            ]
+          ]
+        },
+        "CAD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCAD.pro",
+              -1
+            ]
+          ]
+        },
+        "CHF": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDCHF.pro",
+              -1
+            ]
+          ]
+        },
+        "EUR": {
+          "kind": "direct",
+          "legs": [
+            [
+              "EURUSD.pro",
+              1
+            ]
+          ]
+        },
+        "GBP": {
+          "kind": "direct",
+          "legs": [
+            [
+              "GBPUSD.pro",
+              1
+            ]
+          ]
+        },
+        "JPY": {
+          "kind": "direct",
+          "legs": [
+            [
+              "USDJPY.pro",
+              -1
+            ]
+          ]
+        },
+        "NZD": {
+          "kind": "direct",
+          "legs": [
+            [
+              "NZDUSD.pro",
+              1
+            ]
+          ]
+        },
+        "USD": {
+          "kind": "numeraire",
+          "legs": []
+        }
+      },
+      "signal_membership_count": 157,
+      "signal_membership_sha256": "404bda364f3741168ff5e5a80124e7921b01f6f47426718c513a28f7d6a36419",
+      "venue_evidenced_held_pair_events": 2179
+    }
+  },
+  "network_accessed": false,
+  "performance_computed": false,
+  "preregistration_sha256": "e7579ac48f9051e6dc8b133b44522a2f3cdb5c01d52efb58e72fef7fbbe7614e",
+  "schema_version": 1,
+  "source_sha256": {
+    "bot/forex/family1_universe.py": "ef7b84b5ed9f2e22fad41e68b456d3d8272d28ba261536592eeb631c60dcf557",
+    "data/tms_swap_archive/derived/parsed_all.json": "b6cdd250c208b2ec614356d78999e36bd30881a407fed56a1b2a219894569c94",
+    "prereg/2026-08-14-tms-carry-no-try-direct-gbp-mask.json": "5b1b259d62c6adb7203d0c6dab2439be881e19404fff2a56685b29d6464bb005",
+    "prereg/2026-08-14-tms-carry-no-try-direct-gbp-price-readiness.json": "786aba0dc9db881cfe37d94b9b1f151ac84be9fec9005350917b402f91582dd5",
+    "prereg/2026-08-14-tms-carry-no-try-direct-gbp-universe.json": "461ac8f864b6e443db6c928ac0554084a2c74f2b685131fca4c7341eb1dbcfd0",
+    "prereg/2026-08-21-tms-carry-unlevered-family-1-universe-prereg.md": "e7579ac48f9051e6dc8b133b44522a2f3cdb5c01d52efb58e72fef7fbbe7614e",
+    "requirements.txt": "80590e0555abae9ec2ade90ce5c84f81e28569b36c1c4fddf62309f2acf61949",
+    "run_family1_universe.py": "ebda5102f205caf2e7c7dac116462b69928daa85bec73d8e038f2839bfe71ba4"
+  },
+  "status": "FAMILY1_READINESS_PASSED",
+  "transaction_count": 168,
+  "transaction_mapping_sha256": "3e088bec0996850abb030e68ec73912cca5b04100b1293b274efdc61099f8404",
+  "universe_artifact_sha256": "490c5c4b67d740f7a36a9b98daaf6c7c0cd8f350f106bc341ad9f91a069bce8c"
+}
