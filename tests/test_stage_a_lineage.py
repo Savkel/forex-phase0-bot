@@ -67,9 +67,9 @@ def test_metadata_preflight_reports_retained_economics_boundary_without_reenteri
     assert report["performance_computed"] is False
     assert report["execution_eligible"] is False
     assert report["lineage"]["economics_boundary"]=="ECONOMICS_STARTED"
-    assert report["lineage"]["next_attempt_id"]==3
+    assert report["lineage"]["next_attempt_id"]==4
     assert report["lineage"]["post_statistics_material_defect_count"]==1
-    assert report["lineage"]["corrected_economic_execution_used"] is False
+    assert report["lineage"]["corrected_economic_execution_used"] is True
 
 
 def test_authorization_requires_lineage_attempt_and_separate_counters():
