@@ -1,6 +1,13 @@
 # Unlevered Carry Development Family 1 — Universe Preregistration
 
 - **Status:** PREREGISTERED FAMILY-1 DESIGN; LOCKED ON COMMIT; NOT EXECUTION-AUTHORIZED.
+- **Pre-execution parity correction (2026-08-21):** after frozen prereg commit
+  `51e769e090a5365fdad7e1aef7dcc891bf35ac58`, the annualization denominator was found to
+  conflict with the authoritative Stage-A U14 post-hoc accounting. Before any G10/U8 economic
+  output, it is corrected from `365.2425` to `365.25` days per year so U14 accounting and CAGR
+  remain exactly comparable to the authoritative Stage-A descriptions.
+- **Correction scope:** no other scientific rule, candidate, threshold, metric, diagnostic,
+  benchmark, robustness rule, or execution/accounting mechanic is changed.
 - **Programme:** separate historical DEVELOPMENT optimization; not a reopening of Stage A.
 - **Control:** immutable closed Stage-A U14 result, disposition
   `STAGE_A_SURVIVES_KILL_TEST`.
@@ -185,7 +192,7 @@ For U14, G10, and U8, and separately for D360/D365, report at minimum:
 - every metric available by chronological block, plus full-period D360/D365 differences.
 
 Elapsed years equal actual first-to-last execution seconds divided by
-`365.2425 * 24 * 60 * 60`. CAGR is `(final_equity / initial_equity) ** (1/years) - 1`.
+`365.25 * 24 * 60 * 60`. CAGR is `(final_equity / initial_equity) ** (1/years) - 1`.
 Currency turnover is `sum_t sum_i abs(w[i,t] - w[i,t-1])`, including gap exits/re-entries and
 terminal liquidation; routed turnover uses absolute changes in execution-time USD-equivalent
 edge notionals. Annualized turnover is full-period turnover divided by elapsed years.
