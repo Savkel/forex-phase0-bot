@@ -77,6 +77,39 @@ def test_large_benchmark_spaces_reuse_stage_a_seeded_sampling():
     assert family1_benchmark_books(U14.currencies, 4) == benchmark_books(U14.currencies, 4, 1000, 20260809)
 
 
+def test_benchmark_cache_reuses_unique_books_without_changing_path_weighting(monkeypatch):
+    calls = []
+
+    def fake_evidence(inputs, book, *, columns, signals):
+        key = (tuple(book["longs"]), tuple(book["shorts"]))
+        calls.append(key)
+        value = float(len(calls))
+        return {str(denominator): {
+            "rap": value, "max_drawdown": -value, "total_return": value,
+            "adverse_total_return": value, "spread_x3_total_return": value,
+            "blocks": {block["block_id"]: {
+                "rap": value, "max_drawdown": -value, "total_return": value,
+            } for block in BLOCKS},
+        } for denominator in (360, 365)}
+
+    monkeypatch.setattr(family1_study, "_benchmark_book_evidence", fake_evidence)
+    first_book = {"longs": ("AUD", "CAD"), "shorts": ("CHF", "EUR")}
+    second_book = {"longs": ("AUD", "CHF"), "shorts": ("CAD", "EUR")}
+    cache = {}
+    first = family1_study._ensemble(
+        object(), [first_book, second_book, first_book], columns=(), signals=(), benchmark_cache=cache
+    )
+    second = family1_study._ensemble(
+        object(), [second_book], columns=(), signals=(), benchmark_cache=cache
+    )
+    assert calls == [
+        (("AUD", "CAD"), ("CHF", "EUR")),
+        (("AUD", "CHF"), ("CAD", "EUR")),
+    ]
+    assert first["path_count"] == 3 and first["distributions"]["360"]["rap"] == [1.0, 2.0, 1.0]
+    assert second["path_count"] == 1 and second["distributions"]["365"]["rap"] == [2.0]
+
+
 def test_loco_space_rule_and_full_latent_columns():
     g10 = loco_definitions(G10)
     u8 = loco_definitions(U8)

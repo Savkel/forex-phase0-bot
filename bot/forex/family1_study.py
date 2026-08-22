@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Mapping, MutableMapping, Sequence
 
 import numpy as np
 
@@ -230,26 +230,61 @@ def concentration_diagnostics(inputs: CandidateInputs, *, omitted: str | None = 
     return {"hhi_mean": float(np.mean(hhi)), "hhi_min": min(hhi), "hhi_max": max(hhi), "currencies": currencies}
 
 
+BenchmarkBookKey = tuple[tuple[str, ...], tuple[str, ...]]
+BenchmarkBookEvidence = dict[str, dict[str, object]]
+
+
+def _benchmark_book_key(book: Mapping[str, Sequence[str]]) -> BenchmarkBookKey:
+    return tuple(book["longs"]), tuple(book["shorts"])
+
+
+def _benchmark_book_evidence(
+    inputs: CandidateInputs, book: Mapping[str, Sequence[str]],
+    *, columns: Sequence[str], signals: Sequence[SignalStep],
+) -> BenchmarkBookEvidence:
+    scenarios = _scenario_paths(_static_steps(signals, columns, book), inputs.financing_events, inputs.routes)
+    evidence: BenchmarkBookEvidence = {}
+    for denominator in (360, 365):
+        base = scenarios["base"][denominator]
+        evidence[str(denominator)] = {
+            "rap": rap(base.period_returns),
+            "max_drawdown": max_drawdown_from_returns(base.period_returns),
+            "total_return": base.equities[-1] - 1,
+            "adverse_total_return": scenarios["adverse"][denominator].equities[-1] - 1,
+            "spread_x3_total_return": scenarios["spread_x3"][denominator].equities[-1] - 1,
+            "blocks": {
+                block["block_id"]: {key: block[key] for key in ("rap", "max_drawdown", "total_return")}
+                for block in path_block_diagnostics(base, signals)
+            },
+        }
+    return evidence
+
+
 def _ensemble(
     inputs: CandidateInputs, books: Sequence[Mapping[str, Sequence[str]]],
     *, columns: Sequence[str], signals: Sequence[SignalStep],
+    benchmark_cache: MutableMapping[BenchmarkBookKey, BenchmarkBookEvidence] | None = None,
 ) -> dict[str, object]:
+    cache: MutableMapping[BenchmarkBookKey, BenchmarkBookEvidence] = (
+        {} if benchmark_cache is None else benchmark_cache
+    )
     values = {str(d): {
         "rap": [], "max_drawdown": [], "total_return": [], "adverse_total_return": [],
         "spread_x3_total_return": [], "blocks": {block["block_id"]: {"rap": [], "max_drawdown": [], "total_return": []} for block in BLOCKS},
     } for d in (360, 365)}
     for book in books:
-        scenarios = _scenario_paths(_static_steps(signals, columns, book), inputs.financing_events, inputs.routes)
+        book_key = _benchmark_book_key(book)
+        evidence = cache.get(book_key)
+        if evidence is None:
+            evidence = _benchmark_book_evidence(inputs, book, columns=columns, signals=signals)
+            cache[book_key] = evidence
         for denominator in (360, 365):
-            base = scenarios["base"][denominator]
             target = values[str(denominator)]
-            target["rap"].append(rap(base.period_returns))
-            target["max_drawdown"].append(max_drawdown_from_returns(base.period_returns))
-            target["total_return"].append(base.equities[-1] - 1)
-            target["adverse_total_return"].append(scenarios["adverse"][denominator].equities[-1] - 1)
-            target["spread_x3_total_return"].append(scenarios["spread_x3"][denominator].equities[-1] - 1)
-            for block in path_block_diagnostics(base, signals):
-                cell = target["blocks"][block["block_id"]]
+            item = evidence[str(denominator)]
+            for metric in ("rap", "max_drawdown", "total_return", "adverse_total_return", "spread_x3_total_return"):
+                target[metric].append(item[metric])
+            for block_id, block in item["blocks"].items():
+                cell = target["blocks"][block_id]
                 for key in ("rap", "max_drawdown", "total_return"):
                     cell[key].append(block[key])
     medians = {}
@@ -265,7 +300,10 @@ def _ensemble(
     return {"path_count": len(books), "distributions": values, "medians": medians}
 
 
-def _loco_study(inputs: CandidateInputs) -> dict[str, object]:
+def _loco_study(
+    inputs: CandidateInputs,
+    benchmark_cache: MutableMapping[BenchmarkBookKey, BenchmarkBookEvidence],
+) -> dict[str, object]:
     result = {}
     for omitted in inputs.definition.currencies:
         active = tuple(c for c in inputs.definition.currencies if c != omitted)
@@ -273,7 +311,10 @@ def _loco_study(inputs: CandidateInputs) -> dict[str, object]:
         steps = _membership_steps(inputs.signal_steps, inputs.definition, omitted)
         scenarios = _scenario_paths(steps, inputs.financing_events, inputs.routes)
         books = family1_benchmark_books(active, k)
-        benchmark = _ensemble(inputs, books, columns=inputs.definition.currencies, signals=inputs.signal_steps)
+        benchmark = _ensemble(
+            inputs, books, columns=inputs.definition.currencies, signals=inputs.signal_steps,
+            benchmark_cache=benchmark_cache,
+        )
         result[omitted] = {
             "N": len(active), "k": k,
             "benchmark_books_sha256": _canonical_sha(books),
@@ -298,7 +339,11 @@ def candidate_study(inputs: CandidateInputs) -> dict[str, object]:
     steps = candidate_accounting_steps(inputs.signal_steps, inputs.definition)
     scenarios = _scenario_paths(steps, inputs.financing_events, inputs.routes)
     books = family1_benchmark_books(inputs.definition.currencies, inputs.definition.k)
-    benchmark = _ensemble(inputs, books, columns=inputs.definition.currencies, signals=inputs.signal_steps)
+    benchmark_cache: dict[BenchmarkBookKey, BenchmarkBookEvidence] = {}
+    benchmark = _ensemble(
+        inputs, books, columns=inputs.definition.currencies, signals=inputs.signal_steps,
+        benchmark_cache=benchmark_cache,
+    )
     ic_series = _candidate_ic(inputs.signal_steps, inputs.definition, inputs.routes)
     ic, _ = stationary_bootstrap_evidence(ic_series, lower_quantile=0.025)
     denominators = {}
@@ -335,7 +380,7 @@ def candidate_study(inputs: CandidateInputs) -> dict[str, object]:
             "adverse_total_return": denominators["365"]["adverse_total_return"] - denominators["360"]["adverse_total_return"],
             "spread_x3_total_return": denominators["365"]["spread_x3_total_return"] - denominators["360"]["spread_x3_total_return"],
         },
-        "loco": _loco_study(inputs),
+        "loco": _loco_study(inputs, benchmark_cache),
         "adjudication_policy": ADJUDICATION_POLICY,
         "candidate_disposition": "PENDING_EXTERNAL_ADJUDICATION",
     }
