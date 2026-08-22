@@ -1,0 +1,72 @@
+{
+  "N": 14,
+  "cache_sha256": {
+    "AUD_USD": "1935c5b9b2bfba36db871127507aa8783218f83c391d227b2935cd51909c667c",
+    "EUR_HUF": "fa0b094b2a51090983936e2188189577f4175533d657f0a849e0d53a7c35a099",
+    "EUR_NOK": "e0a0538837308bf155ced5c43bd6ef9ae497cd81ee7659858859c3ab17fe2998",
+    "EUR_PLN": "9574ab9b949d8b30262909306e869e9c6b03ce3d448b2a74879829090ea06caa",
+    "EUR_SEK": "78a732c412fe8288f3bf7a6217a1a79b4a52330c44ad1499b6368bfc9fa69ac1",
+    "EUR_USD": "69eb5ae48b2b2bf91a8f23608fdac24fe3f303699eee1403c511c52d25c263bc",
+    "EUR_ZAR": "4e5b1479ab19a4483881446977467c56c8215e95adab7aa1dae2e27766f94dd1",
+    "GBP_USD": "5a745800892dc3df1b43f9722652c9ebf65a82ea25fa63bd6fab907104da607e",
+    "NZD_USD": "9d71e931e8c71ed8c5a7129f7e57688cc966fd3c8a31c22d1a18a8aaed46f38e",
+    "USD_CAD": "515c131f1ef6a8193b6e4877edbbf5d8a1349c585d450786c48e7861f2786e22",
+    "USD_CHF": "3c8249eb8a2db2ab544d1b7b7cb11c7c996c3f3d2a48022ee695c9aa42e0b2c4",
+    "USD_CZK": "f673cb336b5d3b6f5d48e56668bc85134fbf63a0f901980c24ae2b08ea186bc0",
+    "USD_JPY": "5c86bf3f6fce167303d83ebe5dceeccfb127c6d4862ab45ee2832e32d81875d8"
+  },
+  "configuration_paths": {
+    "0": {
+      "economic_outputs_computed": false,
+      "membership_sha256": "36ef09e6afb7b9fd323eb723bdb8781f723f8430f79fb98f6be43b72ec5fb36e",
+      "rotation_state_sha256": "e54480c937be8e3ec3b8817f865fa8915f30dd4879442b6686885eb27b9596d4"
+    },
+    "1": {
+      "economic_outputs_computed": false,
+      "membership_sha256": "910ac92914351008dca1734fecaf3599b559f8069c09f5d5b0e0a3bd4fefcb01",
+      "rotation_state_sha256": "73c575a9535ffd3de9da0e924ea1cc14d3fa699758865ee82b2d3eeaff53c702"
+    },
+    "2": {
+      "economic_outputs_computed": false,
+      "membership_sha256": "0464f04f3a9154eadb47ed1026a3071f380a86f662d56f83422150aa6d4fa30a",
+      "rotation_state_sha256": "189da1e098fae7e38abc92aa906be1524cb309a7b801304db10025ef4e752c74"
+    },
+    "3": {
+      "economic_outputs_computed": false,
+      "membership_sha256": "898c7fa4f3926c2a6754d873be23734aa0744084b07792d740ffff2081c2d10a",
+      "rotation_state_sha256": "b28c2e12f25beec75eab581f065a7d6c8b0a7b53e1524dbee300589691b214dc"
+    }
+  },
+  "currency_gross": 2,
+  "family1_parity_sha256": "526b0e6e12b978c2d1fcad0b176e92765b09c77d9a4cc6cb56de6921dab31707",
+  "family1_parity_status": "U14_PARITY_PASSED",
+  "family1_result_sha256": "ec0d85614928d6a1357c575ddfe0421d1499b24cbb005b985790d092934bbb1f",
+  "financing_event_count": 680,
+  "financing_event_sha256": "37e0f8d638dd063d15d11e1da10e1336d67586afe95f2f791099f71c45837024",
+  "h_values": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "k": 4,
+  "network_accessed": false,
+  "nonzero_h_economics_authorized": false,
+  "performance_computed": false,
+  "preregistration_sha256": "d839767097b8b2d6a5043ae7e8e0c92c2255404f72814daa8a26627404b934e1",
+  "schema_version": 1,
+  "signal_step_count": 168,
+  "source_sha256": {
+    "bot/forex/family1_study.py": "2ca3cedf17481c63af9b0027f726d3ca8b639b94e87559e51757c5e8fafb01a9",
+    "bot/forex/family1_universe.py": "d98a441d476248596d1444c3d6bdd1a6dc5978e8f03b32c65a903d2895c1b6ff",
+    "bot/forex/family2_hysteresis.py": "2b266f723f571fe875f5a816a5be97485d0aa3491bc4f7ecaacc9f96a81dd6c7",
+    "bot/forex/stage_a_carry.py": "d98e2fbbd33c2495fd1c75a90bf19d0e64dffc8df29784d6b7ae4ffbce2a4e65",
+    "prereg/2026-08-21-tms-carry-unlevered-family-1-u14-parity.json": "526b0e6e12b978c2d1fcad0b176e92765b09c77d9a4cc6cb56de6921dab31707",
+    "prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-prereg.md": "d839767097b8b2d6a5043ae7e8e0c92c2255404f72814daa8a26627404b934e1",
+    "reports/forex/family1/family1-universe-result.json": "ec0d85614928d6a1357c575ddfe0421d1499b24cbb005b985790d092934bbb1f",
+    "run_family2_hysteresis.py": "dd023ee360775a3fa0e09d02c09df37268989c682546ab44b6ec24a491c63cca"
+  },
+  "status": "FAMILY2_READINESS_PASSED",
+  "u14_control_benchmark_sha256": "5702cf09437e2918171e8a40d25253df59fa08589a073dd49d68a56a6b45a546",
+  "u14_ic_sha256": "b524a81ee544505c7a317ab232feb9b609db5f81a5e922b63fd0c6a880c41abd"
+}
