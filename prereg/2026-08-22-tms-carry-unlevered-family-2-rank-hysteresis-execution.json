@@ -1,0 +1,14 @@
+{
+  "configuration_ids": [
+    "H1",
+    "H2",
+    "H3"
+  ],
+  "consumption_count": 1,
+  "h0_parity_sha256": "0ced81728ed3678877b63cd8008f05a8436802aba072c35f50c0456863669641",
+  "network_accessed": false,
+  "preregistration_sha256": "d839767097b8b2d6a5043ae7e8e0c92c2255404f72814daa8a26627404b934e1",
+  "readiness_artifact_sha256": "68c45ee6f162d84a033ce25aeea2de02a8187f484d4f2faf34a495055427e4a7",
+  "schema_version": 1,
+  "status": "ECONOMICS_STARTED"
+}
