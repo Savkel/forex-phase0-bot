@@ -16,6 +16,8 @@ Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from 
 - Closed Stage-A specification: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md`
 - Closed Family-1 specification: `prereg/2026-08-21-tms-carry-unlevered-family-1-universe-prereg.md`
 - Authoritative Family-1 closure: `FAMILY1_UNIVERSE_FINAL_RESULTS.md`
+- Closed Family-2 specification: `prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-prereg.md`
+- Authoritative Family-2 closure: `FAMILY2_RANK_HYSTERESIS_FINAL_RESULTS.md`
 - Agent entrypoint: `AGENTS.md`
 
 Precedence: constitution; committed preregistration/artifacts; verified Git/code/artifact state; this handoff; tool-specific memories; local `CODEX_HANDOFF.md` migration snapshot. Material conflicts are never silently reconciled.
@@ -31,6 +33,8 @@ Precedence: constitution; committed preregistration/artifacts; verified Git/code
 Direct OANDA TMS `.pro` cross-sectional carry Stage A is CLOSED with valid frozen disposition `STAGE_A_SURVIVES_KILL_TEST`. Attempt 3 was the single valid auditable execution; structural adjudication established that the 3,600-second Codex supervisory timeout did not terminate it. This is robust historical DEVELOPMENT evidence, not prospective OOS and not trading permission. Authoritative closure: `STAGE_A_CARRY_FINAL_RESULTS.md`.
 
 Family 1 of the separate unlevered historical DEVELOPMENT optimization programme is CLOSED. External adjudication retains U14 (`N=14,k=4`) for next research. G10 (`N=10,k=3`) and U8 (`N=8,k=2`) remain valid DEVELOPMENT results but are not selected. Liquidity restriction reduced spread cost and routed turnover but worsened CAGR, RAP, and positive-return Calmar versus U14; U8 also weakened drawdown, IC, and robustness evidence. All results remain immutable and preserved.
+
+Family 2 is CLOSED. External adjudication selects rank-hysteresis `H2` (`h=2`) as the historical DEVELOPMENT configuration for subsequent optimization. H0/H1/H2/H3 remain valid and immutable; H1 and H3 are not selected. Versus H0, H2 improved CAGR, RAP, Calmar, MaxDD, turnover/costs, stresses, and LOCO tails under both D360/D365. B2 remained negative and stays documented. Diagnostic thresholds were not automatic gates. H2 does not replace the original frozen Stage-A/H0 strategy for prospective Stage B.
 
 ## ACTIVE LOCKED SPEC
 
@@ -50,9 +54,17 @@ Family-1 immutable evidence:
 - Result: `reports/forex/family1/family1-universe-result.json`, SHA-256 `ec0d85614928d6a1357c575ddfe0421d1499b24cbb005b985790d092934bbb1f`.
 - Completion: `reports/forex/family1/family1-universe-completion.json`, SHA-256 `558003ddfee8a9e58e5b61115bab70d242b4991fc685bf5078ed23866a0d2867`.
 
+Family-2 immutable evidence:
+
+- Execution: `prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-execution.json`, SHA-256 `705e6ab6b3863a726dad77d2665a10f0c0c6e6e76308feb738f3879426a36f2d`.
+- Result: `reports/forex/family2/family2-rank-hysteresis-result.json`, SHA-256 `04c7d5bf34fef2b8a80dccf9e1cce2543bb1a49f32482e745526311bc754247c`.
+- Completion: `reports/forex/family2/family2-rank-hysteresis-completion.json`, SHA-256 `3f23c7a02bcfb5f003f0882d25fabe739e3c5f5f0b48c1091f530d000154abb0`.
+- Readiness: SHA-256 `68c45ee6f162d84a033ce25aeea2de02a8187f484d4f2faf34a495055427e4a7`.
+- H0 parity: SHA-256 `0ced81728ed3678877b63cd8008f05a8436802aba072c35f50c0456863669641`.
+
 ## CERTIFIED INFRASTRUCTURE
 
-TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Family-1 infrastructure passed 18 focused, 114 Stage-A boundary, and 615 full-suite tests before economics.
+TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Family-1 infrastructure passed 18 focused, 114 Stage-A boundary, and 615 full-suite tests before economics. The output-equivalent benchmark-cache optimization is pushed at `eed98da5373c9752f08a875a45af2cb39174d039`. Family-2 infrastructure passed 10 focused, 110 relevant boundary, and 626 full-suite tests; H0 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`.
 
 ## DATA STATE
 
@@ -66,11 +78,11 @@ Financing readiness is certified under the venue-evidenced held-leg model: evide
 
 Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Valid operational Attempt 3 used freeze `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`; result SHA-256 `39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8`. All G1-G5 requirements passed under the frozen rules. Absolute post-hoc baseline performance was modest at approximately 2.3% CAGR. Stage A is closed; no tuning, rerun, or trading permission follows.
 
-Family-1 closure is committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. At verification immediately before this handoff update, local `main`, local `origin/main`, and real remote `main` all matched that commit with ahead/behind `0/0`; only expected untracked `CODEX_HANDOFF.md` and `review.txt` remained. Stage A and all Family-1 code, specifications, and results are unchanged.
+Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. Family-2 closure is committed and pushed at `53521229316bf18eef951452c3fca6fb46dcd96b`. At verification immediately before this handoff update, local `main`, local `origin/main`, and real remote `main` all matched the Family-2 closure commit with ahead/behind `0/0`; only expected untracked `CODEX_HANDOFF.md` and `review.txt` remained. Stage A remains immutable and closed.
 
 ## NEXT GATE
 
-`PERFORMANCE_OPTIMIZATION_BEFORE_FAMILY2`
+`FAMILY3_CARRY_STRENGTH_WEIGHTING_DESIGN`
 
 Any new optimization family requires a separate preregistered gate. Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched.
 
