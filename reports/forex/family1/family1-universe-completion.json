@@ -1,0 +1,11 @@
+{
+  "candidate_ids": [
+    "G10",
+    "U8_LIQUID_MAJORS"
+  ],
+  "execution_artifact_sha256": "6025492cb2b8ba79af02ab614e128a4ba850953b337f91b89ff6f18f0c4c0a0e",
+  "network_accessed": false,
+  "result_artifact_sha256": "ec0d85614928d6a1357c575ddfe0421d1499b24cbb005b985790d092934bbb1f",
+  "schema_version": 1,
+  "status": "ECONOMICS_COMPLETED_PENDING_EXTERNAL_ADJUDICATION"
+}

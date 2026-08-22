@@ -1,0 +1,19 @@
+{
+  "candidate_ids": [
+    "G10",
+    "U8_LIQUID_MAJORS"
+  ],
+  "consumption_count": 1,
+  "integrity": {
+    "performance_computed": false,
+    "readiness_sha256": "cc7c923c80857cb826673a404ea921a18e7296529ed20cd86f616a27734a723e",
+    "status": "FAMILY1_ARTIFACT_INTEGRITY_PASSED",
+    "universe_sha256": "171a54e0d45c031d32cbf519f3a01da09ab660fd585adc270b775e518e2c576d"
+  },
+  "network_accessed": false,
+  "parity_artifact_sha256": "526b0e6e12b978c2d1fcad0b176e92765b09c77d9a4cc6cb56de6921dab31707",
+  "preregistration_sha256": "e7579ac48f9051e6dc8b133b44522a2f3cdb5c01d52efb58e72fef7fbbe7614e",
+  "readiness_artifact_sha256": "cc7c923c80857cb826673a404ea921a18e7296529ed20cd86f616a27734a723e",
+  "schema_version": 1,
+  "status": "ECONOMICS_STARTED"
+}
