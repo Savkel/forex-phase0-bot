@@ -13,8 +13,9 @@ Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from 
 ## GOVERNANCE
 
 - Permanent constitution: `CLAUDE.md`
-- Active specification: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md`
-- Emitted locked artifacts: the universe, mask, and price-readiness JSON files named below.
+- Closed Stage-A specification: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md`
+- Closed Family-1 specification: `prereg/2026-08-21-tms-carry-unlevered-family-1-universe-prereg.md`
+- Authoritative Family-1 closure: `FAMILY1_UNIVERSE_FINAL_RESULTS.md`
 - Agent entrypoint: `AGENTS.md`
 
 Precedence: constitution; committed preregistration/artifacts; verified Git/code/artifact state; this handoff; tool-specific memories; local `CODEX_HANDOFF.md` migration snapshot. Material conflicts are never silently reconciled.
@@ -29,6 +30,8 @@ Precedence: constitution; committed preregistration/artifacts; verified Git/code
 
 Direct OANDA TMS `.pro` cross-sectional carry Stage A is CLOSED with valid frozen disposition `STAGE_A_SURVIVES_KILL_TEST`. Attempt 3 was the single valid auditable execution; structural adjudication established that the 3,600-second Codex supervisory timeout did not terminate it. This is robust historical DEVELOPMENT evidence, not prospective OOS and not trading permission. Authoritative closure: `STAGE_A_CARRY_FINAL_RESULTS.md`.
 
+Family 1 of the separate unlevered historical DEVELOPMENT optimization programme is CLOSED. External adjudication retains U14 (`N=14,k=4`) for next research. G10 (`N=10,k=3`) and U8 (`N=8,k=2`) remain valid DEVELOPMENT results but are not selected. Liquidity restriction reduced spread cost and routed turnover but worsened CAGR, RAP, and positive-return Calmar versus U14; U8 also weakened drawdown, IC, and robustness evidence. All results remain immutable and preserved.
+
 ## ACTIVE LOCKED SPEC
 
 - Prior preregistrations: original `2026-08-08` and no-TRY EUR_GBP-execution commit/spec `2c81d140` — both `SUPERSEDED_UNEXECUTED`; neither produced a performance result.
@@ -41,9 +44,15 @@ Direct OANDA TMS `.pro` cross-sectional carry Stage A is CLOSED with valid froze
 
 Frozen revised essentials: certified source remains intact; active grid excludes TRY and has 35 financing pairs, 14 currencies, `k=4`, and 13 cost-blind routed price legs. GBP routes directly and exclusively through `GBP_USD`; `EUR_GBP` remains financing evidence but is not an execution leg. The causal mask remains 167 defined/157 evaluable rebalances; common OANDA v20 practice H1 bid/ask timestamps and candle OPEN semantics are unchanged. Historical execution remains explicitly hybrid: TMS `.pro` financing with v20 practice prices.
 
+Family-1 immutable evidence:
+
+- Execution: `prereg/2026-08-21-tms-carry-unlevered-family-1-execution.json`, SHA-256 `6025492cb2b8ba79af02ab614e128a4ba850953b337f91b89ff6f18f0c4c0a0e`.
+- Result: `reports/forex/family1/family1-universe-result.json`, SHA-256 `ec0d85614928d6a1357c575ddfe0421d1499b24cbb005b985790d092934bbb1f`.
+- Completion: `reports/forex/family1/family1-universe-completion.json`, SHA-256 `558003ddfee8a9e58e5b61115bab70d242b4991fc685bf5078ed23866a0d2867`.
+
 ## CERTIFIED INFRASTRUCTURE
 
-TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Latest full-suite verification at this frozen baseline: 597 passed on 2026-08-14.
+TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Family-1 infrastructure passed 18 focused, 114 Stage-A boundary, and 615 full-suite tests before economics.
 
 ## DATA STATE
 
@@ -57,9 +66,13 @@ Financing readiness is certified under the venue-evidenced held-leg model: evide
 
 Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Valid operational Attempt 3 used freeze `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`; result SHA-256 `39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8`. All G1-G5 requirements passed under the frozen rules. Absolute post-hoc baseline performance was modest at approximately 2.3% CAGR. Stage A is closed; no tuning, rerun, or trading permission follows.
 
+Family-1 closure is committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. At verification immediately before this handoff update, local `main`, local `origin/main`, and real remote `main` all matched that commit with ahead/behind `0/0`; only expected untracked `CODEX_HANDOFF.md` and `review.txt` remained. Stage A and all Family-1 code, specifications, and results are unchanged.
+
 ## NEXT GATE
 
-Prospective Stage B is the proper untouched validation path. Any improvement research must be a separate preregistered development phase, initially unlevered and preserving the current baseline risk scale.
+`PERFORMANCE_OPTIMIZATION_BEFORE_FAMILY2`
+
+Any new optimization family requires a separate preregistered gate. Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched.
 
 ## MEMORY SYNCHRONIZATION
 
