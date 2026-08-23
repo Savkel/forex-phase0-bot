@@ -1,0 +1,13 @@
+{
+  "configuration_ids": [
+    "CS_MILD",
+    "CS_STRONG"
+  ],
+  "consumption_count": 1,
+  "eq_h2_parity_sha256": "6060e8aa81c2b17a12536abe46028159076fba959dac069fb636841c131a91e0",
+  "network_accessed": false,
+  "preregistration_sha256": "c10865f67be71b411f2ffb613fe0d4273e11e901ebaeeaf834e8d585e4505322",
+  "readiness_artifact_sha256": "9afc7f1140e48a3ff2f7ce5f181f56138c4e753f2a396a0d1ddc302c12b88890",
+  "schema_version": 1,
+  "status": "ECONOMICS_STARTED"
+}
