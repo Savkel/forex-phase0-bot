@@ -18,6 +18,8 @@ Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from 
 - Authoritative Family-1 closure: `FAMILY1_UNIVERSE_FINAL_RESULTS.md`
 - Closed Family-2 specification: `prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-prereg.md`
 - Authoritative Family-2 closure: `FAMILY2_RANK_HYSTERESIS_FINAL_RESULTS.md`
+- Closed Family-3 specification: `prereg/2026-08-22-tms-carry-unlevered-family-3-carry-strength-weighting-prereg.md`
+- Authoritative Family-3 closure: `FAMILY3_CARRY_STRENGTH_WEIGHTING_FINAL_RESULTS.md`
 - Agent entrypoint: `AGENTS.md`
 
 Precedence: constitution; committed preregistration/artifacts; verified Git/code/artifact state; this handoff; tool-specific memories; local `CODEX_HANDOFF.md` migration snapshot. Material conflicts are never silently reconciled.
@@ -35,6 +37,8 @@ Direct OANDA TMS `.pro` cross-sectional carry Stage A is CLOSED with valid froze
 Family 1 of the separate unlevered historical DEVELOPMENT optimization programme is CLOSED. External adjudication retains U14 (`N=14,k=4`) for next research. G10 (`N=10,k=3`) and U8 (`N=8,k=2`) remain valid DEVELOPMENT results but are not selected. Liquidity restriction reduced spread cost and routed turnover but worsened CAGR, RAP, and positive-return Calmar versus U14; U8 also weakened drawdown, IC, and robustness evidence. All results remain immutable and preserved.
 
 Family 2 is CLOSED. External adjudication selects rank-hysteresis `H2` (`h=2`) as the historical DEVELOPMENT configuration for subsequent optimization. H0/H1/H2/H3 remain valid and immutable; H1 and H3 are not selected. Versus H0, H2 improved CAGR, RAP, Calmar, MaxDD, turnover/costs, stresses, and LOCO tails under both D360/D365. B2 remained negative and stays documented. Diagnostic thresholds were not automatic gates. H2 does not replace the original frozen Stage-A/H0 strategy for prospective Stage B.
+
+Family 3 is CLOSED. External adjudication retains equal-weight `EQ_H2` (`tau=0`) as the historical DEVELOPMENT configuration. `CS_MILD` (`tau=0.10`) and `CS_STRONG` (`tau=0.20`) remain valid and immutable but are not selected. Stronger carry weighting increased financing but worsened net CAGR, RAP, Calmar, MaxDD, stress performance, turnover/costs, and concentration; B2 remained negative and worsened with larger `tau`. No automatic gate selected or rejected candidates. `EQ_H2` does not replace the original frozen Stage-A/H0 strategy for prospective Stage B.
 
 ## ACTIVE LOCKED SPEC
 
@@ -62,9 +66,18 @@ Family-2 immutable evidence:
 - Readiness: SHA-256 `68c45ee6f162d84a033ce25aeea2de02a8187f484d4f2faf34a495055427e4a7`.
 - H0 parity: SHA-256 `0ced81728ed3678877b63cd8008f05a8436802aba072c35f50c0456863669641`.
 
+Family-3 immutable evidence:
+
+- Execution: `prereg/2026-08-22-tms-carry-unlevered-family-3-carry-strength-weighting-execution.json`, SHA-256 `3e231b9f94bdf5b8c8328b7d5af0a5115224c24829f5a8c4a95acc1cb72bd490`.
+- Result: `reports/forex/family3/family3-carry-strength-weighting-result.json`, SHA-256 `88f00d40db42b568952c9866973d94e44ce7df481ddb0b8bdfe901a5419e86ac`.
+- Completion: `reports/forex/family3/family3-carry-strength-weighting-completion.json`, SHA-256 `922eb763a35abfbee2973b253e17cff42433578168ca051871fcca326f45f17a`.
+- Readiness: SHA-256 `9afc7f1140e48a3ff2f7ce5f181f56138c4e753f2a396a0d1ddc302c12b88890`.
+- EQ_H2 parity: SHA-256 `6060e8aa81c2b17a12536abe46028159076fba959dac069fb636841c131a91e0`.
+- Execution provenance: one user-run frozen one-shot command completed; Codex did not run Family-3 candidate economics; no network access occurred.
+
 ## CERTIFIED INFRASTRUCTURE
 
-TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Family-1 infrastructure passed 18 focused, 114 Stage-A boundary, and 615 full-suite tests before economics. The output-equivalent benchmark-cache optimization is pushed at `eed98da5373c9752f08a875a45af2cb39174d039`. Family-2 infrastructure passed 10 focused, 110 relevant boundary, and 626 full-suite tests; H0 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`.
+TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Family-1 infrastructure passed 18 focused, 114 Stage-A boundary, and 615 full-suite tests before economics. The output-equivalent benchmark-cache optimization is pushed at `eed98da5373c9752f08a875a45af2cb39174d039`. Family-2 infrastructure passed 10 focused, 110 relevant boundary, and 626 full-suite tests; H0 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`. Family-3 infrastructure passed 16 focused/relevant and 632 full-suite tests; EQ_H2 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`, with IC alone hash-reused.
 
 ## DATA STATE
 
@@ -78,11 +91,11 @@ Financing readiness is certified under the venue-evidenced held-leg model: evide
 
 Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Valid operational Attempt 3 used freeze `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`; result SHA-256 `39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8`. All G1-G5 requirements passed under the frozen rules. Absolute post-hoc baseline performance was modest at approximately 2.3% CAGR. Stage A is closed; no tuning, rerun, or trading permission follows.
 
-Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. Family-2 closure is committed and pushed at `53521229316bf18eef951452c3fca6fb46dcd96b`. At verification immediately before this handoff update, local `main`, local `origin/main`, and real remote `main` all matched the Family-2 closure commit with ahead/behind `0/0`; only expected untracked `CODEX_HANDOFF.md` and `review.txt` remained. Stage A remains immutable and closed.
+Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. Family-2 closure remains committed and pushed at `53521229316bf18eef951452c3fca6fb46dcd96b`. Family-3 closure is committed and pushed at `103aadb268cf732c588b89b68c766402c315d691`. At verification immediately before this handoff update, local `main` and `origin/main` matched the Family-3 closure commit with ahead/behind `0/0`; only expected untracked `CODEX_HANDOFF.md` and `review.txt` remained. Stage A remains immutable and closed.
 
 ## NEXT GATE
 
-`FAMILY3_CARRY_STRENGTH_WEIGHTING_DESIGN`
+`FAMILY4_CONTROLLED_PARAMETER_DESIGN`
 
 Any new optimization family requires a separate preregistered gate. Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched.
 
