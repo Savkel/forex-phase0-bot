@@ -1,0 +1,13 @@
+{
+  "configuration_ids": [
+    "M2",
+    "M4"
+  ],
+  "consumption_count": 1,
+  "m1_parity_sha256": "a7528e78462dd48ea3f6124c161d5882c521b501e6a7d3a43628f22963c5ebfa",
+  "network_accessed": false,
+  "preregistration_sha256": "33f8a7cc9c5196c98d5e2d9f24791ab183ea82cc32be5eb1e559c08c79f9258a",
+  "readiness_artifact_sha256": "d292d6355ad27b23b515b72d8704b03b337582b5b2adf8a40b66e6bca5700e25",
+  "schema_version": 1,
+  "status": "ECONOMICS_STARTED"
+}
