@@ -1,0 +1,70 @@
+{
+    "schema_version":  1,
+    "recorded_utc":  "2026-09-21T13:01:35.0065291Z",
+    "gate":  "FAMILY5_ENOSPC_OPERATIONAL_RECOVERY",
+    "authorization_basis":  "Explicit user operational recovery authorization: prior incomplete ENOSPC attempt is not a consumed scientific one-shot result; remove only its verified incomplete archive and permit one identical manual retry.",
+    "prior_attempt":  {
+                          "attempt_id":  1,
+                          "disposition":  "INCOMPLETE_OPERATIONAL_FAILURE_ENOSPC",
+                          "error":  "OSError [Errno 28] No space left on device (user-reported)",
+                          "finalized_scientific_result":  false,
+                          "original_marker_path":  "prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-execution.json",
+                          "preserved_marker_path":  "prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-execution-attempt-1-enospc.json",
+                          "marker_sha256":  "eb7cdf5c484e6b235d3e88c688d6efb40d3245c73357a345fe0f5c4f56708600",
+                          "marker_original_contents":  {
+                                                           "authorization_sha256":  "7155e6c7d7c47b57b60483dad3e9b25a9a684f11b6d26573fd2c7d134569acd4",
+                                                           "candidate_ids":  [
+                                                                                 "K3",
+                                                                                 "K5"
+                                                                             ],
+                                                           "consumption_count":  1,
+                                                           "control_sha256":  "e1518d90d3e78d52c53ee125181aa25ffa779637c3605b75b6030bd64a768137",
+                                                           "parity_sha256":  "eafe337788f6f67ed08a77abd95e335c57243fbb2ee98ab8ebb49c9b504e7a9b",
+                                                           "preregistration_sha256":  "af832109ca374fde71ab70a4f984e9fee0f996c09a6ecb0e64ddcab6fe947eb7",
+                                                           "readiness_sha256":  "b24d796cb889d771d2be4540e55d68cbadfafaa62e6a792d39b20900f0da61e0",
+                                                           "status":  "ECONOMICS_STARTED"
+                                                       },
+                          "progress":  {
+                                           "k3":  "Computation completed for FULL and all 14 LOCO cases; 89420 archive records; no finalized result persisted.",
+                                           "k5":  "FULL and AUD LOCO complete; CAD LOCO persisted through zero-based benchmark index 686 including spread_x3 D365; subsequent work unconfirmed.",
+                                           "complete_archive_records":  105460,
+                                           "archive_tail":  "Damaged/incomplete; gzip end-of-stream absent."
+                                       },
+                          "archive":  {
+                                          "path":  "reports/forex/family5/family5-candidate-paths.jsonl.gz",
+                                          "bytes":  8471757436,
+                                          "sha256":  "1e6f938b8f198dcc892cefd77cbe4fdddc420f54c81ae8307e06f4fdaba1c10f",
+                                          "created_utc":  "2026-09-21T09:21:07.1008239Z",
+                                          "modified_utc":  "2026-09-21T12:20:06.1802881Z",
+                                          "disposition":  "Authorized deletion after identity verification; operational partial output not required as retained scientific evidence under this external adjudication."
+                                      }
+                      },
+    "authorized_retry":  {
+                             "attempt_id":  2,
+                             "retry_of_attempt_id":  1,
+                             "status":  "AUTHORIZED_PENDING_MANUAL_EXECUTION",
+                             "maximum_new_execution_attempts":  1,
+                             "command":  "python -B run_family5_breadth.py execute-candidates",
+                             "candidate_order":  [
+                                                     "K3",
+                                                     "K5"
+                                                 ],
+                             "execution_mode":  "Clean execution from start; no partial-result reuse or resume.",
+                             "scientific_semantics":  "Identical frozen code, inputs, benchmark books/seeds, timing, financing, costs, robustness and candidate order; no tuning.",
+                             "original_authorization_sha256":  "7155e6c7d7c47b57b60483dad3e9b25a9a684f11b6d26573fd2c7d134569acd4",
+                             "freeze_commit":  "f41f8524c30cd45ae48000127d2452baca1795af",
+                             "implementation_checkpoint":  "2c64264ea9d7618c258bc81c69b5fbe3c63e0e5b",
+                             "repository_head":  "69e78605dddf45a1bf23a514393d71fb6c825c12",
+                             "k4_path_archive_sha256":  "92a3178b9a2196539edbecd3916c4e02dd976a73a4c1b060dd44d557fd4fa430",
+                             "active_marker_path":  "prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-execution.json",
+                             "active_marker_policy":  "Existing frozen CLI creates consumption_count=1 exclusively; marker/result/completion/archive existence guards remain unchanged. No further retry authorized.",
+                             "result_disposition":  "PENDING_EXTERNAL_ADJUDICATION",
+                             "minimum_free_bytes":  20000000000,
+                             "estimated_complete_candidate_archive_bytes":  15900000000,
+                             "free_bytes_before_cleanup":  12782280704,
+                             "no_stage_b_access":  true,
+                             "no_network_or_data_fetch":  true,
+                             "economics_executed_during_preparation":  false,
+                             "code_changed":  false
+                         }
+}
