@@ -4,9 +4,9 @@
 
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
-- Last state verification: 2026-08-14, before this handoff update.
-- Project-state commit observed before the handoff update: `d4159b60e6466825a95cfe2af455c0a2bc54fa05`.
-- Push status observed then: local `main` was 32 ahead / 0 behind `origin/main`; commits were unpushed.
+- Last state verification: 2026-09-21, before the Family-5 closure/handoff commit.
+- Project-state commit observed before this handoff update: `7f07e54ad21aed9aadcdbd9b47e8f7bbfdbfdbe4`.
+- Push status observed then: local `main` == `origin/main`; ahead/behind `0/0`, pushed.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -22,6 +22,9 @@ Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from 
 - Authoritative Family-3 closure: `FAMILY3_CARRY_STRENGTH_WEIGHTING_FINAL_RESULTS.md`
 - Closed Family-4 specification: `prereg/2026-09-19-tms-carry-unlevered-family-4-rebalance-cadence-prereg.md`
 - Authoritative Family-4 closure: `FAMILY4_REBALANCE_CADENCE_FINAL_RESULTS.md`
+- Closed Family-5 specification: `prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-prereg.md`
+- Authoritative Family-5 closure: `FAMILY5_PORTFOLIO_BREADTH_FINAL_RESULTS.md`
+- Family-5 operational recovery authority: `prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-operational-recovery-authorization.json`
 - Agent entrypoint: `AGENTS.md`
 
 Precedence: constitution; committed preregistration/artifacts; verified Git/code/artifact state; this handoff; tool-specific memories; local `CODEX_HANDOFF.md` migration snapshot. Material conflicts are never silently reconciled.
@@ -43,6 +46,8 @@ Family 2 is CLOSED. External adjudication selects rank-hysteresis `H2` (`h=2`) a
 Family 3 is CLOSED. External adjudication retains equal-weight `EQ_H2` (`tau=0`) as the historical DEVELOPMENT configuration. `CS_MILD` (`tau=0.10`) and `CS_STRONG` (`tau=0.20`) remain valid and immutable but are not selected. Stronger carry weighting increased financing but worsened net CAGR, RAP, Calmar, MaxDD, stress performance, turnover/costs, and concentration; B2 remained negative and worsened with larger `tau`. No automatic gate selected or rejected candidates. `EQ_H2` does not replace the original frozen Stage-A/H0 strategy for prospective Stage B.
 
 Family 4 is CLOSED. External adjudication retains `M1_CONTROL` (weekly cadence) as the historical DEVELOPMENT configuration. M2 and M4 remain valid and immutable but are not selected. Slower cadence reduced trade count and M4 reduced spread/routed turnover, but both worsened CAGR, RAP, Calmar, MaxDD, stresses, spot P&L, and B2; financing remained broadly stable and LOCO benchmark-relative RAP stayed positive in 14/14 cases under both denominators. No automatic gate selected or rejected candidates. The original frozen Stage-A/H0 prospective Stage B remains isolated.
+
+Family 5 is CLOSED. External adjudication retains `K4_CONTROL` (`k=4`) for DEVELOPMENT. K3 and K5 remain valid immutable results but are not selected. DEVELOPMENT remains **U14 + H2 (h=2) + EQ + M1 weekly cadence + k=4**, long +1/short -1, currency gross 2. K3 worsened drawdown, B2 and stress tails; K5 improved drawdown/concentration/costs and matched RAP excess but reduced CAGR, raw RAP, financing and full-sample stress returns versus K4. B2 remains negative for all candidates; negative LOCO stress evidence is preserved. This is an external decision, not an automatic winner/rejection gate. The original frozen Stage-A U14/k4/H0 strategy and prospective Stage B remain unchanged and isolated.
 
 ## ACTIVE LOCKED SPEC
 
@@ -88,9 +93,31 @@ Family-4 immutable evidence:
 - M1 parity: SHA-256 `a7528e78462dd48ea3f6124c161d5882c521b501e6a7d3a43628f22963c5ebfa`.
 - Execution provenance: one user-run frozen one-shot command completed; Codex did not run M2/M4 economics; no network access occurred.
 
+Family-5 immutable evidence:
+
+- Closure: `FAMILY5_PORTFOLIO_BREADTH_FINAL_RESULTS.md` (complete artifact ledger, results and negative evidence).
+- Prereg freeze: `f41f8524c30cd45ae48000127d2452baca1795af`; infrastructure: `2c64264ea9d7618c258bc81c69b5fbe3c63e0e5b`; original authorization: `69e78605dddf45a1bf23a514393d71fb6c825c12`; operational recovery authorization: `7f07e54ad21aed9aadcdbd9b47e8f7bbfdbfdbe4`.
+- `prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-readiness.json`, SHA-256 `b24d796cb889d771d2be4540e55d68cbadfafaa62e6a792d39b20900f0da61e0`.
+- `prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-k4-parity.json`, SHA-256 `eafe337788f6f67ed08a77abd95e335c57243fbb2ee98ab8ebb49c9b504e7a9b`.
+- `prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-operational-recovery-authorization.json`, SHA-256 `91f9c5d73065e63eebc3e9fdbeccc0b4fcc77b55383f564b2da926efd7290fee`.
+- `prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-execution.json`, SHA-256 `eb7cdf5c484e6b235d3e88c688d6efb40d3245c73357a345fe0f5c4f56708600`.
+- `reports/forex/family5/family5-k4-control.json`, SHA-256 `e1518d90d3e78d52c53ee125181aa25ffa779637c3605b75b6030bd64a768137`.
+- `reports/forex/family5/family5-k4-paths.jsonl.gz`, SHA-256 `92a3178b9a2196539edbecd3916c4e02dd976a73a4c1b060dd44d557fd4fa430`.
+- `reports/forex/family5/family5-portfolio-breadth-result.json`, SHA-256 `5b7105375bc539b22a29e4278927e7515d9808a804173f2e17b9b1deeed6c883`.
+- `reports/forex/family5/family5-portfolio-breadth-completion.json`, SHA-256 `4019102689c553768813c6e5bb410dcfca1643452669f27be839c3c082fc954d`.
+- `reports/forex/family5/family5-candidate-paths.jsonl.gz`, SHA-256 `a50bad8d0d8c76918003170886e38442b931a778b271dc66717d9f8cef9aa165`.
+- Recovery sidecar Git-normalized SHA-256: `e1c23e49937db52ede5f7b871a3b54df91e97667187f46b2e8789695be404b7b`; local-byte difference is line endings only.
+- Operational provenance: first attempt ended incomplete solely from ENOSPC, with no valid result/completion. Its hash-verified incomplete 8.47 GB archive was removed under separate external authorization; the failed marker and concise audit remain. An identical frozen clean retry completed K3 then K5, reusing K4. Two operational attempts produced one successful scientific completion, not tuning or a second scientific result.
+- Successful execution/completion have `consumption_count=1`; old/new marker payloads and hashes are identical, with attempt linkage supplied by the committed recovery sidecar. No further execution is authorized.
+- All K3/K5 FULL + 14 LOCO cases, 1,000 matched books/case, three scenarios, D360/D365 and B1/B2/B3 are complete. The candidate archive has 178,660 verified records, 15,789,358,836 bytes; all 1,260 report distributions and archive integrity/order checks passed in read-only post-execution verification.
+- Raw result/candidate labels remain `PENDING_EXTERNAL_ADJUDICATION`; completion remains `ECONOMICS_COMPLETED_PENDING_EXTERNAL_ADJUDICATION`. External closure is recorded here and in the final-results document without editing emitted evidence.
+- Reports/control/path archives remain local/gitignored; successful and failed execution markers remain local/untracked. Original authorization, readiness, parity, prereg, code and inputs remain frozen. No network/data fetch or Stage-B access occurred during execution/verification.
+
 ## CERTIFIED INFRASTRUCTURE
 
 TMS ingestion is fail-closed and certified through flattened-text/layout-geometry agreement. Latest relevant parser commit: `c9e727c`. Manifest: `provenance/tms_swap_manifest.json`. Current canonical freeze-manifest SHA-256: `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`. Family-1 infrastructure passed 18 focused, 114 Stage-A boundary, and 615 full-suite tests before economics. The output-equivalent benchmark-cache optimization is pushed at `eed98da5373c9752f08a875a45af2cb39174d039`. Family-2 infrastructure passed 10 focused, 110 relevant boundary, and 626 full-suite tests; H0 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`. Family-3 infrastructure passed 16 focused/relevant and 632 full-suite tests; EQ_H2 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`, with IC alone hash-reused. Family-4 infrastructure passed 6 focused and 638 full-suite tests; M1 parity had zero discrete/numeric mismatches and maximum numeric difference `1.4210854715202004e-14` against tolerance `1e-12`, with IC hash-reused.
+
+Family-5 checkpoint records 75 focused and 697 full-suite passing tests (historical, not rerun for closure). K4 parity covered 1,349,231,725 numeric and 540,074,611 discrete comparisons; numeric/discrete/shape mismatches were zero, maximum delta `1.4210854715202004e-14` versus `1e-12`. Successful K4 control/archive were hash-reused. Closure reverified 13 evidence hashes and 35 source hashes; no tests, parity or economics were rerun.
 
 ## DATA STATE
 
@@ -104,11 +131,11 @@ Financing readiness is certified under the venue-evidenced held-leg model: evide
 
 Attempt 2 remains immutable `VOID_RETAINED`; its provisional disposition is not scientific evidence. Valid operational Attempt 3 used freeze `586c2229de5d959bae21b780192f0ecdaa60b4bf34a00bc2e432b575aaa5f4e5`; result SHA-256 `39838d559e36645c7910b65f5190d7b292540ed780ebe1ce3a697b8dbec9e6b8`. All G1-G5 requirements passed under the frozen rules. Absolute post-hoc baseline performance was modest at approximately 2.3% CAGR. Stage A is closed; no tuning, rerun, or trading permission follows.
 
-Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. Family-2 closure remains committed and pushed at `53521229316bf18eef951452c3fca6fb46dcd96b`. Family-3 closure remains committed and pushed at `103aadb268cf732c588b89b68c766402c315d691`. Family-4 closure is committed and pushed at `5ae6e9a3c14aafc379f44521ff1a22ca7976a6ee`. At verification immediately before this handoff update, local `main` and `origin/main` matched that Family-4 closure commit with ahead/behind `0/0`; only expected untracked `CODEX_HANDOFF.md` and `review.txt` remained. Stage A remains immutable and closed.
+Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0cfd2b17c30d`. Family-2 closure remains committed and pushed at `53521229316bf18eef951452c3fca6fb46dcd96b`. Family-3 closure remains committed and pushed at `103aadb268cf732c588b89b68c766402c315d691`. Family-4 closure is committed and pushed at `5ae6e9a3c14aafc379f44521ff1a22ca7976a6ee`. Family-5 closure now retains K4_CONTROL with valid unselected K3/K5 results. Before this closure/handoff commit, local `main` and `origin/main` matched `7f07e54ad21aed9aadcdbd9b47e8f7bbfdbfdbe4` at `0/0`; only expected untracked `CODEX_HANDOFF.md`, `review.txt`, and the two Family-5 execution markers remained. The closure/handoff commit is explicitly authorized for normal push; its exact resulting HEAD is recorded in local memories after push verification, without a recursive handoff edit. Stage A remains immutable and closed.
 
 ## NEXT GATE
 
-`FAMILY5_PORTFOLIO_BREADTH_DESIGN`
+Family 5 is CLOSED. No subsequent research gate is currently defined by authoritative project state. Do not infer a new family or begin design without separate external direction.
 
 Any new optimization family requires a separate preregistered gate. Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched.
 
