@@ -1,0 +1,317 @@
+{
+  "benchmark_reuse": {
+    "AUD": {
+      "benchmark_payload_sha256": "a91d4ee0c986088c813979ba275e2d64c5ca5b1f5c4900a917f3afd42b17470b",
+      "books_sha256": "a0545c445502dc84b78971b6d4518789ee752eaf0fd2b5bc8dd1bf8bd981d151"
+    },
+    "CAD": {
+      "benchmark_payload_sha256": "576a4fef5559df84703b78ed9429d91cba2e2ee055df57cbb5d9c45b16dbc505",
+      "books_sha256": "e729b941afb862cc21f4e6540400942851436829862afe846d56b7303c94bc5b"
+    },
+    "CHF": {
+      "benchmark_payload_sha256": "8d78cc2e30a7b600c87e18b5b66239d734008d2db110e1dc253a96685b6dc50b",
+      "books_sha256": "63892e221bbd9c6d372dd49665c556257e24f8808b2863eb08dff6c7023184db"
+    },
+    "CZK": {
+      "benchmark_payload_sha256": "950d36457ea045b74f5f38c77d97ff8d7821ef1f3c1f1dd7940e46176a31facb",
+      "books_sha256": "c4e5bdcaee4858896af6a8ea33bf67a36b81cd2011e1031b3f5ae8d8633c8056"
+    },
+    "EUR": {
+      "benchmark_payload_sha256": "15140856e8366e42bdf6b7cfad426b10977351d2bc5a912e45f8cc888131316a",
+      "books_sha256": "4c8bc9927c2c15ca3e1ffd788dbaf5515b010b797b468e02f6c413ce75418c96"
+    },
+    "FULL": {
+      "benchmark_payload_sha256": "0207c7570a0c5cb9c48ffdea1f11b6a4217a549c970da533c1f54ffd16743ca3",
+      "books_sha256": "5702cf09437e2918171e8a40d25253df59fa08589a073dd49d68a56a6b45a546"
+    },
+    "GBP": {
+      "benchmark_payload_sha256": "d6cf183b3770c3c3f1090331322bebf88b2f798094cfe6d7e490bf10a41aff1f",
+      "books_sha256": "0c43fb25e4d1dd11f43c40656fb38b18018b668832ce99c7de25d7960af3ed54"
+    },
+    "HUF": {
+      "benchmark_payload_sha256": "28ce6258fa8898d422b6a1fb86b054e1b9d8059eac26f5987cf93175c58006ca",
+      "books_sha256": "e3b22e7d769d847d0897365e78fe3220f09db599015305c07b575a87f1219d5a"
+    },
+    "JPY": {
+      "benchmark_payload_sha256": "6a2eed8e474d4eed1d870cc7dc47583bd6bcc232256d26eb04c76073597dc1a3",
+      "books_sha256": "a46b0bf1b776efd5ebd2c8abb5e7b1527430905a44de61b251f2f8ef12a9fd1c"
+    },
+    "NOK": {
+      "benchmark_payload_sha256": "1481fc5e37c706e0532a8db6e8ec55bd17774a8088695afde5915a2f3d638de5",
+      "books_sha256": "17b52afd23b225f75647b496673a8cbbfa342d4c05423b8fa68962c7471eb2dc"
+    },
+    "NZD": {
+      "benchmark_payload_sha256": "7b1a10dff4a714afc6cbcca5bf4f0b8a93acc6fbc0ca2d20620a9c94d99a4c6c",
+      "books_sha256": "216d419832072b7cda1614f314f1ca5bf7107539b580f197306fa68b915ae3be"
+    },
+    "PLN": {
+      "benchmark_payload_sha256": "032cbf1e9f07cb9e7a9621569656db0c6622e09e20be5e2c8c72ed3759c7dee5",
+      "books_sha256": "53283db5a7cd02d36afe9405813954f581b481ea92c74a280142450d6c5193bc"
+    },
+    "SEK": {
+      "benchmark_payload_sha256": "966b8ca54d3ae2ce7e87f1c20c0d3f8cc3200496a66f2508be1e5a14cfafad79",
+      "books_sha256": "97a889cf2dc4b81cbdb95dd5cae8581b98270288a9b75328339842905809772c"
+    },
+    "USD": {
+      "benchmark_payload_sha256": "1eac25d1df51ea5231c11813904e0aced0f603055a65a67ea1f2d02f6f2a0302",
+      "books_sha256": "aa0db8943eb161a6de652e682b39fd8a0d1650e5a8d5334f6536cdef48156be6"
+    },
+    "ZAR": {
+      "benchmark_payload_sha256": "c941dbcad06c51d3da1a2fe471030dce2e3db8f941eec88caaadea04044c950d",
+      "books_sha256": "d75228d5afb4d3a20ce78dfba832ced60d3849660c5846a3508172af60c68c6b"
+    }
+  },
+  "family5_parity_counts": {
+    "discrete_values_compared": 540074611,
+    "max_abs_difference": 1.4210854715202004e-14,
+    "mismatch_count": 0,
+    "numeric_values_compared": 1349231725
+  },
+  "family5_parity_sha256": "eafe337788f6f67ed08a77abd95e335c57243fbb2ee98ab8ebb49c9b504e7a9b",
+  "freeze_commit": "a34c0fec0ceaafd4f7fc05e9ae32fce544a8fb5d",
+  "ic_sha256": "b524a81ee544505c7a317ab232feb9b609db5f81a5e922b63fd0c6a880c41abd",
+  "network_accessed": false,
+  "noncontrol_historical_economics_computed": false,
+  "parity": {
+    "cell_count": 6,
+    "cells": {
+      "benchmark_reuse_hashes": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":30,\"mappings\":16,\"numeric_scalars\":0,\"sequences\":0}": 1
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 30,
+        "expected_shapes": {
+          "{\"discrete_scalars\":30,\"mappings\":16,\"numeric_scalars\":0,\"sequences\":0}": 1
+        },
+        "instances": 1,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 0,
+        "shape_mismatch_count": 0
+      },
+      "ic_reuse_hash": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":1,\"mappings\":0,\"numeric_scalars\":0,\"sequences\":0}": 1
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 1,
+        "expected_shapes": {
+          "{\"discrete_scalars\":1,\"mappings\":0,\"numeric_scalars\":0,\"sequences\":0}": 1
+        },
+        "instances": 1,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 0,
+        "shape_mismatch_count": 0
+      },
+      "membership_state_records": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":4762,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4775,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4776,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4780,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4802,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4807,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 2,
+          "{\"discrete_scalars\":4813,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4819,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4819,\"mappings\":325,\"numeric_scalars\":3947,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4850,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4864,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 4
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 72266,
+        "expected_shapes": {
+          "{\"discrete_scalars\":4762,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4775,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4776,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4780,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4802,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4807,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 2,
+          "{\"discrete_scalars\":4813,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4819,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4819,\"mappings\":325,\"numeric_scalars\":3947,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4850,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 1,
+          "{\"discrete_scalars\":4864,\"mappings\":325,\"numeric_scalars\":3790,\"sequences\":2243}": 4
+        },
+        "instances": 15,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 57007,
+        "shape_mismatch_count": 0
+      },
+      "strategy_discrete_paths": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":6471,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 12,
+          "{\"discrete_scalars\":6672,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 12,
+          "{\"discrete_scalars\":6879,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":6987,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7102,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7122,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7289,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7480,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7491,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7496,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 12,
+          "{\"discrete_scalars\":7671,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7990,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 643734,
+        "expected_shapes": {
+          "{\"discrete_scalars\":6471,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 12,
+          "{\"discrete_scalars\":6672,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 12,
+          "{\"discrete_scalars\":6879,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":6987,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7102,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7122,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7289,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7480,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7491,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7496,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 12,
+          "{\"discrete_scalars\":7671,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6,
+          "{\"discrete_scalars\":7990,\"mappings\":337,\"numeric_scalars\":2521,\"sequences\":1018}": 6
+        },
+        "instances": 90,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 226890,
+        "shape_mismatch_count": 0
+      },
+      "strategy_full_paths_and_components": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":12836,\"sequences\":15}": 12,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13037,\"sequences\":15}": 12,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13244,\"sequences\":15}": 3,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13352,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13467,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13487,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13654,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13845,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13856,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13861,\"sequences\":15}": 12,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":14036,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":14355,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":172,\"mappings\":1530,\"numeric_scalars\":13243,\"sequences\":15}": 3
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 15393,
+        "expected_shapes": {
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":12836,\"sequences\":15}": 12,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13037,\"sequences\":15}": 12,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13244,\"sequences\":15}": 3,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13352,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13467,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13487,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13654,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13845,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13856,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":13861,\"sequences\":15}": 12,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":14036,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":171,\"mappings\":1530,\"numeric_scalars\":14355,\"sequences\":15}": 6,
+          "{\"discrete_scalars\":172,\"mappings\":1530,\"numeric_scalars\":13243,\"sequences\":15}": 3
+        },
+        "instances": 90,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 1216581,
+        "shape_mismatch_count": 0
+      },
+      "strategy_targets_actions": {
+        "actual_shapes": {
+          "{\"discrete_scalars\":504,\"mappings\":336,\"numeric_scalars\":2520,\"sequences\":1}": 15
+        },
+        "discrete_mismatch_count": 0,
+        "discrete_values_compared": 7560,
+        "expected_shapes": {
+          "{\"discrete_scalars\":504,\"mappings\":336,\"numeric_scalars\":2520,\"sequences\":1}": 15
+        },
+        "instances": 15,
+        "max_abs_difference": 0.0,
+        "mismatch_count": 0,
+        "numeric_mismatch_count": 0,
+        "numeric_values_compared": 37800,
+        "shape_mismatch_count": 0
+      }
+    },
+    "discrete_mismatch_count": 0,
+    "discrete_values_compared": 738984,
+    "max_abs_difference": 0.0,
+    "mismatch_count": 0,
+    "numeric_mismatch_count": 0,
+    "numeric_values_compared": 1538278,
+    "shape_mismatch_count": 0,
+    "tolerance": 1e-12
+  },
+  "preregistration_sha256": "38a75c3f821843e740401cc7255f83d621c8030ff013ba3170341ea534af6d1d",
+  "readiness_sha256": "2494984371ff670cb91da8104b84d2675a8145dea3247b6188673fd23822a3cf",
+  "schema_version": 1,
+  "scope": {
+    "benchmark_economics": "HASH_REUSED_IMMUTABLE_FAMILY5_K4",
+    "candidate": "HURDLE_OFF_CONTROL",
+    "denominators": [
+      360,
+      365
+    ],
+    "full_cases": 1,
+    "ic_evidence": "HASH_REUSED_IMMUTABLE_FAMILY5_K4",
+    "loco_cases": 14,
+    "noncontrol_historical_paths": 0,
+    "scenarios": [
+      "base",
+      "adverse",
+      "spread_x3"
+    ],
+    "strategy_paths": 90
+  },
+  "source_sha256": {
+    "bot/forex/family1_study.py": "2ca3cedf17481c63af9b0027f726d3ca8b639b94e87559e51757c5e8fafb01a9",
+    "bot/forex/family1_universe.py": "d98a441d476248596d1444c3d6bdd1a6dc5978e8f03b32c65a903d2895c1b6ff",
+    "bot/forex/family2_hysteresis.py": "2b266f723f571fe875f5a816a5be97485d0aa3491bc4f7ecaacc9f96a81dd6c7",
+    "bot/forex/family3_weighting.py": "577fe0314dade64e7a434ad14dc1d6ff870a389140a8266e85770bb862027cc3",
+    "bot/forex/family4_cadence.py": "9e73382450ebc3f44113da0f0ef81171b8ee550b8fae95e9b9e7d8c2f88c7d0d",
+    "bot/forex/family5_breadth.py": "95f27b6772020daf00debcf5600089e9b88b62ee34f250b8ed1b28095b937f00",
+    "bot/forex/family5_study.py": "a4369b0b9adfd95572d8aa3b4e5b74129557c0c36d82648ceed670385d93fa65",
+    "bot/forex/family6_hurdle.py": "2644da0001fd9129e244147291d5da583097ef8378a0a4760a7eb9b9c59a5762",
+    "bot/forex/stage_a_carry.py": "d98e2fbbd33c2495fd1c75a90bf19d0e64dffc8df29784d6b7ae4ffbce2a4e65",
+    "bot/forex/stage_a_lineage.py": "2641e5077b41b9ac1f04a4450da18622e75e3ed93975dc63ca3d16d8bfcdeb75",
+    "bot/forex/stage_a_orchestration.py": "c7483b276466eb479af7c932a3fe839b7f8e902795df43faf7ace7be178411ec",
+    "bot/forex/stage_a_preflight.py": "33966050e1ad5ffed1b860161f41b286be65816be9816a5551eb1dcea505cb65",
+    "prereg/2026-08-21-tms-carry-unlevered-family-1-u14-parity.json": "526b0e6e12b978c2d1fcad0b176e92765b09c77d9a4cc6cb56de6921dab31707",
+    "prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-h0-parity.json": "0ced81728ed3678877b63cd8008f05a8436802aba072c35f50c0456863669641",
+    "prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-prereg.md": "d839767097b8b2d6a5043ae7e8e0c92c2255404f72814daa8a26627404b934e1",
+    "prereg/2026-08-22-tms-carry-unlevered-family-2-rank-hysteresis-readiness.json": "68c45ee6f162d84a033ce25aeea2de02a8187f484d4f2faf34a495055427e4a7",
+    "prereg/2026-08-22-tms-carry-unlevered-family-3-carry-strength-weighting-eq-h2-parity.json": "6060e8aa81c2b17a12536abe46028159076fba959dac069fb636841c131a91e0",
+    "prereg/2026-08-22-tms-carry-unlevered-family-3-carry-strength-weighting-prereg.md": "c10865f67be71b411f2ffb613fe0d4273e11e901ebaeeaf834e8d585e4505322",
+    "prereg/2026-08-22-tms-carry-unlevered-family-3-carry-strength-weighting-readiness.json": "9afc7f1140e48a3ff2f7ce5f181f56138c4e753f2a396a0d1ddc302c12b88890",
+    "prereg/2026-09-19-tms-carry-unlevered-family-4-rebalance-cadence-execution.json": "eb2b97d96924e694e868bf087506070a5953860c1766bc2880f179366300927e",
+    "prereg/2026-09-19-tms-carry-unlevered-family-4-rebalance-cadence-m1-parity.json": "a7528e78462dd48ea3f6124c161d5882c521b501e6a7d3a43628f22963c5ebfa",
+    "prereg/2026-09-19-tms-carry-unlevered-family-4-rebalance-cadence-prereg.md": "33f8a7cc9c5196c98d5e2d9f24791ab183ea82cc32be5eb1e559c08c79f9258a",
+    "prereg/2026-09-19-tms-carry-unlevered-family-4-rebalance-cadence-readiness.json": "d292d6355ad27b23b515b72d8704b03b337582b5b2adf8a40b66e6bca5700e25",
+    "prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-k4-parity.json": "eafe337788f6f67ed08a77abd95e335c57243fbb2ee98ab8ebb49c9b504e7a9b",
+    "prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-prereg.md": "af832109ca374fde71ab70a4f984e9fee0f996c09a6ecb0e64ddcab6fe947eb7",
+    "prereg/2026-09-20-tms-carry-unlevered-family-5-portfolio-breadth-readiness.json": "b24d796cb889d771d2be4540e55d68cbadfafaa62e6a792d39b20900f0da61e0",
+    "prereg/2026-09-22-tms-carry-unlevered-family-6-carry-cost-hurdle-prereg.md": "38a75c3f821843e740401cc7255f83d621c8030ff013ba3170341ea534af6d1d",
+    "reports/forex/family1/family1-universe-result.json": "ec0d85614928d6a1357c575ddfe0421d1499b24cbb005b985790d092934bbb1f",
+    "reports/forex/family2/family2-rank-hysteresis-completion.json": "3f23c7a02bcfb5f003f0882d25fabe739e3c5f5f0b48c1091f530d000154abb0",
+    "reports/forex/family2/family2-rank-hysteresis-result.json": "04c7d5bf34fef2b8a80dccf9e1cce2543bb1a49f32482e745526311bc754247c",
+    "reports/forex/family3/family3-carry-strength-weighting-completion.json": "922eb763a35abfbee2973b253e17cff42433578168ca051871fcca326f45f17a",
+    "reports/forex/family3/family3-carry-strength-weighting-result.json": "88f00d40db42b568952c9866973d94e44ce7df481ddb0b8bdfe901a5419e86ac",
+    "reports/forex/family4/family4-rebalance-cadence-completion.json": "85469fed3c81b74c6783da40302e2548ff53f7c66794baae345ace68eaaa9547",
+    "reports/forex/family4/family4-rebalance-cadence-result.json": "b92f6d12d7cd7274bf3e60dca44fc402bd7bfe6d9fa6ee8fcc78f1cb31bdb6a8",
+    "reports/forex/family5/family5-k4-control.json": "e1518d90d3e78d52c53ee125181aa25ffa779637c3605b75b6030bd64a768137",
+    "run_family2_hysteresis.py": "dd023ee360775a3fa0e09d02c09df37268989c682546ab44b6ec24a491c63cca",
+    "run_family3_weighting.py": "8366f77194602f6118d29c917c5561228c84d085ae6570503ec990405dbe1735",
+    "run_family4_cadence.py": "d0f595682eff09291b08d3a9236cec274cea8f89e59e5084e7a879ead5ed4c95",
+    "run_family5_breadth.py": "3dfe63c2ba3b78ebd3e40d5ea73bbc4f5799ff4d501faaf754a74401c99bf1af",
+    "run_family6_hurdle.py": "711e87018d099d86191e681da9a3e94a4bb9b98bedc12aca16f9f7cf7b08bb5d",
+    "tests/test_family5_breadth.py": "3cb5c2abca2ce79b9466f3c23613e8787bf4b835e0a41ba3b5cce7119eaed38d",
+    "tests/test_family6_hurdle.py": "9bc1e3b43fdf04cc6f119a6d7a5fb3cb330d9089ed65a769fac776608a92aa14"
+  },
+  "stage_b_accessed": false,
+  "status": "FAMILY6_CONTROL_PARITY_PASSED"
+}
