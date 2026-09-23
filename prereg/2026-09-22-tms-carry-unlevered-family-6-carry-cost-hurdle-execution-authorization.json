@@ -1,0 +1,25 @@
+{
+  "base_checkpoint_commit": "e79facfb3a6ca3ac208382cfd5752935a7eaee66",
+  "candidate_ids": [
+    "HURDLE_1X",
+    "HURDLE_2X"
+  ],
+  "command": "python -B run_family6_economics.py execute-candidates",
+  "consumption_count": 1,
+  "estimated_artifact_bytes": 500000000,
+  "execution_source_sha256": {
+    "bot/forex/family6_execution.py": "04abfea1b216200398b85185920f9d661735bdbb3090dd6928b47f01d361d37a",
+    "run_family6_economics.py": "627967e3400857589b7459ed2baca71f995a73fc2dab841e2a00ffb497ffe29b",
+    "tests/test_family6_execution.py": "49947c724211005bbe26e05a780fa666aa83402270e8bee7d51fdf12fb5caa50"
+  },
+  "external_economics_authorized": true,
+  "infrastructure_commit": "f27ec7fb9a47487a1b4e62fe1ef20245cb53b6b2",
+  "minimum_free_bytes": 2000000000,
+  "network_fetch_authorized": false,
+  "parity_sha256": "49e25dab4d3ae254da75f8755271baa58190c5c46fcf2a02f18d27de3fb65d38",
+  "preregistration_sha256": "38a75c3f821843e740401cc7255f83d621c8030ff013ba3170341ea534af6d1d",
+  "readiness_sha256": "2494984371ff670cb91da8104b84d2675a8145dea3247b6188673fd23822a3cf",
+  "schema_version": 1,
+  "stage_b_authorized": false,
+  "status": "FAMILY6_ECONOMICS_EXECUTION_AUTHORIZED"
+}
