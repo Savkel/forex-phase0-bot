@@ -73,11 +73,19 @@ def _git_head(root):
     ).stdout.strip()
 
 
-def _checkpoint_is_ancestor(root, head):
+def _is_ancestor(root, older, newer):
     return subprocess.run(
-        ["git", "merge-base", "--is-ancestor", BASE_CHECKPOINT_COMMIT, head], cwd=root,
+        ["git", "merge-base", "--is-ancestor", older, newer], cwd=root,
         check=False, capture_output=True,
     ).returncode == 0
+
+
+def _tracked_changes(root, older, newer):
+    output = subprocess.run(
+        ["git", "diff", "--name-only", f"{older}..{newer}", "--"], cwd=root,
+        check=True, capture_output=True, text=True,
+    ).stdout
+    return tuple(line.strip() for line in output.splitlines() if line.strip())
 
 
 def _validate_frozen_evidence(root):
@@ -102,7 +110,8 @@ def _validate_frozen_evidence(root):
     }
 
 
-def _validate_authorization(root, *, head=None, ancestor=None, source_hashes=None):
+def _validate_authorization(root, *, head=None, ancestor=None, tracked_changes=None,
+                            source_hashes=None):
     root = Path(root); path = root / AUTHORIZATION_REL
     if not path.is_file():
         raise PermissionError("prereg-bound external economics authorization required")
@@ -119,10 +128,16 @@ def _validate_authorization(root, *, head=None, ancestor=None, source_hashes=Non
     if value.get("status") != "FAMILY6_ECONOMICS_EXECUTION_AUTHORIZED" or value.get("external_economics_authorized") is not True:
         raise PermissionError("Family-6 economics is not explicitly authorized")
     head = head or _git_head(root)
-    ancestor = _checkpoint_is_ancestor(root, head) if ancestor is None else ancestor
+    infrastructure = value.get("infrastructure_commit")
+    valid_commit = (isinstance(infrastructure, str) and len(infrastructure) == 40
+                    and all(c in "0123456789abcdef" for c in infrastructure))
+    ancestor = (_is_ancestor(root, BASE_CHECKPOINT_COMMIT, infrastructure)
+                and _is_ancestor(root, infrastructure, head)) if ancestor is None and valid_commit else ancestor
+    tracked_changes = (_tracked_changes(root, infrastructure, head)
+                       if tracked_changes is None and valid_commit else tracked_changes)
     source_hashes = source_hashes or execution_source_sha256(root)
     expected = {
-        "infrastructure_commit": head, "base_checkpoint_commit": BASE_CHECKPOINT_COMMIT,
+        "base_checkpoint_commit": BASE_CHECKPOINT_COMMIT,
         "preregistration_sha256": PREREG_SHA256, "readiness_sha256": READINESS_SHA256,
         "parity_sha256": PARITY_SHA256, "execution_source_sha256": source_hashes,
         "candidate_ids": list(CANDIDATE_ORDER), "command": EXECUTION_COMMAND,
@@ -130,7 +145,8 @@ def _validate_authorization(root, *, head=None, ancestor=None, source_hashes=Non
         "minimum_free_bytes": MINIMUM_FREE_BYTES, "stage_b_authorized": False,
         "network_fetch_authorized": False,
     }
-    if not ancestor or any(value.get(key) != expected_value for key, expected_value in expected.items()):
+    if (not valid_commit or not ancestor or tuple(tracked_changes or ()) != (_rel(AUTHORIZATION_REL),)
+            or any(value.get(key) != expected_value for key, expected_value in expected.items())):
         raise IntegrityError("execution authorization is stale or differs from the frozen execution")
     return value
 
@@ -272,11 +288,12 @@ def _run_economics(root, sink, frozen, progress):
 
 
 def execute_candidates(root, *, runner=None, free_bytes=None, head=None, ancestor=None,
-                       source_hashes=None, frozen=None):
+                       tracked_changes=None, source_hashes=None, frozen=None):
     root = Path(root); production_runner = runner is None; runner = runner or _run_economics
     with offline():
         source_hashes = source_hashes or execution_source_sha256(root)
-        _validate_authorization(root, head=head, ancestor=ancestor, source_hashes=source_hashes)
+        _validate_authorization(root, head=head, ancestor=ancestor,
+                                tracked_changes=tracked_changes, source_hashes=source_hashes)
         authorization_sha = _sha256(root / AUTHORIZATION_REL)
         frozen = frozen or _validate_frozen_evidence(root)
         free = _disk_preflight(root / REPORT_DIR, free_bytes)

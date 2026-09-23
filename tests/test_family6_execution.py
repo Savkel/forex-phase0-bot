@@ -10,6 +10,10 @@ from bot.forex.family1_universe import _sha256
 from bot.forex.family5_breadth import exclusive_json
 from bot.forex.stage_a_orchestration import IntegrityError
 
+INFRASTRUCTURE = "1" * 40
+EXECUTION_HEAD = "2" * 40
+AUTH_CHANGE = (str(execution.AUTHORIZATION_REL).replace(chr(92), "/"),)
+
 
 def _sources(root):
     for rel in execution.SOURCE_PATHS:
@@ -20,7 +24,7 @@ def _sources(root):
 def _authorization(root, sources, **changes):
     value = {
         "schema_version": 1, "status": "FAMILY6_ECONOMICS_EXECUTION_AUTHORIZED",
-        "external_economics_authorized": True, "infrastructure_commit": "head",
+        "external_economics_authorized": True, "infrastructure_commit": INFRASTRUCTURE,
         "base_checkpoint_commit": execution.BASE_CHECKPOINT_COMMIT,
         "preregistration_sha256": execution.PREREG_SHA256,
         "readiness_sha256": execution.READINESS_SHA256, "parity_sha256": execution.PARITY_SHA256,
@@ -53,15 +57,28 @@ def test_fixed_command_order_and_cli_help(capsys):
     assert exc.value.code == 0 and "execute-candidates" in capsys.readouterr().out
 
 
-def test_authorization_is_exact_and_prereg_bound(tmp_path):
+def test_authorization_is_exact_and_prereg_bound(monkeypatch, tmp_path):
     sources = _sources(tmp_path); _authorization(tmp_path, sources)
+    ancestry = []
+    monkeypatch.setattr(execution, "_is_ancestor",
+        lambda root, older, newer: ancestry.append((older, newer)) or True)
+    monkeypatch.setattr(execution, "_tracked_changes",
+        lambda root, older, newer: AUTH_CHANGE)
     assert execution._validate_authorization(
-        tmp_path, head="head", ancestor=True, source_hashes=sources)["consumption_count"] == 1
+        tmp_path, head=EXECUTION_HEAD,
+        source_hashes=sources)["infrastructure_commit"] == INFRASTRUCTURE
+    assert ancestry == [(execution.BASE_CHECKPOINT_COMMIT, INFRASTRUCTURE),
+                        (INFRASTRUCTURE, EXECUTION_HEAD)]
+    with pytest.raises(IntegrityError, match="stale"):
+        execution._validate_authorization(
+            tmp_path, head=EXECUTION_HEAD, ancestor=True,
+            tracked_changes=AUTH_CHANGE + ("README.md",), source_hashes=sources)
     value = json.loads((tmp_path / execution.AUTHORIZATION_REL).read_text())
     value["candidate_ids"] = list(reversed(value["candidate_ids"]))
     (tmp_path / execution.AUTHORIZATION_REL).write_text(json.dumps(value))
     with pytest.raises(IntegrityError, match="stale"):
-        execution._validate_authorization(tmp_path, head="head", ancestor=True, source_hashes=sources)
+        execution._validate_authorization(tmp_path, head=EXECUTION_HEAD, ancestor=True,
+            tracked_changes=AUTH_CHANGE, source_hashes=sources)
     with pytest.raises(OSError, match="requires"):
         execution._disk_preflight(tmp_path, execution.MINIMUM_FREE_BYTES - 1)
 
@@ -71,7 +88,8 @@ def test_disk_failure_precedes_consumption_marker(monkeypatch, tmp_path):
     monkeypatch.setattr(execution, "_validate_frozen_evidence", lambda root: _frozen())
     with pytest.raises(OSError, match="requires"):
         execution.execute_candidates(tmp_path, runner=lambda *args: pytest.fail("economics entered"),
-            free_bytes=execution.MINIMUM_FREE_BYTES - 1, head="head", ancestor=True,
+            free_bytes=execution.MINIMUM_FREE_BYTES - 1, head=EXECUTION_HEAD, ancestor=True,
+            tracked_changes=AUTH_CHANGE,
             source_hashes=sources, frozen=_frozen())
     assert not (tmp_path / execution.EXECUTION_REL).exists()
 
@@ -82,7 +100,8 @@ def test_success_emits_hash_bound_artifacts_and_blocks_rerun(monkeypatch, tmp_pa
     monkeypatch.setattr(execution, "execution_source_sha256", lambda root: sources)
     result_path = execution.execute_candidates(
         tmp_path, runner=_runner, free_bytes=execution.MINIMUM_FREE_BYTES,
-        head="head", ancestor=True, source_hashes=sources, frozen=_frozen())
+        head=EXECUTION_HEAD, ancestor=True, tracked_changes=AUTH_CHANGE,
+        source_hashes=sources, frozen=_frozen())
     result = json.loads(result_path.read_text()); completion = json.loads((tmp_path / execution.COMPLETION_REL).read_text())
     assert result["candidate_order"] == list(execution.CANDIDATE_ORDER)
     assert completion["result_sha256"] == _sha256(result_path)
@@ -91,7 +110,8 @@ def test_success_emits_hash_bound_artifacts_and_blocks_rerun(monkeypatch, tmp_pa
         assert json.loads(handle.readline())["identity"]["candidate_id"] == "HURDLE_1X"
     with pytest.raises(PermissionError, match="already exists"):
         execution.execute_candidates(tmp_path, runner=_runner, free_bytes=execution.MINIMUM_FREE_BYTES,
-            head="head", ancestor=True, source_hashes=sources, frozen=_frozen())
+            head=EXECUTION_HEAD, ancestor=True, tracked_changes=AUTH_CHANGE,
+            source_hashes=sources, frozen=_frozen())
 
 
 def test_failure_is_not_completed_and_retry_requires_exact_recovery(monkeypatch, tmp_path):
@@ -100,8 +120,8 @@ def test_failure_is_not_completed_and_retry_requires_exact_recovery(monkeypatch,
     monkeypatch.setattr(execution, "execution_source_sha256", lambda root: sources)
     def fail(root, sink, frozen, progress):
         progress.append({"candidate_id": "HURDLE_1X", "case": "FULL"}); raise OSError("disk")
-    kwargs = dict(free_bytes=execution.MINIMUM_FREE_BYTES, head="head", ancestor=True,
-                  source_hashes=sources, frozen=_frozen())
+    kwargs = dict(free_bytes=execution.MINIMUM_FREE_BYTES, head=EXECUTION_HEAD, ancestor=True,
+                  tracked_changes=AUTH_CHANGE, source_hashes=sources, frozen=_frozen())
     with pytest.raises(OSError, match="disk"):
         execution.execute_candidates(tmp_path, runner=fail, **kwargs)
     failure_path = tmp_path / execution._failure_rel(1)
