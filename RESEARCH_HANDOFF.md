@@ -4,9 +4,9 @@
 
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
-- Last state verification: 2026-09-24, during `TOKYO_FIX_PRE_ECONOMICS_FREEZE`.
-- HEAD observed before this update: `36e786b36e0c6ea038f4548c95cd92c2691b0816`.
-- Before this authorized local commit, `main` is one commit ahead of cached `origin/main`, zero behind. The commit containing this update freezes the already approved Tokyo complete-case amendment, exact mask, implementation and readiness evidence bindings. No push or remote refresh is authorized. Unrelated local artifacts remain preserved.
+- Last state verification: 2026-09-24, during `TOKYO_FIX_CLOSE_PUSH_SAVE`.
+- HEAD observed before this update: `0a0872c79cd754601ee4f1fe16f21d16f454f428`.
+- Before closure, `main` is two commits ahead of `origin/main` and verified remote main (`ad5fd8146265661a6ba502ac8fa2571690c2c2a2`), zero behind. The user authorizes a normal closure commit and push, then SAVE MEMORY. The containing commit persists the final Tokyo baseline closure; final live Git/push identity is verified after push and recorded in local continuity notes without a recursive handoff edit. Unrelated artifacts remain preserved.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -38,6 +38,7 @@ Precedence: constitution; committed preregistration/artifacts; verified Git/code
 - Phase 0: `CLOSED_FAIL`
 - Phase 1: `CLOSED_FAIL`
 - Phase 2A: `CLOSED_FAIL`
+- Tokyo pre-fixing USD-demand baseline: `CLOSED_FAIL`; [authoritative closure](TOKYO_FIX_BASELINE_FINAL_RESULTS.md).
 
 ## ACTIVE RESEARCH
 
@@ -57,19 +58,21 @@ Family 6 is CLOSED. External adjudication retains `HURDLE_OFF_CONTROL`, identica
 
 Further sequential unlevered optimization is **STOPPED** pending a separately authorized new research stage. Family 7 is not defined and must not be opened or inferred.
 
-### Strategy 2: complete-case pre-economics state frozen and ready
+### Strategy 2: Tokyo frozen baseline CLOSED_FAIL; one-shot consumed
 
-The original [Tokyo preregistration](prereg/2026-09-23-tokyo-fix-baseline-prereg-draft.md), general intraday benchmark governance and explicit DAILY research-venue assumption are frozen at `36e786b36e0c6ea038f4548c95cd92c2691b0816`. No scientific semantics in those original files changed during this freeze. Actual practice-account mode remains UNKNOWN; [venue provenance](provenance/tokyo_v20_daily_research_venue.md) binds a conditional historical OANDA v20 DAILY model, not account-specific execution feasibility.
+The user authorized final closure in `TOKYO_FIX_CLOSE_PUSH_SAVE` on 2026-09-24. [TOKYO_FIX_BASELINE_FINAL_RESULTS.md](TOKYO_FIX_BASELINE_FINAL_RESULTS.md) is authoritative for closure and exact emitted evidence hashes. Original specification/governance/DAILY-venue freeze: `36e786b36e0c6ea038f4548c95cd92c2691b0816`; complete-case mask/implementation/readiness freeze: `0a0872c79cd754601ee4f1fe16f21d16f454f428`. Those frozen files and all generated evidence remain unchanged.
 
-Preserved operational history: initial timestamp readiness failed on 1,147 role/timestamp requirements, representing 983 distinct missing timestamps across 44 dates. The first repair attempt stopped at its first empty response; diagnostics established two genuine feed absences. The completed full map subsequently established 983 OANDA-practice M15 BA absences, zero recoverable and zero unresolved. Original cache, failed attempt, raw diagnostics, classification and initial readiness evidence remain unchanged. There is no interpolated or repaired price cache.
+One scientific attempt completed in `reports/forex/tokyo_fix/economics_once_complete_case_20260924/`. Result SHA-256: `e76505e55be0b746ab48284ab9999cc005d76aa1fc198fa7d0e8d0951df32c7b`; completion SHA-256: `c63d40e07b211f1cdc8cd22977d27714de830e544c7deaac9d57f830288207c3`. The exclusive attempt directory and `STARTED_NO_RETRY` marker remain present, with valid completion and no failure artifact. **One-shot consumed: do not rerun, reset or remove its guard.** Raw result remains `CLOSED_FAIL`; raw completion remains `ECONOMICS_COMPLETED_PENDING_EXTERNAL_ADJUDICATION`. This handoff and the closure document record the subsequent external decision without rewriting emitted statuses.
 
-The user then approved the general pre-economics complete-case evaluability rule. The [auditable amendment](prereg/2026-09-24-tokyo-fix-complete-case-amendment.md) and [exact date manifest](prereg/2026-09-24-tokyo-fix-complete-case-dates.json) supersede only the original no-complete-case invalidation policy. Calendar eligibility remains 2,446; the original envelope exclusion leaves 2,445 dates; the common 44-date data exclusion (1.799591%) leaves 2,401 evaluable dates. The mask applies identically to primary, both timing controls and both passive references. All signal, timing, costs, accounting, benchmark matching, null parameters and chronological blocks remain as approved. Missingness may be nonrandom; results apply conditionally to this frozen historical sample, not excluded dates or a live availability filter.
+All three frozen economic requirements FAILED (0/3): base normalized alpha `-0.17392391157247847`; doubled-half-spread alpha `-0.3889184609759322`; base primary MaxDD `-0.18969730258440576` is deeper than matched-passive `-0.014085867344707959`. Primary cumulative net return is -18.014368339491% base and -40.783151582552% stress. All three fixed chronological blocks have negative returns and alpha under both costs; block evidence has no extra automatic gates.
 
-Readiness completed before this commit: 125 focused calendar, seal, causality, exact cash/units, independent Decimal hand-ledger, benchmark, bootstrap, determinism and one-shot safety tests passed. All 248,784 permitted input rows passed quote integrity; retained dates have complete required support. No historical strategy/control/passive return or economic verdict has been computed. [Tracked freeze bindings](provenance/tokyo_pre_economics_freeze.json) bind the unchanged generated readiness report, test evidence, exact source/specification bytes, mask, input/calendar provenance and complete gap map. Its containing commit makes the previously uncommitted source bindings durable; the original readiness report's `LOCAL_UNCOMMITTED_HASH_BOUND` field records its emission-time status and is not rewritten.
+Preserve positive timing evidence: mean primary-minus-average-controls contrast is `0.00012255136631729967` base and `0.00014838683104991757` stress; both one-sided bootstrap p-values are exactly `1/10001`. This is **relative timing evidence only, not profitability** or proof of fixing-specific causation. No significance gate was prescribed and timing evidence cannot override economic failure.
 
-Current gate: `TOKYO_FIX_PRE_ECONOMICS_FREEZE`. This gate authorizes one normal local commit only; no economics, fetch, push or memory update. The implementation in `bot/forex/tokyo_fix_baseline.py` and guarded runner `scripts/run_tokyo_fix.py` are hash-bound. The runner rechecks source/specification/runtime/input/mask/readiness bindings, then claims one exclusive attempt directory before any economics. A failed attempt is retained and cannot be silently retried. The prepared USER-RUN command, from the repository root, is `python -m scripts.run_tokyo_fix --execute-one-shot-economics`. The agent must stop before executing it.
+Calendar eligibility remains 2,446 dates, with one original envelope exclusion and 44 pre-economics common data exclusions (1.799591% of 2,445), yielding 2,401 paired dates. The full 983-absence map, earlier failures, calendar provenance, permitted cache and complete-case amendment remain immutable. Missingness may be nonrandom. Actual account mode is UNKNOWN; the zero-financing model is conditional on the declared DAILY venue. Historical DEVELOPMENT results establish neither untouched OOS nor trading/account execution permission.
 
-Phase-2A confirmation and carry Stage B remain sealed. Carry DEVELOPMENT remains **U14 + H2 + EQ + M1 + k=4 + HURDLE_OFF_CONTROL**; no Family 7 is opened. No commit here includes market-price caches, sealed data, credentials, unrelated research or memory files.
+Readiness recorded 125 passing focused tests, independent hand-ledger/bootstrap checks and quote integrity. Closure reverified immutable hashes and frozen bindings; no tests, readiness computation, strategy/bootstrap economics, source fetch, sealed-data or Stage-B access was rerun. Emitted results/readiness/archives remain local/gitignored; source/specification/closure and hash bindings are tracked. Existing unrelated untracked artifacts remain preserved.
+
+**No rescue:** no post-hoc timing/day/filter/cost/threshold/mask changes, tuning or replay of this baseline. Broader Tokyo-fixing mechanisms remain eligible only as separately authorized and independently preregistered research; closure selects no successor. Carry DEVELOPMENT remains **U14 + H2 + EQ + M1 + k=4 + HURDLE_OFF_CONTROL**, with no Family 7; Phase-2A confirmation and carry Stage B remain sealed.
 
 ## ACTIVE LOCKED SPEC
 
@@ -173,7 +176,7 @@ Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0c
 
 Family 6 is CLOSED. Further sequential unlevered carry optimization is STOPPED. No Family 7 is defined or authorized.
 
-Strategy 2 is frozen and ready for the prepared USER-RUN one-shot historical DEVELOPMENT economics command, subject to the unchanged fail-closed runtime checks. This commit does not execute economics or authorize the agent to do so. Preserve the 2,401-date complete-case sample, all exclusions and all prior failures. Do not tune, access credentials or sealed prices, fetch data, push or update memory.
+Tokyo baseline is CLOSED_FAIL and its one-shot is consumed. No next research gate is selected. Await a separately authorized, independently preregistered new research proposal; broader Tokyo-fixing mechanisms are not blanket-banned, but no post-hoc rescue, tuning or replay of this baseline is authorized. Positive timing evidence is relative only. Preserve all evidence; do not access credentials, sealed Phase-2A data or carry Stage B.
 
 Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched; it is not opened by Family-6 closure and would require separate external authorization.
 
