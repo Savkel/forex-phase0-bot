@@ -4,15 +4,16 @@
 
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
-- Last state verification: 2026-09-23, before the Family-6 closure/handoff commit.
-- Project-state commit observed before this handoff update: `80d72b748ed52f8ec6836de8a955082dfe6e9f63`.
-- Push status observed then: local `main` == `origin/main`; ahead/behind `0/0`, pushed.
+- Last state verification: 2026-09-24, during the authorized Tokyo freeze/readiness gate.
+- HEAD observed before this update: `ad5fd8146265661a6ba502ac8fa2571690c2c2a2`.
+- Before the authorized local freeze commit, `main` == cached `origin/main`. The commit containing this update freezes the general governance amendment, Tokyo specification and research-venue provenance; implementation/readiness follows separately. No push or remote refresh is authorized. Existing unrelated local artifacts remain preserved.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
 ## GOVERNANCE
 
 - Permanent constitution: `CLAUDE.md`
+- Approved general intraday amendment: [governance/2026-09-24-intraday-passive-benchmark-amendment.md](governance/2026-09-24-intraday-passive-benchmark-amendment.md), frozen in the commit containing this update. It preserves the verbatim pre-economics human approval and binds exact local `CLAUDE.md` SHA-256 `e46730ea21f97b896ee646556b15c7ccffd0694a902176ef8f9c4a870459635f`; the ignored local constitution remains authoritative.
 - Closed Stage-A specification: `prereg/2026-08-14-tms-carry-no-try-direct-gbp-kill-test-prereg.md`
 - Closed Family-1 specification: `prereg/2026-08-21-tms-carry-unlevered-family-1-universe-prereg.md`
 - Authoritative Family-1 closure: `FAMILY1_UNIVERSE_FINAL_RESULTS.md`
@@ -55,6 +56,14 @@ Family 5 is CLOSED. External adjudication retains `K4_CONTROL` (`k=4`) for DEVEL
 Family 6 is CLOSED. External adjudication retains `HURDLE_OFF_CONTROL`, identical to Family-5 `K4_CONTROL`, for DEVELOPMENT. `HURDLE_1X` and `HURDLE_2X` remain valid immutable results but are not selected. Both hurdles reduced turnover, fills and spread cost; 2X also improved MaxDD, Calmar and B2. Neither improved net CAGR or RAP because avoided rotations lost more spot value than the costs saved. DEVELOPMENT therefore remains **U14 + H2 (`h=2`) + EQ + M1 weekly cadence + `k=4`**, long +1/short -1, currency gross 2, without a carry-cost hurdle. This external decision does not alter the original frozen Stage-A/H0 prospective Stage-B strategy.
 
 Further sequential unlevered optimization is **STOPPED** pending a separately authorized new research stage. Family 7 is not defined and must not be opened or inferred.
+
+### Strategy 2: approved specification frozen; readiness pending
+
+The user externally selected Tokyo pre-fixing USD-demand anticipation and approved its design. The [Tokyo preregistration](prereg/2026-09-23-tokyo-fix-baseline-prereg-draft.md) is frozen as historical DEVELOPMENT research by the commit containing this update, before implementation/economics; its historical filename is retained. It uses the approved general intraday passive rule, applicable to all rollover-flat intraday strategies.
+
+The historical passive-financing archive blocker is removed by the approved full financing-day, rollover-flat benchmark. Exact common cash/units accounting, exposure normalization, no-leverage readiness, alpha/drawdown requirements and the separate timing null remain mandatory. Tokyo's entry/exit timing, calendar, spread stress, research envelope and robustness design are unchanged. Prior document checks verified the amendment verbatim and all 2,445 date-label benchmark boundaries inside the unchanged envelope without reading prices or calculating economics; those checks do not certify price support or execution readiness.
+
+Current gate: `TOKYO_FIX_FREEZE_AND_READINESS`. The user's latest instruction authorizes binding official v20 DAILY as a frozen research venue assumption if scientifically/governance-valid, then continuing the previously authorized local freeze, implementation and readiness gate. [Bound assessment/provenance](provenance/tokyo_v20_daily_research_venue.md) adopts that conditional research scope. The unused practice account's actual mode remains UNKNOWN; absence of financing transactions proves nothing. No legal-entity mapping, account-specific execution feasibility or historical account-mode continuity is claimed. Zero financing is conditional on DAILY and zero rollover exposure, never a universal claim for intraday accounts. All original timestamp/quote support, seal, calendar, cost, matching, accounting and timing-null checks remain mandatory. Stop at a material failure; no rescue or economics is authorized. At freeze time implementation/readiness is pending. Phase-2A confirmation and carry Stage B stay sealed. Carry DEVELOPMENT remains **U14 + H2 + EQ + M1 + k=4 + HURDLE_OFF_CONTROL**; no Family 7 is opened.
 
 ## ACTIVE LOCKED SPEC
 
@@ -156,7 +165,9 @@ Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0c
 
 ## NEXT GATE
 
-Family 6 is CLOSED. Further sequential unlevered optimization is STOPPED. No Family 7 or other subsequent research gate is defined by authoritative project state; do not infer or begin one without a separately authorized new research stage.
+Family 6 is CLOSED. Further sequential unlevered carry optimization is STOPPED. No Family 7 is defined or authorized.
+
+Strategy 2's general governance, specification and explicit DAILY research-venue binding are frozen by the authorized local commit containing this update. Continue the authorized implementation and pre-economics readiness checks, then prepare the one-shot command only if all checks pass. Do not execute economics, fetch market data, access credentials or sealed prices, push or update memory. A material readiness failure stops this gate without modifying the frozen scientific rules.
 
 Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched; it is not opened by Family-6 closure and would require separate external authorization.
 
