@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "gate": "TOKYO_FIX_CALENDAR_ACQUISITION",
+  "source_identity": "Cabinet Office, Government of Japan, national holidays CSV",
+  "official_page": {
+    "url": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html",
+    "final_url": "https://www8.cao.go.jp/chosei/shukujitsu/gaiyou.html",
+    "retrieved_at_utc": "2026-09-23T16:18:12.017818+00:00",
+    "sha256": "565ed19991424566812ce202196adc2a5f7932d9e607940ce28df76456413e43",
+    "bytes": 20682,
+    "http_status": 200,
+    "content_type": "text/html",
+    "last_modified": "Fri, 22 May 2026 01:39:39 GMT",
+    "path": "data/japan_calendar/raw/cao_gaiyou.html"
+  },
+  "raw_csv": {
+    "url": "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv",
+    "final_url": "https://www8.cao.go.jp/chosei/shukujitsu/syukujitsu.csv",
+    "retrieved_at_utc": "2026-09-23T16:18:13.274429+00:00",
+    "sha256": "cec37a743c96995cdb9cb52b685c9003634682a9b0e1a640a6b9b96881fe964a",
+    "bytes": 21538,
+    "http_status": 200,
+    "content_type": "text/csv",
+    "last_modified": "Mon, 02 Feb 2026 00:30:17 GMT",
+    "path": "data/japan_calendar/raw/syukujitsu.csv"
+  },
+  "official_page_links_csv": true,
+  "advertised_coverage_years": [
+    1955,
+    2027
+  ],
+  "closure_rule_authority": "User-specified Bank of Japan office-closure rule: weekends, Cabinet Office listed holidays, December 31 through January 3. No BOJ fetch performed.",
+  "scope": "Calendar only; no price or strategy data accessed."
+}
