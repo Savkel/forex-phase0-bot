@@ -4,9 +4,9 @@
 
 - Repo: `E:\Claude\forex_bot`
 - Branch: `main`
-- Last state verification: 2026-09-24, during `TOKYO_FIX_CLOSE_PUSH_SAVE`.
-- HEAD observed before this update: `0a0872c79cd754601ee4f1fe16f21d16f454f428`.
-- Before closure, `main` is two commits ahead of `origin/main` and verified remote main (`ad5fd8146265661a6ba502ac8fa2571690c2c2a2`), zero behind. The user authorizes a normal closure commit and push, then SAVE MEMORY. The containing commit persists the final Tokyo baseline closure; final live Git/push identity is verified after push and recorded in local continuity notes without a recursive handoff edit. Unrelated artifacts remain preserved.
+- Last state verification: 2026-10-31, during `CFTC_POSITIONING_EXPLORATORY_CLOSE_PUSH_SAVE`.
+- HEAD observed before this update: `62dfb7748208beedeadf5e3edae2a0982db7a364`.
+- Before closure, `main` is one commit ahead of local `origin/main` (`95a5193af76bbbc4d4b553af56701e3da8d2a084`), zero behind. The user authorizes a normal closure commit and push, then SAVE MEMORY. This commit records the CFTC exploratory closure; final live Git/remote identity is verified after push and recorded in local continuity notes without a recursive handoff edit. Unrelated artifacts remain preserved.
 
 Current HEAD, `origin/main`, ahead/behind, and dirty state are always read from live Git at session start. Stored observations in this file are audit context only and never supersede live Git. A commit containing a handoff update does not require another edit solely to record its own hash.
 
@@ -39,8 +39,39 @@ Precedence: constitution; committed preregistration/artifacts; verified Git/code
 - Phase 1: `CLOSED_FAIL`
 - Phase 2A: `CLOSED_FAIL`
 - Tokyo pre-fixing USD-demand baseline: `CLOSED_FAIL`; [authoritative closure](TOKYO_FIX_BASELINE_FINAL_RESULTS.md).
+- CFTC leveraged-fund yen-positioning fade: `EXPLORATORY_NOT_SUPPORTED`; [authoritative closure](CFTC_POSITIONING_EXPLORATORY_FINAL_RESULTS.md). One-shot consumed; strict PIT certification and further optimization not justified. No validation-level rejection of all positioning mechanisms.
 
 ## ACTIVE RESEARCH
+
+### Latest Strategy-2 closure: CFTC positioning EXPLORATORY_NOT_SUPPORTED
+
+External closure authorized in `CFTC_POSITIONING_EXPLORATORY_CLOSE_PUSH_SAVE` and
+recorded 2026-10-31. Freeze `62dfb7748208beedeadf5e3edae2a0982db7a364` remains
+unchanged. [Final results](CFTC_POSITIONING_EXPLORATORY_FINAL_RESULTS.md) preserve
+the exact results, limitations, evidence hashes and terminal no-rescue restrictions.
+486 supported weeks represent only 30 sign-runs (longest 105), not independent
+observations. Fixed 13/14-day lag and official disruption exclusions do not certify
+original CFTC vintages; no validation/significance claim is permitted.
+
+Base net -26.09649394%, MaxDD -29.43574208%, alpha -0.2394799737330223;
+matched passive net +3.92544861%, MaxDD -10.60084387%. Doubled-half-spread net
+-35.09414126%, MaxDD -37.05123399%, alpha -0.39879028769545466. All three necessary
+requirements failed; both directions and every fixed block lost. Only 12/30 runs
+were positive; circular-rotation descriptive rank p=382/486 is not significance.
+Strict PIT certification and further optimization are not justified.
+
+Evidence: `reports/forex/cftc_positioning/economics_once_20261030/`; result SHA-256
+`1cc8291b1bed785210eeb4634b7ca45e2a37ac264259143f9a3c9bf98f406d9b`, completion
+`9f28071debaa4fbb4cba4d4157b91d7c83367630a99afd873c946157c31d4a0d`.
+Raw result/completion remain `EXPLORATORY_COMPLETED_PENDING_EXTERNAL_REVIEW`;
+external terminal disposition is recorded here without modifying emitted evidence.
+One attempt, consumption_count=1, valid completion, no failure; no rerun/reset.
+Closure reverified frozen source/input/output bindings and historical 80 passing
+tests; no tests, readiness or economics rerun. Inputs/reports remain local/gitignored.
+No successor is selected. Fiscal NOK and VIX/JPY remain DATA_BLOCKED. Prior closures,
+carry retention, Stage-B isolation and the Phase-2A seal remain unchanged.
+
+### Retained closed carry programme
 
 Direct OANDA TMS `.pro` cross-sectional carry Stage A is CLOSED with valid frozen disposition `STAGE_A_SURVIVES_KILL_TEST`. Attempt 3 was the single valid auditable execution; structural adjudication established that the 3,600-second Codex supervisory timeout did not terminate it. This is robust historical DEVELOPMENT evidence, not prospective OOS and not trading permission. Authoritative closure: `STAGE_A_CARRY_FINAL_RESULTS.md`.
 
@@ -176,7 +207,7 @@ Family-1 closure remains committed and pushed at `fb557e15dc7c2b740d1dcd0d232c0c
 
 Family 6 is CLOSED. Further sequential unlevered carry optimization is STOPPED. No Family 7 is defined or authorized.
 
-Tokyo baseline is CLOSED_FAIL and its one-shot is consumed. No next research gate is selected. Await a separately authorized, independently preregistered new research proposal; broader Tokyo-fixing mechanisms are not blanket-banned, but no post-hoc rescue, tuning or replay of this baseline is authorized. Positive timing evidence is relative only. Preserve all evidence; do not access credentials, sealed Phase-2A data or carry Stage B.
+CFTC exploratory positioning is EXPLORATORY_NOT_SUPPORTED and its one-shot is consumed. Strict PIT certification and further optimization are not justified; no rescue, tuning, favorable-subset selection or replay is authorized. This is not a validation-level rejection of every positioning mechanism. No next research gate is selected; await separately authorized, genuinely distinct, independently preregistered research. Fiscal NOK and VIX/JPY remain DATA_BLOCKED. Tokyo remains CLOSED_FAIL with consumed one-shot; its positive timing evidence is relative only. Preserve all evidence; do not access credentials, sealed Phase-2A data or carry Stage B.
 
 Prospective Stage B for the original frozen Stage-A strategy remains isolated and untouched; it is not opened by Family-6 closure and would require separate external authorization.
 
